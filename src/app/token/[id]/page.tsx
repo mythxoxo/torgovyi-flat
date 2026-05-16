@@ -3,13 +3,13 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 
-import type { TokenRecord, TradeRecord } from "../../../lib/shared";
-import { BuySellBox } from "../../../components/buy-sell-box";
-import { ChartPlaceholder } from "../../../components/chart-placeholder";
-import { FeeBreakdown } from "../../../components/fee-breakdown";
-import { LiveTrades } from "../../../components/live-trades";
-import { ProgressBar } from "../../../components/progress-bar";
-import { getToken, getTrades } from "../../../lib/api";
+import type { TokenRecord, TradeRecord } from "../../lib/shared";
+import { BuySellBox } from "../../components/buy-sell-box";
+import { ChartPlaceholder } from "../../components/chart-placeholder";
+import { FeeBreakdown } from "../../components/fee-breakdown";
+import { LiveTrades } from "../../components/live-trades";
+import { ProgressBar } from "../../components/progress-bar";
+import { getToken, getTrades } from "../../lib/api";
 
 export default function TokenPage() {
   const params = useParams();

@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 
-import type { TokenRecord } from "../../lib/shared";
-import { TokenList } from "../../components/token-list";
-import { getTokenList } from "../../lib/api";
+import type { TokenRecord } from "../lib/shared";
+import { TokenList } from "../components/token-list";
+import { getTokenList } from "../lib/api";
 
 export default function HomePage() {
   const [tokens, setTokens] = useState<TokenRecord[]>([]);

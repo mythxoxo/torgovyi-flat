@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-import type { UserSummary } from "../../lib/shared";
-import { useWallet } from "../../components/wallet-context";
-import { claimFunds, getUser } from "../../lib/api";
-import { TokenCard } from "../../components/token-card";
+import type { UserSummary } from "../lib/shared";
+import { useWallet } from "../components/wallet-context";
+import { claimFunds, getUser } from "../lib/api";
+import { TokenCard } from "../components/token-card";
 
 export default function MyTokensPage() {
   const { wallet } = useWallet();
