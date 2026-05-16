@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react";
 
-import type { UserSummary } from "../lib/shared";
+import type { UserSummary } from "../../lib/shared";
 
-import { ReferralPanel } from "../components/referral-panel";
-import { useWallet } from "../components/wallet-context";
-import { claimFunds, getUser } from "../lib/api";
+import { ReferralPanel } from "../../components/referral-panel";
+import { useWallet } from "../../components/wallet-context";
+import { claimFunds, resolveReferral } from "../../lib/api";
 
 export default function ReferralsPage() {
   const { wallet } = useWallet();
