@@ -89,7 +89,7 @@ export default function TokenPage() {
         </div>
       </div>
 
-      <ChartPlaceholder />
+      <ChartPlaceholder progress={token.state.progress} />
 
       {token.status === "BONDING" && (
         <BuySellBox token={token} />
