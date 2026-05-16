@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(34, 211, 238, 0.12), transparent 32%),
+    radial-gradient(circle at top right, rgba(249, 115, 22, 0.16), transparent 24%),
+    linear-gradient(180deg, #050b14 0%, #07101a 48%, #02060a 100%);
+  color: #e2e8f0;
+  overflow-x: hidden;
+}
+
+.card-surface {
+  background: linear-gradient(180deg, rgba(9, 19, 31, 0.94), rgba(6, 14, 22, 0.92));
+  border: 1px solid rgba(138, 161, 181, 0.14);
+}
