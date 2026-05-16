@@ -53,9 +53,10 @@ export function BuySellBox({ token }: { token: TokenRecord }) {
         walletSource === "tonconnect" &&
         isTonAddress(token.contractAddresses.bondingCurve)
       ) {
+        const cleanReferralCode = referralCode.trim();
         const resolvedReferral =
-          referralCode.trim().length > 0
-            ? await resolveReferral(referralCode || undefined, wallet)
+          cleanReferralCode.length > 0
+            ? await resolveReferral(cleanReferralCode, wallet)
             : null;
         await sendTransaction(
           buildBuyDraft({
