@@ -56,7 +56,7 @@ export function BuySellBox({ token }: { token: TokenRecord }) {
         const cleanReferralCode = referralCode.trim();
         const resolvedReferral =
           cleanReferralCode.length > 0
-            ? await resolveReferral(cleanReferralCode, wallet)
+            ? await resolveReferral(wallet, cleanReferralCode)
             : null;
         await sendTransaction(
           buildBuyDraft({

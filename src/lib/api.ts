@@ -82,7 +82,7 @@ export const sellToken = (
   });
 
 export const resolveReferral = (wallet: string, code?: string) =>
-  requestJson("/api/referral/resolve", {
+  requestJson<{ code: string | null; valid: boolean; wallet: string | null; fallbackToTreasury: boolean }>("/api/referral/resolve", {
     method: "POST",
     body: JSON.stringify({ wallet, code })
   });
