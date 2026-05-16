@@ -6,7 +6,7 @@ import type { UserSummary } from "../../lib/shared";
 
 import { ReferralPanel } from "../../components/referral-panel";
 import { useWallet } from "../../components/wallet-context";
-import { claimFunds, resolveReferral } from "../../lib/api";
+import { claimFunds, resolveReferral, getUser } from "../../lib/api";
 
 export default function ReferralsPage() {
   const { wallet } = useWallet();
