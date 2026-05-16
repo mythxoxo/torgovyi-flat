@@ -51,7 +51,7 @@ export function CreateTokenForm() {
       setUploadingImage(true);
       setError("");
       const uploaded = await uploadImage(file);
-      setImage(uploaded.url);
+      setImage(uploaded);
     } catch (caughtError) {
       setError(caughtError instanceof Error ? caughtError.message : "Image upload failed");
     } finally {

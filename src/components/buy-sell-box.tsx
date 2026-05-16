@@ -72,19 +72,21 @@ export function BuySellBox({ token }: { token: TokenRecord }) {
       }
 
       if (mode === "BUY") {
-        await buyToken(token.id, {
+        await buyToken(
+          token.id,
           wallet,
-          tonAmount: numericAmount,
-          referralCode: referralCode || undefined,
-          slippageBps: Number(slippageBps)
-        });
+          numericAmount,
+          referralCode || undefined,
+          Number(slippageBps)
+        );
       } else {
-        await sellToken(token.id, {
+        await sellToken(
+          token.id,
           wallet,
-          tokenAmount: numericAmount,
-          referralCode: referralCode || undefined,
-          slippageBps: Number(slippageBps)
-        });
+          numericAmount,
+          referralCode || undefined,
+          Number(slippageBps)
+        );
       }
 
       router.refresh();
