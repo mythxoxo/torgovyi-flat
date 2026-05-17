@@ -461,9 +461,18 @@ export default function TonLandingArtifact() {
           .container { width: calc(100% - 20px); }
           .cards-grid { grid-template-columns: 1fr; }
           .countdown { grid-template-columns: repeat(2, 1fr); }
-          h1 { font-size: 2.9rem; }
+          h1 { font-size: 2.4rem; }
           .price-pill { width: 100%; justify-content: center; }
           .nav-tools { width: 100%; }
+          .hero { padding-top: 28px; }
+          .hero-grid { gap: 16px; }
+          .hero-side { min-height: 220px; }
+          .hero-visual { position: relative; height: 220px; }
+          .section { padding: 44px 0; }
+          .section-grid, .join-grid { gap: 16px; }
+          .image-card img { min-height: 220px; }
+          .time-box { padding: 12px; }
+          .time-box strong { font-size: 1.25rem; }
         }
       `}</style>
 

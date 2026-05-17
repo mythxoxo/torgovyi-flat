@@ -24,6 +24,7 @@ type WalletSource = "tonconnect" | "demo" | "none";
 const DEFAULT_DEMO_WALLET = "EQDEMO00000000000000000000000000000000000000000";
 const allowDemoWallet = process.env.NEXT_PUBLIC_ALLOW_DEMO_WALLET === "true";
 const REQUIRED_CHAIN = CHAIN.TESTNET;
+const FALLBACK_MANIFEST = "https://torgovyi-flat.vercel.app/tonconnect-manifest.json";
 
 const WalletContext = createContext<{
   wallet: string;
@@ -129,9 +130,7 @@ function WalletBridge({ children }: { children: ReactNode }) {
 }
 
 export function Providers({ children }: { children: ReactNode }) {
-  const manifestUrl =
-    process.env.NEXT_PUBLIC_TONCONNECT_MANIFEST_URL ||
-    "http://localhost:3000/tonconnect-manifest.json";
+  const manifestUrl = FALLBACK_MANIFEST;
 
   return (
     <TonConnectUIProvider manifestUrl={manifestUrl}>
