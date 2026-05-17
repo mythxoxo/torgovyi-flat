@@ -59,10 +59,6 @@ function WalletBridge({ children }: { children: ReactNode }) {
   const [demoWallet, setDemoWalletState] = useState(DEFAULT_DEMO_WALLET);
 
   useEffect(() => {
-    tonConnectUI.setConnectionNetwork(REQUIRED_CHAIN);
-  }, [tonConnectUI]);
-
-  useEffect(() => {
     if (!allowDemoWallet || typeof window === "undefined") {
       return;
     }

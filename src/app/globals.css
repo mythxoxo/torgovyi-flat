@@ -4,17 +4,21 @@
 
 :root {
   color-scheme: dark;
-  --grad-primary: linear-gradient(135deg, #0088cc, #00c896);
-  --grad-card: linear-gradient(180deg, #111827 0%, #0a0f1a 100%);
-  --grad-hero: radial-gradient(ellipse at 60% 0%, #0088cc22 0%, transparent 70%);
-  --bg: #0a0f1a;
-  --surface: #111827;
-  --surface-2: #1a2235;
-  --border: #1e3a5f;
-  --text-primary: #ffffff;
-  --text-muted: #8ba3c1;
-  --green: #00c896;
-  --red: #ff4757;
+  --bg: #06080f;
+  --surface: #0d1117;
+  --surface-2: #161b26;
+  --border: #21262d;
+  --border-active: #2979ff;
+  --text-primary: #e6edf3;
+  --text-muted: #7d8590;
+  --text-subtle: #484f58;
+  --green: #3fb950;
+  --green-dim: rgba(63,185,80,0.12);
+  --red: #f85149;
+  --red-dim: rgba(248,81,73,0.12);
+  --blue: #2979ff;
+  --blue-dim: rgba(41,121,255,0.1);
+  --accent: #58a6ff;
 }
 
 html,
@@ -25,26 +29,41 @@ body {
 
 body {
   min-height: 100vh;
-  background-color: #0a0f1a;
-  background-image: url('/brand/hex-pattern.svg'), var(--grad-hero);
-  background-repeat: repeat, no-repeat;
-  background-size: 60px, cover;
-  background-attachment: fixed, fixed;
-  color: white;
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+  color: var(--text-primary);
   overflow-x: hidden;
   font-family: system-ui, sans-serif;
 }
 
+.card,
 .card-surface,
 .glass-card {
-  background: rgba(17, 24, 39, 0.8);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(0, 136, 204, 0.15);
-  border-radius: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.card:hover,
+.card-surface:hover,
+.glass-card:hover {
+  border-color: rgba(41, 121, 255, 0.35);
+  box-shadow: 0 0 0 1px rgba(41, 121, 255, 0.1), 0 8px 24px rgba(0, 0, 0, 0.4);
+  transform: translateY(-1px);
+  transition: all 0.15s ease;
 }
 
 .input-field {
-  @apply w-full rounded-xl border border-[#1e3a5f] bg-[#1a2235] px-4 py-3 text-sm text-white transition-colors placeholder:text-[#8ba3c1] focus:border-[#0088cc] focus:outline-none;
+  @apply w-full rounded-xl border px-4 py-3 text-sm text-[color:var(--text-primary)] transition-colors placeholder:text-[color:var(--text-muted)] focus:outline-none;
+  border-color: var(--border);
+  background: var(--surface-2);
+}
+
+.input-field:focus {
+  border-color: var(--border-active);
 }
 
 .scrollbar-none {
@@ -52,6 +71,31 @@ body {
   scrollbar-width: none;
 }
 .scrollbar-none::-webkit-scrollbar { display: none; }
-.gradient-text { @apply bg-gradient-to-r from-[#0088cc] to-[#00c896] bg-clip-text text-transparent; }
+.gradient-text { @apply bg-gradient-to-r from-[#2979ff] to-[#58a6ff] bg-clip-text text-transparent; }
 .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
 .animate-marquee:hover { animation-play-state: paused; }
+
+.btn-primary {
+  background: #2979ff;
+  color: white;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 0.5rem 1.25rem;
+}
+
+.badge {
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+[data-tc-button] {
+  background: var(--surface-2) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 8px !important;
+  color: var(--text-primary) !important;
+  font-size: 0.8rem !important;
+  height: 36px !important;
+}
