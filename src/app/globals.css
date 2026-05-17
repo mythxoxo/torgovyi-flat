@@ -1,5 +1,4 @@
 @tailwind base;
-@tailwind components;
 @tailwind utilities;
 
 :root {
@@ -104,4 +103,23 @@ body {
   color: var(--text-primary) !important;
   font-size: 0.8rem !important;
   height: 36px !important;
+}
+
+@keyframes logo-float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes pulsebar {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.18); }
+}
+
+.logo-animated {
+  animation: logo-float 3s ease-in-out infinite;
+}
+
+.logo-animated:hover {
+  animation-duration: 0.8s;
+  filter: drop-shadow(0 0 8px rgba(83,246,255,0.6));
 }

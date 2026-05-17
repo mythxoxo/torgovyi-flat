@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
@@ -9,9 +10,9 @@ import { LivePill } from "./shared/live-pill";
 
 const navItems = [
   { href: "/", label: "Маркет", icon: Home },
-  { href: "/create", label: "Создать", icon: Rocket },
-  { href: "/my-tokens", label: "Мои", icon: Wallet },
-  { href: "/referrals", label: "Рефы", icon: Link2 }
+  { href: "/create", label: "Запуск", icon: Rocket },
+  { href: "/my-tokens", label: "Портфель", icon: Wallet },
+  { href: "/referrals", label: "Рефералы", icon: Link2 }
 ];
 
 function NavItem({ href, label, icon: Icon, active }: { href: string; label: string; icon: typeof Home; active: boolean }) {
@@ -31,7 +32,7 @@ export function MobileShell({ children }: { children: ReactNode }) {
       <header className="sticky top-0 z-40 border-b border-[color:var(--border)] bg-[rgba(6,3,10,0.86)] px-4 py-3 backdrop-blur-xl">
         <div className="flex items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-2">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-[#53f6ff]/25 bg-[#53f6ff]/10 font-display text-base text-[#53f6ff]">T</div>
+            <Image src="/brand/logo-icon.svg" alt="TONK.MEM" width={32} height={32} className="logo-animated" />
             <div className="min-w-0">
               <div className="truncate font-display text-lg uppercase tracking-[0.06em] text-white">TONK<span className="gradient-text">.MEM</span></div>
               <div className="text-[10px] font-bold tracking-[0.2em] text-[#3df6a2]">TESTNET</div>
@@ -39,9 +40,8 @@ export function MobileShell({ children }: { children: ReactNode }) {
           </div>
           <WalletConnectButton />
         </div>
-        <div className="mt-3 flex items-center justify-between text-xs text-[color:var(--text-muted)]">
+        <div className="mt-3 text-xs text-[color:var(--text-muted)]">
           <LivePill />
-          <span>TON memecoin board</span>
         </div>
       </header>
       <main>{children}</main>

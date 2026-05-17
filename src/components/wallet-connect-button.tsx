@@ -14,9 +14,9 @@ export function WalletConnectButton() {
         <TonConnectButton className="!w-auto" />
       </div>
       {walletSource === "tonconnect" && wallet ? (
-        <div className={`rounded-lg px-3 py-2 text-xs ${isTestnet ? "bg-[color:var(--green-dim)] text-[color:var(--green)]" : "bg-[color:var(--red-dim)] text-[color:var(--red)]"}`}>
-          {isTestnet ? "TESTNET" : "⚠️ MAINNET"} · {shorten(wallet)}
-          {networkWarning ? <span className="block pt-1">Переключи TonKeeper в Testnet: Settings → Dev Tools → Switch to Testnet</span> : null}
+        <div className={`max-w-[220px] rounded-lg px-3 py-2 text-xs leading-5 ${isTestnet ? "bg-[color:var(--green-dim)] text-[color:var(--green)]" : "bg-[color:var(--red-dim)] text-[color:var(--red)]"}`}>
+          {isTestnet ? `TESTNET · ${shorten(wallet)}` : "TonKeeper → Settings → Dev Tools → Switch to Testnet"}
+          {networkWarning && !isTestnet ? <span className="block pt-1 opacity-90">Иначе транзакция не пройдёт.</span> : null}
         </div>
       ) : null}
       {canUseDemoWallet && !wallet ? <button type="button" onClick={() => setDemoWallet("EQDEMO11111111111111111111111111111111111111111")} className="hidden rounded-lg border border-[color:var(--border)] px-3 py-2 text-xs text-[color:var(--text-muted)] sm:block">Demo</button> : null}

@@ -23,9 +23,6 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "TONK.MEM — TON Meme Launchpad",
     description: "Запускай мем-токены в TON Testnet."
-  },
-  other: {
-    "telegram:channel": "@tonkmem"
   }
 };
 

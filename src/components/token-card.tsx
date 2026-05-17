@@ -12,10 +12,10 @@ function statusMeta(token: TokenRecord) {
 
 function timeAgo(value: string) {
   const diff = Math.max(1, Math.floor((Date.now() - new Date(value).getTime()) / 60000));
-  if (diff < 60) return `${diff} мин назад`;
+  if (diff < 60) return `${diff}м`;
   const hours = Math.floor(diff / 60);
-  if (hours < 24) return `${hours} ч назад`;
-  return `${Math.floor(hours / 24)} д назад`;
+  if (hours < 24) return `${hours}ч`;
+  return `${Math.floor(hours / 24)}д`;
 }
 
 export function TokenCard({ token }: { token: TokenRecord }) {

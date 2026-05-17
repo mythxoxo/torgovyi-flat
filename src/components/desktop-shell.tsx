@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, Link2, Rocket, Wallet } from "lucide-react";
@@ -21,7 +22,7 @@ export function DesktopShell({ children }: { children: ReactNode }) {
     <div className="flex h-screen w-full overflow-hidden" style={{ background: "var(--bg)" }}>
       <aside className="flex w-[250px] shrink-0 flex-col border-r" style={{ borderColor: "var(--border)", background: "rgba(7,4,10,0.96)" }}>
         <div className="flex items-center gap-3 border-b px-5 py-4" style={{ borderColor: "var(--border)" }}>
-          <div className="flex h-9 w-9 items-center justify-center rounded-md border border-[#53f6ff]/25 bg-[#53f6ff]/10 font-display text-base text-[#53f6ff] animate-flicker">T</div>
+          <Image src="/brand/logo-icon.svg" alt="TONK.MEM" width={36} height={36} className="logo-animated" />
           <div>
             <div className="font-display text-[26px] uppercase tracking-[0.08em] text-white">TONK<span className="gradient-text">.MEM</span></div>
             <div className="text-[10px] font-bold tracking-[0.26em] text-[#3df6a2]">TESTNET</div>
@@ -54,7 +55,7 @@ export function DesktopShell({ children }: { children: ReactNode }) {
       {(pathname === "/" || pathname.startsWith("/token")) ? (
         <aside className="hidden w-[280px] shrink-0 flex-col border-l xl:flex" style={{ borderColor: "var(--border)", background: "rgba(7,4,10,0.96)" }}>
           <div className="border-b px-4 py-3" style={{ borderColor: "var(--border)" }}><span className="font-mono text-[11px] font-bold uppercase tracking-[0.28em] text-[color:var(--text-muted)]">Radar</span></div>
-          <div className="flex flex-1 items-center justify-center p-6"><div className="text-center"><p className="text-xs text-[color:var(--text-muted)]">пока тихо</p></div></div>
+          <div className="flex flex-1 items-center justify-center p-6"><div className="text-center"><p className="text-xs text-[color:var(--text-muted)]">Трейды появятся после первых сделок</p></div></div>
           <div className="border-t p-4" style={{ borderColor: "var(--border)" }}><Link href="/create" className="btn-primary flex w-full items-center justify-center gap-2"><Rocket className="h-4 w-4" />Запустить токен</Link></div>
         </aside>
       ) : null}
