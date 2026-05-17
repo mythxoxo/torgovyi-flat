@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Orbitron, JetBrains_Mono } from "next/font/google";
+import { Bebas_Neue, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { PageShell } from "../components/page-shell";
 import { TelegramBoot } from "../components/telegram-boot";
 import { Providers } from "../components/wallet-context";
 
-const orbitron = Orbitron({ subsets: ["latin"], variable: "--font-syne" });
+const bebas = Bebas_Neue({ subsets: ["latin"], weight: "400", variable: "--font-syne" });
 const jetBrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
 
 export const metadata: Metadata = {
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="ru">
-      <body className={`${orbitron.variable} ${jetBrainsMono.variable}`}>
+      <body className={`${bebas.variable} ${jetBrainsMono.variable}`}>
         <Providers>
           <TelegramBoot />
           <PageShell>{children}</PageShell>

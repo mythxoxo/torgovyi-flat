@@ -10,32 +10,32 @@ const config: Config = {
     extend: {
       colors: {
         brand: {
-          bg: "#050816",
-          ink: "#d9f7ff",
-          panel: "#0b1125",
-          panel2: "#101a36",
-          line: "#17325f",
-          cyan: "#31f2ff",
-          acid: "#c7ff3d",
-          hot: "#ff4fd8",
-          warn: "#ff6a3d",
-          mint: "#27f1a8",
-          muted: "#7ba6c7"
+          bg: "#06030a",
+          panel: "#120917",
+          panel2: "#1b1022",
+          line: "#3a2247",
+          cyan: "#53f6ff",
+          acid: "#d7ff4f",
+          magenta: "#ff46c7",
+          orange: "#ff8b3d",
+          green: "#3df6a2",
+          muted: "#b79ec9"
         },
-        mist: "#7ba6c7"
+        mist: "#b79ec9"
       },
       fontFamily: {
         display: ["var(--font-syne)", "system-ui", "sans-serif"],
         mono: ["var(--font-mono)", "monospace"]
       },
       boxShadow: {
-        glow: "0 0 0 1px rgba(49,242,255,0.15), 0 20px 50px rgba(0,0,0,0.45)",
-        neon: "0 0 24px rgba(49,242,255,0.22)"
+        glow: "0 0 0 1px rgba(83,246,255,0.15), 0 18px 40px rgba(0,0,0,0.45)",
+        neon: "0 0 32px rgba(83,246,255,0.22), 0 0 80px rgba(255,70,199,0.08)"
       },
       animation: {
-        marquee: "marquee 24s linear infinite",
-        flicker: "flicker 2.6s steps(2,end) infinite",
-        floatcard: "floatcard 6s ease-in-out infinite"
+        marquee: "marquee 20s linear infinite",
+        flicker: "flicker 2.2s steps(2,end) infinite",
+        pulsebar: "pulsebar 1.8s ease-in-out infinite",
+        hoverfloat: "hoverfloat 4.2s ease-in-out infinite"
       },
       keyframes: {
         marquee: {
@@ -44,9 +44,13 @@ const config: Config = {
         },
         flicker: {
           "0%, 100%": { opacity: "1" },
-          "50%": { opacity: ".82" }
+          "50%": { opacity: ".78" }
         },
-        floatcard: {
+        pulsebar: {
+          "0%, 100%": { filter: "brightness(1)" },
+          "50%": { filter: "brightness(1.18)" }
+        },
+        hoverfloat: {
           "0%, 100%": { transform: "translateY(0px)" },
           "50%": { transform: "translateY(-3px)" }
         }

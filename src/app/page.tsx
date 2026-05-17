@@ -40,14 +40,15 @@ export default function HomePage() {
   return (
     <div className="pb-20">
       <section className="px-4 pt-4">
-        <div className="card relative overflow-hidden p-6 before:absolute before:inset-0 before:bg-[linear-gradient(120deg,transparent,rgba(49,242,255,0.08),transparent)] before:animate-marquee">
+        <div className="card relative overflow-hidden p-6">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(255,70,199,0.12),transparent_35%),radial-gradient(circle_at_80%_20%,rgba(83,246,255,0.10),transparent_28%)]" />
           <div className="relative z-10">
             <div className="mb-4 flex flex-wrap gap-2 text-xs font-medium">
-              <span className="badge bg-[#31f2ff]/10 text-[#31f2ff]">TON Launchpad</span>
-              <span className="badge bg-[#27f1a8]/10 text-[#27f1a8]">Testnet</span>
+              <span className="badge bg-[#53f6ff]/10 text-[#53f6ff]">TON Launchpad</span>
+              <span className="badge bg-[#3df6a2]/10 text-[#3df6a2]">Testnet</span>
             </div>
-            <h1 className="max-w-[12ch] font-display text-4xl font-bold uppercase leading-none text-[color:var(--text-primary)]">LAUNCH FAST. SHILL HARD. GET TO GRAD.</h1>
-            <p className="mt-3 max-w-2xl text-sm leading-7 text-[color:var(--text-muted)]">TONK.MEM — мем-лаунчпад для degens внутри Telegram. Токен, bonding progress, быстрый launch и testnet-флоу без фейковых метрик.</p>
+            <h1 className="max-w-[11ch] font-display text-5xl leading-[0.92] tracking-[0.05em] text-[color:var(--text-primary)]">MINT MEMES. FARM EXITS.</h1>
+            <p className="mt-3 max-w-xl text-sm leading-7 text-[color:var(--text-muted)]">TONK.MEM — деgen launchpad для Telegram. Быстрый запуск, честный bonding progress, testnet-only flow и ноль картонного SaaS вайба.</p>
             <div className="mt-5"><Link href="/create" className="btn-primary inline-flex">Запустить токен</Link></div>
           </div>
         </div>
@@ -59,9 +60,9 @@ export default function HomePage() {
             {filtered.concat(filtered).slice(0, Math.max(10, filtered.length * 2)).map((token, i) => (
               <span key={`${token.id}-${i}`} className="flex items-center gap-2 text-[color:var(--text-muted)]">
                 <span className="font-semibold text-[color:var(--text-primary)]">{token.name}</span>
-                <span className="font-mono text-[#31f2ff]">${token.ticker}</span>
+                <span className="font-mono text-[#53f6ff]">${token.ticker}</span>
                 <span>{Math.round(token.state.progress * 100)}% grad</span>
-                <span className="font-mono text-[#c7ff3d]">{token.state.marketCapTon.toFixed(1)} TON</span>
+                <span className="font-mono text-[#d7ff4f]">{token.state.marketCapTon.toFixed(1)} TON</span>
               </span>
             ))}
           </div>
@@ -70,7 +71,7 @@ export default function HomePage() {
 
       <div className="scrollbar-none mt-4 flex gap-2 overflow-x-auto px-4">
         {tabs.map((tab) => (
-          <button key={tab} type="button" onClick={() => setActive(tab)} className={`whitespace-nowrap rounded-full border px-3 py-1.5 text-sm font-medium transition-all ${active === tab ? "border-[#31f2ff]/30 bg-[#31f2ff]/10 text-white" : "border-transparent bg-[color:var(--surface-2)] text-[color:var(--text-muted)] hover:text-white"}`}>{tab}</button>
+          <button key={tab} type="button" onClick={() => setActive(tab)} className={`whitespace-nowrap rounded-full border px-3 py-1.5 text-sm font-medium transition-all ${active === tab ? "border-[#53f6ff]/30 bg-[#53f6ff]/10 text-white shadow-neon" : "border-transparent bg-[color:var(--surface-2)] text-[color:var(--text-muted)] hover:text-white"}`}>{tab}</button>
         ))}
       </div>
 

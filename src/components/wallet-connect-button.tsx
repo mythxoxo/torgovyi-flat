@@ -15,7 +15,7 @@ export function WalletConnectButton() {
       </div>
       {walletSource === "tonconnect" && wallet ? (
         <div className={`rounded-lg px-3 py-2 text-xs ${isTestnet ? "bg-[color:var(--green-dim)] text-[color:var(--green)]" : "bg-[color:var(--red-dim)] text-[color:var(--red)]"}`}>
-          {isTestnet ? "Testnet" : "⚠️ Mainnet"} · {shorten(wallet)}
+          {isTestnet ? "TESTNET" : "⚠️ MAINNET"} · {shorten(wallet)}
           {networkWarning ? <span className="block pt-1">Переключи TonKeeper в Testnet: Settings → Dev Tools → Switch to Testnet</span> : null}
         </div>
       ) : null}
