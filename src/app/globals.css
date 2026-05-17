@@ -7,6 +7,14 @@
   --grad-primary: linear-gradient(135deg, #0088cc, #00c896);
   --grad-card: linear-gradient(180deg, #111827 0%, #0a0f1a 100%);
   --grad-hero: radial-gradient(ellipse at 60% 0%, #0088cc22 0%, transparent 70%);
+  --bg: #0a0f1a;
+  --surface: #111827;
+  --surface-2: #1a2235;
+  --border: #1e3a5f;
+  --text-primary: #ffffff;
+  --text-muted: #8ba3c1;
+  --green: #00c896;
+  --red: #ff4757;
 }
 
 html,
@@ -43,19 +51,7 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
-
-.scrollbar-none::-webkit-scrollbar {
-  display: none;
-}
-
-.gradient-text {
-  @apply bg-gradient-to-r from-[#0088cc] to-[#00c896] bg-clip-text text-transparent;
-}
-
-.pb-safe {
-  padding-bottom: env(safe-area-inset-bottom);
-}
-
-.animate-marquee:hover {
-  animation-play-state: paused;
-}
+.scrollbar-none::-webkit-scrollbar { display: none; }
+.gradient-text { @apply bg-gradient-to-r from-[#0088cc] to-[#00c896] bg-clip-text text-transparent; }
+.pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+.animate-marquee:hover { animation-play-state: paused; }

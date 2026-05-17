@@ -114,7 +114,7 @@ export default function HomePage() {
 
       {error ? <p className="px-4 pt-4 text-sm text-rose-300">{error}</p> : null}
 
-      <div className="mt-4">
+      <div className="px-6 py-4">
         <TokenList tokens={filtered} loading={loading} />
       </div>
     </div>
