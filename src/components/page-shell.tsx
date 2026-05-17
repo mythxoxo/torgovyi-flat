@@ -1,42 +1,55 @@
-import Link from "next/link";
-import type { ReactNode } from "react";
+"use client";
 
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import type { ReactNode } from "react";
+import { Home, Link2, Rocket, Wallet } from "lucide-react";
 import { WalletConnectButton } from "./wallet-connect-button";
 
 const navItems = [
-  { href: "/", label: "Home" },
-  { href: "/create", label: "Create" },
-  { href: "/referrals", label: "Referrals" },
-  { href: "/my-tokens", label: "My Tokens" }
+  { href: "/", label: "Home", icon: Home },
+  { href: "/create", label: "Create", icon: Rocket },
+  { href: "/my-tokens", label: "My Tokens", icon: Wallet },
+  { href: "/referrals", label: "Refs", icon: Link2 }
 ];
 
-export function PageShell({ children }: { children: ReactNode }) {
+function NavItem({ href, label, icon: Icon, active }: { href: string; label: string; icon: typeof Home; active: boolean }) {
   return (
-    <div className="mx-auto box-border flex min-h-screen w-full max-w-5xl flex-col overflow-hidden px-4 pb-12 pt-5 sm:px-6">
-      <header className="mb-6 w-full min-w-0 rounded-xl border border-white/10 bg-white/5 p-4 shadow-glow backdrop-blur">
-        <div className="mb-4 flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <p className="text-xs uppercase tracking-[0.28em] text-cyan-300">TON launchpad</p>
-            <h1 className="mt-2 text-2xl font-semibold text-white">Meme tokens in two taps</h1>
-          </div>
-          <div className="rounded-lg border border-cyan-400/30 px-3 py-1 text-xs text-cyan-200">
-            Testnet
-          </div>
+    <Link href={href} className={`relative flex flex-col items-center justify-center gap-1 px-2 text-xs ${active ? "text-[#0088cc]" : "text-[#8ba3c1]"}`}>
+      {active ? <span className="absolute -top-2 left-1/2 h-0.5 w-10 -translate-x-1/2 rounded-full bg-[#0088cc]" /> : null}
+      <Icon className="h-4 w-4" />
+      <span>{label}</span>
+    </Link>
+  );
+}
+
+export function PageShell({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+
+  return (
+    <div className="mx-auto min-h-screen w-full max-w-6xl pb-24">
+      <header className="sticky top-0 z-40 flex items-center justify-between border-b border-[#1e3a5f] bg-[#0a0f1a]/95 px-4 py-3 backdrop-blur-md">
+        <div className="flex items-center gap-2">
+          <Image src="/brand/logo-icon.svg" alt="TONK.MEM" width={28} height={28} className="h-7 w-7" />
+          <span className="font-display text-lg font-bold text-white">
+            TONK<span className="gradient-text">.MEM</span>
+          </span>
         </div>
-        <WalletConnectButton />
-        <nav className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="min-w-0 truncate rounded-lg border border-white/10 px-2 py-2 text-center text-xs text-mist transition hover:border-cyan-300 hover:text-white"
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
+        <div className="flex items-center gap-3">
+          <div className="hidden items-center gap-1.5 text-xs text-[#8ba3c1] sm:flex">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#00c896]" />
+            <span>142 live</span>
+          </div>
+          <WalletConnectButton />
+        </div>
       </header>
-      <main className="min-w-0 flex-1">{children}</main>
+      <main>{children}</main>
+      <nav className="fixed bottom-0 left-0 right-0 z-50 flex h-16 items-center justify-around border-t border-[#1e3a5f] bg-[#0a0f1a]/95 pb-safe backdrop-blur-md">
+        {navItems.map((item) => (
+          <NavItem key={item.href} {...item} active={pathname === item.href} />
+        ))}
+      </nav>
     </div>
   );
 }

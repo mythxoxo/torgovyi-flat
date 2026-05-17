@@ -4,6 +4,9 @@
 
 :root {
   color-scheme: dark;
+  --grad-primary: linear-gradient(135deg, #0088cc, #00c896);
+  --grad-card: linear-gradient(180deg, #111827 0%, #0a0f1a 100%);
+  --grad-hero: radial-gradient(ellipse at 60% 0%, #0088cc22 0%, transparent 70%);
 }
 
 html,
@@ -14,15 +17,45 @@ body {
 
 body {
   min-height: 100vh;
-  background:
-    radial-gradient(circle at top left, rgba(34, 211, 238, 0.12), transparent 32%),
-    radial-gradient(circle at top right, rgba(249, 115, 22, 0.16), transparent 24%),
-    linear-gradient(180deg, #050b14 0%, #07101a 48%, #02060a 100%);
-  color: #e2e8f0;
+  background-color: #0a0f1a;
+  background-image: url('/brand/hex-pattern.svg'), var(--grad-hero);
+  background-repeat: repeat, no-repeat;
+  background-size: 60px, cover;
+  background-attachment: fixed, fixed;
+  color: white;
   overflow-x: hidden;
+  font-family: system-ui, sans-serif;
 }
 
-.card-surface {
-  background: linear-gradient(180deg, rgba(9, 19, 31, 0.94), rgba(6, 14, 22, 0.92));
-  border: 1px solid rgba(138, 161, 181, 0.14);
+.card-surface,
+.glass-card {
+  background: rgba(17, 24, 39, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 136, 204, 0.15);
+  border-radius: 16px;
+}
+
+.input-field {
+  @apply w-full rounded-xl border border-[#1e3a5f] bg-[#1a2235] px-4 py-3 text-sm text-white transition-colors placeholder:text-[#8ba3c1] focus:border-[#0088cc] focus:outline-none;
+}
+
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.gradient-text {
+  @apply bg-gradient-to-r from-[#0088cc] to-[#00c896] bg-clip-text text-transparent;
+}
+
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
 }
