@@ -4,31 +4,31 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 const translations = {
   en: {
-    nav: { join: 'Join Launch', about: 'About', features: 'Features', roadmap: 'Roadmap', faq: 'FAQ' },
+    nav: { join: 'Join Community', about: 'About', features: 'Features', roadmap: 'Roadmap', faq: 'FAQ' },
     hero: {
-      badge: 'TON-native launch culture',
-      title: 'Launch harder. Trade faster. Build the next TON legend.',
+      badge: 'TON-native market culture',
+      title: 'Trade sharper. Move faster. Build the next TON legend.',
       subtitle:
-        'A dark, high-signal TON launchpad for degen communities — built for sharp launches, live market momentum, and Telegram-native growth.',
+        'A dark, high-signal TON hub for degen communities — built for market momentum, live TON stats, and Telegram-native growth.',
       primary: 'Join Community',
       secondary: 'Read Litepaper',
-      countdown: 'Countdown to launch'
+      countdown: 'Countdown to next phase'
     },
     about: {
       title: 'About the project',
       body:
-        'TONK is a launch ecosystem for communities that want more than a static token page. We turn hype into structure: launch tooling, community rails, live stats, and a route from testnet chaos to mainnet conviction.'
+        'TONK is a TON ecosystem for communities that want more than a static token page. We turn hype into structure: trading rails, community loops, live stats, and a route from testnet chaos to mainnet conviction.'
     },
     stats: {
       members: 'Community members',
       volume: 'Testnet volume',
-      launch: 'Public launch'
+      launch: 'Public phase'
     },
     features: {
       title: 'Built for serious degens',
       items: [
         {
-          title: 'Telegram-first launch flow',
+          title: 'Telegram-first market flow',
           text: 'Fast onboarding, zero friction handoff from social hype to onchain action.'
         },
         {
@@ -48,17 +48,17 @@ const translations = {
     roadmap: {
       title: 'Roadmap',
       stages: [
-        { title: 'Testnet', text: 'Closed testers, wallet flows, launch mechanics, stress testing.', current: true },
-        { title: 'Audit', text: 'Security review, launch checklist, treasury and contract hardening.' },
-        { title: 'Mainnet', text: 'Public launch, partner campaigns, live liquidity and community scaling.' }
+        { title: 'Testnet', text: 'Closed testers, wallet flows, product mechanics, stress testing.', current: true },
+        { title: 'Audit', text: 'Security review, readiness checklist, treasury and contract hardening.' },
+        { title: 'Mainnet', text: 'Public phase, partner campaigns, live liquidity and community scaling.' }
       ]
     },
     join: {
       title: 'How to join',
       steps: [
-        { title: 'Join the Telegram', text: 'Get the earliest alpha, launch alerts, and community coordination.' },
-        { title: 'Connect your TON wallet', text: 'Be ready for testnet tasks, snapshots, and launch participation.' },
-        { title: 'Watch the launch board', text: 'Track roadmap updates, the TON price pulse, and the countdown.' }
+        { title: 'Join the Telegram', text: 'Get the earliest alpha, market alerts, and community coordination.' },
+        { title: 'Connect your TON wallet', text: 'Be ready for testnet tasks, snapshots, and participation.' },
+        { title: 'Watch the market board', text: 'Track roadmap updates, the TON price pulse, and the countdown.' }
       ]
     },
     faq: {
@@ -66,8 +66,8 @@ const translations = {
       items: [
         { q: 'Is this already on mainnet?', a: 'No. The current phase is testnet-first. Mainnet comes after testing, feedback, and audit.' },
         { q: 'Why TON?', a: 'Fast finality, Telegram-native distribution, and a user base that actually moves onchain.' },
-        { q: 'What makes this different?', a: 'It is built around launch intensity: community loops, momentum visibility, and a brand that feels alive instead of corporate.' },
-        { q: 'How do I prepare?', a: 'Join Telegram, connect a TON wallet, follow launch updates, and be ready before the countdown ends.' }
+        { q: 'What makes this different?', a: 'It is built around market intensity: community loops, momentum visibility, and a brand that feels alive instead of corporate.' },
+        { q: 'How do I prepare?', a: 'Join Telegram, connect a TON wallet, follow updates, and be ready before the countdown ends.' }
       ]
     },
     footer: {
@@ -76,31 +76,31 @@ const translations = {
     }
   },
   ru: {
-    nav: { join: 'Зайти в запуск', about: 'О проекте', features: 'Фичи', roadmap: 'Роадмап', faq: 'FAQ' },
+    nav: { join: 'Войти', about: 'О проекте', features: 'Фичи', roadmap: 'Роадмап', faq: 'FAQ' },
     hero: {
-      badge: 'TON-native launch culture',
+      badge: 'TON-native market culture',
       title: 'Запускай жёстче. Торгуй быстрее. Собери следующую легенду TON.',
       subtitle:
-        'Тёмный, агрессивный launchpad для TON-комьюнити — под быстрые запуски, живой рыночный импульс и Telegram-native рост.',
+        'Тёмный, агрессивный TON-хаб для комьюнити — под живой рыночный импульс и Telegram-native рост.',
       primary: 'Вступить в комьюнити',
       secondary: 'Открыть litepaper',
-      countdown: 'Обратный отсчёт до лаунча'
+      countdown: 'Обратный отсчёт до следующей фазы'
     },
     about: {
       title: 'О проекте',
       body:
-        'TONK — это экосистема запуска для комьюнити, которым мало статичной токен-страницы. Мы превращаем хайп в структуру: инструменты запуска, комьюнити-рельсы, живые метрики и путь от тестнета к mainnet.'
+        'TONK — это экосистема для комьюнити, которым мало статичной токен-страницы. Мы превращаем хайп в структуру: market rails, комьюнити-рельсы, живые метрики и путь от тестнета к mainnet.'
     },
     stats: {
       members: 'Участников в комьюнити',
       volume: 'Объём в тестнете',
-      launch: 'Публичный запуск'
+      launch: 'Публичная фаза'
     },
     features: {
       title: 'Сделано для сильных дегенов',
       items: [
         {
-          title: 'Telegram-first запуск',
+          title: 'Telegram-first market flow',
           text: 'Быстрый онбординг и почти нулевое трение между хайпом и ончейн-действием.'
         },
         {
@@ -120,17 +120,17 @@ const translations = {
     roadmap: {
       title: 'Роадмап',
       stages: [
-        { title: 'Testnet', text: 'Закрытые тестеры, wallet flows, механики запуска, стресс-тест.', current: true },
-        { title: 'Audit', text: 'Security review, launch checklist, укрепление treasury и контрактов.' },
-        { title: 'Mainnet', text: 'Публичный запуск, партнёрские кампании, живая ликвидность и рост комьюнити.' }
+        { title: 'Testnet', text: 'Закрытые тестеры, wallet flows, продуктовые механики, стресс-тест.', current: true },
+        { title: 'Audit', text: 'Security review, readiness checklist, укрепление treasury и контрактов.' },
+        { title: 'Mainnet', text: 'Публичная фаза, партнёрские кампании, живая ликвидность и рост комьюнити.' }
       ]
     },
     join: {
       title: 'Как зайти',
       steps: [
-        { title: 'Зайди в Telegram', text: 'Получай раннюю альфу, алерты по запуску и координацию комьюнити.' },
-        { title: 'Подключи TON-кошелёк', text: 'Будь готов к testnet-задачам, snapshot’ам и участию в запуске.' },
-        { title: 'Следи за launch board', text: 'Смотри обновления роадмапа, пульс TON и обратный отсчёт.' }
+        { title: 'Зайди в Telegram', text: 'Получай раннюю альфу, рыночные алерты и координацию комьюнити.' },
+        { title: 'Подключи TON-кошелёк', text: 'Будь готов к testnet-задачам, snapshot’ам и участию.' },
+        { title: 'Следи за market board', text: 'Смотри обновления роадмапа, пульс TON и обратный отсчёт.' }
       ]
     },
     faq: {
@@ -138,7 +138,7 @@ const translations = {
       items: [
         { q: 'Это уже mainnet?', a: 'Нет. Сейчас проект в testnet-фазе. Mainnet будет после тестов, фидбека и аудита.' },
         { q: 'Почему именно TON?', a: 'Быстрый finality, Telegram-native дистрибуция и аудитория, которая реально двигает ончейн.' },
-        { q: 'Чем это отличается?', a: 'Фокус на launch intensity: циклы комьюнити, видимый импульс и бренд, который ощущается живым.' },
+        { q: 'Чем это отличается?', a: 'Фокус на market intensity: циклы комьюнити, видимый импульс и бренд, который ощущается живым.' },
         { q: 'Как подготовиться?', a: 'Зайди в Telegram, подключи TON-кошелёк, следи за апдейтами и будь готов до нуля таймера.' }
       ]
     },
@@ -473,7 +473,7 @@ export default function TonLandingArtifact() {
             <div className="brand-mark">T</div>
             <div>
               <div className="brand-title">TONK<span className="ton">.MEM</span></div>
-              <div style={{ color: 'var(--muted)', fontSize: '0.8rem' }}>Launch. Meme. Earn.</div>
+              <div style={{ color: 'var(--muted)', fontSize: '0.8rem' }}>Trade. Meme. Earn.</div>
             </div>
           </div>
           <div className="nav-tools">
