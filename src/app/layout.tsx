@@ -1,35 +1,38 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
+import { Orbitron, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { PageShell } from "../components/page-shell";
 import { TelegramBoot } from "../components/telegram-boot";
 import { Providers } from "../components/wallet-context";
 
-const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-syne" });
+const orbitron = Orbitron({ subsets: ["latin"], variable: "--font-syne" });
 const jetBrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
 
 export const metadata: Metadata = {
   title: "TONK.MEM — TON Meme Launchpad",
-  description: "Запускай мем-токены в TON Testnet. Bonding curve, instant listing, реферальная система.",
+  description: "Запускай мем-токены в TON Testnet. Bonding curve, мгновенный листинг, реферальная система.",
   icons: { icon: "/icon.svg", shortcut: "/icon.svg" },
   openGraph: {
     title: "TONK.MEM — TON Meme Launchpad",
-    description: "Запускай мем-токены в TON Testnet. Bonding curve, instant listing, реферальная система.",
+    description: "Запускай мем-токены в TON Testnet. Bonding curve, мгновенный листинг, реферальная система.",
+    images: [{ url: "/brand/img_02.jpg", width: 1200, height: 630 }],
     type: "website",
-    images: ["/brand/img_02.jpg"]
+    siteName: "TONK.MEM"
   },
   twitter: {
     card: "summary_large_image",
     title: "TONK.MEM — TON Meme Launchpad",
-    description: "Запускай мем-токены в TON Testnet. Bonding curve, instant listing, реферальная система.",
-    images: ["/brand/img_02.jpg"]
+    description: "Запускай мем-токены в TON Testnet."
+  },
+  other: {
+    "telegram:channel": "@tonkmem"
   }
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="ru">
-      <body className={`${spaceGrotesk.variable} ${jetBrainsMono.variable}`}>
+      <body className={`${orbitron.variable} ${jetBrainsMono.variable}`}>
         <Providers>
           <TelegramBoot />
           <PageShell>{children}</PageShell>

@@ -10,7 +10,7 @@ export function WalletConnectButton() {
 
   return (
     <div className="flex items-center gap-2">
-      <div className="rounded-lg border border-[color:var(--border)] bg-[color:var(--surface-2)] px-2 py-1">
+      <div className="rounded-lg border border-[color:var(--border)] bg-[color:var(--surface-2)] px-2 py-1 shadow-neon">
         <TonConnectButton className="!w-auto" />
       </div>
       {walletSource === "tonconnect" && wallet ? (
@@ -19,9 +19,7 @@ export function WalletConnectButton() {
           {networkWarning ? <span className="block pt-1">Переключи TonKeeper в Testnet: Settings → Dev Tools → Switch to Testnet</span> : null}
         </div>
       ) : null}
-      {canUseDemoWallet && !wallet ? (
-        <button type="button" onClick={() => setDemoWallet("EQDEMO11111111111111111111111111111111111111111")} className="hidden rounded-lg border border-[color:var(--border)] px-3 py-2 text-xs text-[color:var(--text-muted)] sm:block">Demo</button>
-      ) : null}
+      {canUseDemoWallet && !wallet ? <button type="button" onClick={() => setDemoWallet("EQDEMO11111111111111111111111111111111111111111")} className="hidden rounded-lg border border-[color:var(--border)] px-3 py-2 text-xs text-[color:var(--text-muted)] sm:block">Demo</button> : null}
     </div>
   );
 }

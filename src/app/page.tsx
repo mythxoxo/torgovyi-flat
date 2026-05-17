@@ -7,14 +7,14 @@ import type { TokenRecord } from "../lib/shared";
 import { TokenList } from "../components/token-list";
 import { getTokenList } from "../lib/api";
 
-const tabs = ["Тренд", "Новые", "~Grad", "Вышли", "Топ объём"] as const;
+const tabs = ["Тренд", "Новые", "~Grad", "Вышли", "Топ кап"] as const;
 
 function mapTabToFilter(tab: (typeof tabs)[number]) {
   switch (tab) {
     case "Новые": return "new";
     case "~Grad": return "almost-graduated";
     case "Вышли": return "graduated";
-    case "Топ объём": return "top-volume";
+    case "Топ кап": return "top-volume";
     default: return "trending";
   }
 }
@@ -40,32 +40,37 @@ export default function HomePage() {
   return (
     <div className="pb-20">
       <section className="px-4 pt-4">
-        <div className="card p-6">
-          <div className="mb-4 flex flex-wrap gap-2 text-xs font-medium">
-            <span className="badge bg-[color:var(--blue-dim)] text-[color:var(--accent)]">TON Launchpad</span>
-            <span className="badge bg-[color:var(--green-dim)] text-[color:var(--green)]">Testnet</span>
+        <div className="card relative overflow-hidden p-6 before:absolute before:inset-0 before:bg-[linear-gradient(120deg,transparent,rgba(49,242,255,0.08),transparent)] before:animate-marquee">
+          <div className="relative z-10">
+            <div className="mb-4 flex flex-wrap gap-2 text-xs font-medium">
+              <span className="badge bg-[#31f2ff]/10 text-[#31f2ff]">TON Launchpad</span>
+              <span className="badge bg-[#27f1a8]/10 text-[#27f1a8]">Testnet</span>
+            </div>
+            <h1 className="max-w-[12ch] font-display text-4xl font-bold uppercase leading-none text-[color:var(--text-primary)]">LAUNCH FAST. SHILL HARD. GET TO GRAD.</h1>
+            <p className="mt-3 max-w-2xl text-sm leading-7 text-[color:var(--text-muted)]">TONK.MEM — мем-лаунчпад для degens внутри Telegram. Токен, bonding progress, быстрый launch и testnet-флоу без фейковых метрик.</p>
+            <div className="mt-5"><Link href="/create" className="btn-primary inline-flex">Запустить токен</Link></div>
           </div>
-          <h1 className="max-w-[12ch] font-display text-4xl font-bold text-[color:var(--text-primary)]">TONK.MEM — мем-лаунчпад в TON</h1>
-          <p className="mt-3 max-w-2xl text-sm leading-7 text-[color:var(--text-muted)]">Запускай мем-токены в TON Testnet: bonding curve, мгновенный листинг, реферальная механика и TMA-флоу без фейковых цифр.</p>
-          <div className="mt-5"><Link href="/create" className="btn-primary inline-flex">Запустить токен</Link></div>
         </div>
       </section>
 
-      <div className="mt-4 overflow-hidden border-y border-[color:var(--border)] bg-[color:var(--surface)] py-1.5">
-        <div className="animate-marquee flex gap-8 whitespace-nowrap text-xs">
-          {filtered.concat(filtered).slice(0, Math.max(10, filtered.length * 2)).map((token, i) => (
-            <span key={`${token.id}-${i}`} className="flex items-center gap-2 text-[color:var(--text-muted)]">
-              <span className="font-semibold text-[color:var(--text-primary)]">{token.name}</span>
-              <span className="font-mono text-[color:var(--accent)]">${token.ticker}</span>
-              <span>{Math.round(token.state.progress * 100)}% grad</span>
-            </span>
-          ))}
+      {filtered.length > 0 ? (
+        <div className="mt-4 overflow-hidden border-y border-[color:var(--border)] bg-[color:var(--surface)] py-1.5">
+          <div className="animate-marquee flex gap-8 whitespace-nowrap text-xs">
+            {filtered.concat(filtered).slice(0, Math.max(10, filtered.length * 2)).map((token, i) => (
+              <span key={`${token.id}-${i}`} className="flex items-center gap-2 text-[color:var(--text-muted)]">
+                <span className="font-semibold text-[color:var(--text-primary)]">{token.name}</span>
+                <span className="font-mono text-[#31f2ff]">${token.ticker}</span>
+                <span>{Math.round(token.state.progress * 100)}% grad</span>
+                <span className="font-mono text-[#c7ff3d]">{token.state.marketCapTon.toFixed(1)} TON</span>
+              </span>
+            ))}
+          </div>
         </div>
-      </div>
+      ) : null}
 
       <div className="scrollbar-none mt-4 flex gap-2 overflow-x-auto px-4">
         {tabs.map((tab) => (
-          <button key={tab} type="button" onClick={() => setActive(tab)} className={`whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-medium transition-all ${active === tab ? "bg-[color:var(--blue-dim)] text-white border border-[#2979ff]/20" : "bg-[color:var(--surface-2)] text-[color:var(--text-muted)] hover:text-white"}`}>{tab}</button>
+          <button key={tab} type="button" onClick={() => setActive(tab)} className={`whitespace-nowrap rounded-full border px-3 py-1.5 text-sm font-medium transition-all ${active === tab ? "border-[#31f2ff]/30 bg-[#31f2ff]/10 text-white" : "border-transparent bg-[color:var(--surface-2)] text-[color:var(--text-muted)] hover:text-white"}`}>{tab}</button>
         ))}
       </div>
 
