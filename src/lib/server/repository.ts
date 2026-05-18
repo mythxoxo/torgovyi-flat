@@ -5,6 +5,18 @@ import { Pool } from "pg";
 
 import { createDemoSnapshot, type LaunchpadSnapshot } from "../shared";
 
+const seededDemoNames = new Set(["Moon Drip", "Bark TON", "Liquid Cat", "Graduated Pepe"]);
+
+const normalizeSnapshot = (snapshot: LaunchpadSnapshot): LaunchpadSnapshot => {
+  const looksSeeded = snapshot.tokens.some((token) => seededDemoNames.has(token.name));
+  if (!looksSeeded) return snapshot;
+  return {
+    ...snapshot,
+    updatedAt: new Date().toISOString(),
+    tokens: []
+  };
+};
+
 export interface SnapshotRepository {
   read(): Promise<LaunchpadSnapshot>;
   write(snapshot: LaunchpadSnapshot): Promise<void>;
@@ -23,7 +35,7 @@ export class FileSnapshotRepository implements SnapshotRepository {
     await mkdir(path.dirname(this.filePath), { recursive: true });
     try {
       const content = await readFile(this.filePath, "utf8");
-      this.cache = JSON.parse(content) as LaunchpadSnapshot;
+      this.cache = normalizeSnapshot(JSON.parse(content) as LaunchpadSnapshot);
     } catch {
       this.cache = createDemoSnapshot();
       await this.write(this.cache);
@@ -64,7 +76,7 @@ export class PostgresSnapshotRepository implements SnapshotRepository {
       return snapshot;
     }
 
-    return structuredClone(row.payload);
+    return structuredClone(normalizeSnapshot(row.payload));
   }
 
   public async write(snapshot: LaunchpadSnapshot): Promise<void> {

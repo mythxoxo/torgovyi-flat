@@ -234,101 +234,22 @@ const buyToGraduation = (token: TokenRecord, wallet: string, referral?: Referral
 };
 
 export const createDemoSnapshot = (): LaunchpadSnapshot => {
-  const creatorA = makeWallet("CREATORA");
-  const creatorB = makeWallet("CREATORB");
-  const creatorC = makeWallet("CREATORC");
-  const traderA = makeWallet("TRADERA");
-  const traderB = makeWallet("TRADERB");
-  const traderC = makeWallet("TRADERC");
-  const traderD = makeWallet("TRADERD");
+  const emptyReferralWallet = makeWallet("REFERRAL");
 
   const referrals: ReferralEntry[] = [
     {
-      code: generateReferralCode(traderC),
-      wallet: traderC,
+      code: generateReferralCode(emptyReferralWallet),
+      wallet: emptyReferralWallet,
       totalVolumeTon: 0,
       earnedTon: 0,
-      createdAt: new Date("2026-05-01T08:00:00.000Z").toISOString()
-    },
-    {
-      code: generateReferralCode(traderD),
-      wallet: traderD,
-      totalVolumeTon: 0,
-      earnedTon: 0,
-      createdAt: new Date("2026-05-01T09:00:00.000Z").toISOString()
+      createdAt: new Date().toISOString()
     }
   ];
-
-  const tokens = [
-    buildTokenRecord(
-      {
-        name: "Moon Drip",
-        ticker: "MDRIP",
-        creatorWallet: creatorA,
-        description: "Community coin that drips into the moon.",
-        twitterLink: "https://x.com/moondrip",
-        telegramLink: "https://t.me/moondrip",
-        websiteLink: "https://moondrip.fun"
-      },
-      "2026-05-04T08:00:00.000Z",
-      0
-    ),
-    buildTokenRecord(
-      {
-        name: "Bark TON",
-        ticker: "BARK",
-        creatorWallet: creatorB,
-        creatorTax: { mode: "burn" },
-        description: "Every bark burns."
-      },
-      "2026-05-03T12:00:00.000Z",
-      1
-    ),
-    buildTokenRecord(
-      {
-        name: "Liquid Cat",
-        ticker: "LCAT",
-        creatorWallet: creatorC,
-        creatorTax: { mode: "buyback_burn" },
-        description: "Cat meme with graduation pressure."
-      },
-      "2026-05-02T18:30:00.000Z",
-      2
-    ),
-    buildTokenRecord(
-      {
-        name: "Graduated Pepe",
-        ticker: "GPEPE",
-        creatorWallet: creatorA,
-        creatorTax: { mode: "custom", rate: 0.02, buybackSplit: 0.4, burnSplit: 0.6 },
-        description: "Already living on the STON.fi side."
-      },
-      "2026-05-01T10:15:00.000Z",
-      3
-    )
-  ];
-
-  applyBuyFixture(tokens[0]!, 0.8, traderA, referrals[0]!);
-  applyBuyFixture(tokens[0]!, 1.1, traderB);
-  applyBuyFixture(tokens[0]!, 0.35, creatorA);
-
-  applyBuyFixture(tokens[1]!, 4.2, traderA);
-  applyBuyFixture(tokens[1]!, 2.5, traderB, referrals[1]!);
-  applySellFixture(tokens[1]!, (tokens[1]!.holderBalances[traderA] ?? 0) * 0.15, traderA);
-
-  for (let i = 0; i < 14; i += 1) {
-    applyBuyFixture(tokens[2]!, 0.85 + i * 0.05, i % 2 === 0 ? traderA : traderB, referrals[i % 2]!);
-  }
-  applyBuyFixture(tokens[2]!, 1.5, creatorC);
-
-  buyToGraduation(tokens[3]!, traderA, referrals[0]!);
-
-  graduateFixture(tokens[3]!);
 
   return {
     version: 1,
     updatedAt: new Date().toISOString(),
     referrals,
-    tokens: tokens.map((token) => refreshTokenDerivedFields(token))
+    tokens: []
   };
 };
