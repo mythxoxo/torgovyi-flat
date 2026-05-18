@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
+    />
+    <title>P2P SpreadBot</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Telegram Mini App</p>
+          <h1>P2P SpreadBot</h1>
+          <p class="hero-copy">
+            Live spread scanner for Binance P2P, Bybit P2P, spot reference and
+            exchanger routes.
+          </p>
+        </div>
+        <div class="hero-badges">
+          <span class="badge badge-live" id="feedModeBadge">Connecting...</span>
+          <span class="badge" id="planBadge">Free</span>
+        </div>
+      </header>
+
+      <section class="metrics">
+        <article class="metric-card">
+          <span class="metric-label">Visible spreads</span>
+          <strong id="visibleCount">0</strong>
+        </article>
+        <article class="metric-card">
+          <span class="metric-label">Best spread</span>
+          <strong id="bestSpread">0%</strong>
+        </article>
+        <article class="metric-card">
+          <span class="metric-label">Last refresh</span>
+          <strong id="refreshAt">-</strong>
+        </article>
+      </section>
+
+      <main class="layout">
+        <section class="panel controls-panel">
+          <div class="panel-head">
+            <h2>Filters</h2>
+            <button class="ghost-button" id="reloadButton">Refresh</button>
+          </div>
+
+          <div class="form-grid">
+            <label>
+              <span>Asset</span>
+              <select id="assetSelect"></select>
+            </label>
+
+            <label>
+              <span>Fiat</span>
+              <select id="fiatSelect"></select>
+            </label>
+
+            <label>
+              <span>Min spread %</span>
+              <input id="minSpreadInput" type="number" min="0" step="0.1" />
+            </label>
+          </div>
+
+          <div class="venue-block">
+            <span>Venues</span>
+            <div class="venue-list" id="venueList"></div>
+          </div>
+
+          <div class="settings-actions">
+            <button class="primary-button" id="saveSettingsButton">Save alert settings</button>
+          </div>
+        </section>
+
+        <section class="panel table-panel">
+          <div class="panel-head">
+            <h2>Spread Feed</h2>
+            <p id="feedHint">Delayed free feed</p>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Pair</th>
+                  <th>Buy</th>
+                  <th>Sell</th>
+                  <th>Spread</th>
+                  <th>PnL / 1000</th>
+                  <th>Volume</th>
+                </tr>
+              </thead>
+              <tbody id="spreadTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <aside class="panel paywall-panel">
+          <div class="panel-head">
+            <h2>Pro Access</h2>
+          </div>
+
+          <div class="paywall-copy">
+            <p>
+              Unlock the full feed, 30-second updates and direct Telegram alerts for
+              hot routes.
+            </p>
+          </div>
+
+          <div class="tier-list" id="tierList"></div>
+
+          <div class="notice" id="writeAccessNotice">
+            Alerts in DM require permission for the bot to write to the user.
+          </div>
+
+          <div class="paywall-actions">
+            <button class="ghost-button" id="writeAccessButton">Allow DM alerts</button>
+          </div>
+        </aside>
+      </main>
+
+      <section class="status-bar" id="statusBar">Loading session...</section>
+    </div>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

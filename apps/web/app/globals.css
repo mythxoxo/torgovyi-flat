@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+}
+
+body {
+  min-height: 100vh;
+  background-color: #0a0f1a;
+  background-image: url("/brand/hex-pattern.svg");
+  background-repeat: repeat;
+  background-size: 60px;
+  color: #e2e8f0;
+  overflow-x: hidden;
+}
+
+.glass-card {
+  background: rgba(17, 24, 39, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 136, 204, 0.15);
+  border-radius: 16px;
+}
+
+.card-surface {
+  background: linear-gradient(180deg, rgba(9, 19, 31, 0.94), rgba(6, 14, 22, 0.92));
+  border: 1px solid rgba(138, 161, 181, 0.14);
+}
+
+.input-field {
+  @apply w-full rounded-xl border border-[#1e3a5f] bg-[#1a2235] px-4 py-3 text-sm text-white transition-colors placeholder:text-[#8ba3c1] focus:border-[#0088cc] focus:outline-none;
+}
+
+.gradient-text {
+  @apply bg-gradient-to-r from-[#0088cc] to-[#00c896] bg-clip-text text-transparent;
+}
+
+.scrollbar-none {
+  scrollbar-width: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}

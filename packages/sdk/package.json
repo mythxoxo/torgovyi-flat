@@ -1,0 +1,16 @@
+{
+  "name": "@meme-launchpad/sdk",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@meme-launchpad/shared": "0.1.0",
+    "@ton/core": "^0.60.1"
+  }
+}

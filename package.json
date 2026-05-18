@@ -1,35 +1,37 @@
 {
-  "name": "meme-launchpad-web",
+  "name": "ton-meme-launchpad-mvp",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
+  "description": "Telegram Mini App MVP launchpad for meme tokens on TON.",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "@aws-sdk/client-s3": "^3.540.0",
-    "@ton/core": "^0.57.0",
-    "@tonconnect/ui-react": "^2.0.10",
-    "@twa-dev/sdk": "^8.0.1",
-    "@types/canvas-confetti": "^1.9.0",
-    "canvas-confetti": "^1.9.4",
-    "lightweight-charts": "^5.2.0",
-    "lucide-react": "^1.16.0",
-    "next": "^15.5.18",
-    "pg": "^8.11.3",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "dev": "concurrently -n web,api,bot -c cyan,green,yellow \"npm run dev:web\" \"npm run dev:api\" \"npm run dev:bot\"",
+    "dev:web": "npm run dev -w @meme-launchpad/web",
+    "dev:api": "npm run dev -w @meme-launchpad/api",
+    "dev:bot": "npm run dev -w @meme-launchpad/bot",
+    "contracts:check": "npx tact --config tact.config.json --check",
+    "contracts:build": "npx tact --config tact.config.json",
+    "build": "npm run build -w @meme-launchpad/shared && npm run build -w @meme-launchpad/sdk && npm run build -w @meme-launchpad/config && npm run build -w @meme-launchpad/api && npm run build -w @meme-launchpad/bot && npm run build -w @meme-launchpad/web",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "simulate": "tsx scripts/simulate_curve.ts",
+    "seed": "tsx scripts/seed_demo.ts",
+    "deploy:testnet": "tsx scripts/deploy_testnet.ts",
+    "typecheck": "npm run build"
   },
   "devDependencies": {
-    "@types/node": "^20",
-    "@types/pg": "^8.11.4",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "autoprefixer": "^10.4.19",
-    "postcss": "^8",
-    "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "@tact-lang/compiler": "^1.6.13",
+    "@types/node": "^22.15.21",
+    "concurrently": "^9.1.2",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.4"
+  },
+  "engines": {
+    "node": ">=22"
   }
 }

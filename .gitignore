@@ -1,19 +1,13 @@
-# Dependencies
 node_modules/
-
-# Next.js
-.next/
-out/
-
-# Env files
 .env
+.next/
+dist/
+coverage/
+logs/
+data/db.json
+data/launchpad-local.json
+data/uploads/
+contracts/build/
+npm-debug.log*
 .env.local
 .env.production
-.env.*.local
-
-# Data (local only, use DATABASE_URL on Vercel)
-data/
-
-# Misc
-.DS_Store
-*.log
