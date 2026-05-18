@@ -9,8 +9,8 @@ const syne = Syne({ subsets: ["latin"], variable: "--font-syne" });
 const mono = Space_Mono({ subsets: ["latin"], weight: ["400", "700"], variable: "--font-mono" });
 
 export const metadata: Metadata = {
-  title: "TONK.MEM",
-  description: "TONK.MEM"
+  title: "TONK.MEM Mainnet",
+  description: "TONK.MEM Mainnet"
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

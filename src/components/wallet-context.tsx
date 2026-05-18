@@ -58,9 +58,7 @@ function WalletBridge({ children }: { children: ReactNode }) {
       walletSource === "tonconnect"
         ? walletChain === REQUIRED_CHAIN
           ? "Mainnet"
-          : walletChain === CHAIN.TESTNET
-            ? "Testnet"
-            : walletChain || "Unknown"
+          : walletChain || "Unknown"
         : "Mainnet";
 
     return {

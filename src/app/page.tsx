@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Search } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { TokenRecord } from "../lib/shared";
@@ -70,7 +71,11 @@ export default function HomePage() {
   };
 
   return (
-    <div className="pb-20">
+    <div className="relative pb-20">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <Image src="/brand/img_01.png" alt="" fill className="object-cover opacity-[0.05]" priority />
+      </div>
+      <div className="relative z-10">
       {tickerTrades.length > 0 ? (
         <div className="overflow-hidden border-b border-[#1e3a5f] bg-[#0a1628] py-1.5">
           <div className="animate-marquee flex gap-8 whitespace-nowrap text-xs">
@@ -111,6 +116,7 @@ export default function HomePage() {
       <div className="py-4">
         <TokenList tokens={visibleTokens} loading={loading} searchQuery={query} />
         <div ref={sentinelRef} className="h-8" />
+      </div>
       </div>
     </div>
   );
