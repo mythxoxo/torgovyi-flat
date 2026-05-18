@@ -1,13 +1,32 @@
+export interface TelegramWebAppUser {
+  id: number;
+  username?: string;
+  first_name?: string;
+  photo_url?: string;
+}
+
 export interface TelegramWebApp {
   ready(): void;
   expand(): void;
   setHeaderColor?(color: string): void;
+  openTelegramLink(url: string): void;
+  showPopup(params: {
+    title: string;
+    message: string;
+    buttons?: Array<{ type: "ok" | "close" | "cancel" | "default"; text?: string; id?: string }>;
+  }, callback?: (buttonId: string) => void): void;
+  BackButton: {
+    show(): void;
+    hide(): void;
+    onClick(cb: () => void): void;
+    offClick?(cb: () => void): void;
+  };
+  HapticFeedback: {
+    impactOccurred(style: "light" | "medium" | "heavy" | "rigid" | "soft"): void;
+    notificationOccurred(type: "error" | "success" | "warning"): void;
+  };
   initDataUnsafe?: {
-    user?: {
-      id: number;
-      username?: string;
-      first_name?: string;
-    };
+    user?: TelegramWebAppUser;
     start_param?: string;
   };
 }

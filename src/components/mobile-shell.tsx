@@ -7,6 +7,7 @@ import type { ReactNode } from "react";
 import { Home, Link2, Rocket, Wallet } from "lucide-react";
 import { WalletConnectButton } from "./wallet-connect-button";
 import { LivePill } from "./shared/live-pill";
+import { getTelegramUser } from "../lib/telegram";
 
 const navItems = [
   { href: "/", label: "Маркет", icon: Home },
@@ -17,8 +18,8 @@ const navItems = [
 
 function NavItem({ href, label, icon: Icon, active }: { href: string; label: string; icon: typeof Home; active: boolean }) {
   return (
-    <Link href={href} className={`relative flex flex-col items-center justify-center gap-1 px-2 text-[10px] ${active ? "text-[#53f6ff]" : "text-[color:var(--text-muted)]"}`}>
-      <span className={`rounded-xl px-3 py-1.5 transition-all ${active ? "bg-[#53f6ff]/10" : ""}`}><Icon className="h-4 w-4" /></span>
+    <Link href={href} className={`relative flex h-full min-w-0 flex-1 flex-col items-center justify-center gap-1 border-t-2 px-2 text-[10px] ${active ? "border-[#0088cc] text-[#0088cc]" : "border-transparent text-[#8ba3c1]"}`}>
+      <Icon className="h-4 w-4" />
       <span>{label}</span>
     </Link>
   );
@@ -26,26 +27,35 @@ function NavItem({ href, label, icon: Icon, active }: { href: string; label: str
 
 export function MobileShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const user = getTelegramUser();
 
   return (
-    <div className="mx-auto min-h-screen w-full max-w-md pb-24">
-      <header className="sticky top-0 z-40 border-b border-[color:var(--border)] bg-[rgba(6,3,10,0.86)] px-4 py-3 backdrop-blur-xl">
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex min-w-0 items-center gap-2">
-            <Image src="/brand/logo-icon.svg" alt="TONK.MEM" width={32} height={32} className="logo-animated" />
-            <div className="min-w-0">
-              <div className="truncate font-display text-lg uppercase tracking-[0.06em] text-white">TONK<span className="gradient-text">.MEM</span></div>
-              <div className="text-[10px] font-bold tracking-[0.2em] text-[#3df6a2]">TESTNET</div>
-            </div>
-          </div>
-          <WalletConnectButton />
+    <div className="mx-auto min-h-screen w-full max-w-md bg-transparent pb-[calc(88px+env(safe-area-inset-bottom))]">
+      <header className="sticky top-0 z-40 flex items-center justify-between border-b border-[#1e3a5f] bg-[#0a0f1a]/95 px-4 py-3 backdrop-blur-md">
+        <div className="flex flex-shrink-0 items-center gap-2">
+          <Image src="/brand/logo-icon.svg" alt="TONK.MEM" width={24} height={24} className="h-6 w-6" />
+          <span className="font-display text-base font-bold">
+            TONK<span className="gradient-text">.MEM</span>
+          </span>
         </div>
-        <div className="mt-3 text-xs text-[color:var(--text-muted)]">
+
+        <div className="flex items-center gap-1.5 text-xs text-[#8ba3c1]">
+          <span className="h-1.5 w-1.5 rounded-full bg-[#00c896] animate-pulse" />
           <LivePill />
         </div>
+
+        <div className="flex items-center gap-2">
+          {user?.photo_url ? <img src={user.photo_url} alt={user.first_name || "avatar"} className="h-7 w-7 rounded-full" /> : null}
+          <WalletConnectButton />
+        </div>
       </header>
+
       <main>{children}</main>
-      <nav className="fixed bottom-0 left-0 right-0 z-50 mx-auto flex h-16 max-w-md items-center justify-around border-t border-[color:var(--border)] bg-[rgba(6,3,10,0.96)] pb-safe backdrop-blur-xl">
+
+      <nav
+        className="fixed bottom-0 left-0 right-0 z-50 mx-auto flex max-w-md items-center justify-around border-t border-[#1e3a5f] bg-[#0a0f1a]/95 backdrop-blur-md"
+        style={{ height: "calc(64px + env(safe-area-inset-bottom))", paddingBottom: "env(safe-area-inset-bottom)" }}
+      >
         {navItems.map((item) => <NavItem key={item.href} {...item} active={pathname === item.href} />)}
       </nav>
     </div>

@@ -1,22 +1,27 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getLiveStats } from "@/lib/stats";
 
-export function LivePill({ className = "" }: { className?: string }) {
-  const [live, setLive] = useState(25);
+export function LivePill() {
+  const [count, setCount] = useState<number | null>(null);
 
   useEffect(() => {
-    const fetchStats = () => getLiveStats().then((d) => setLive(d.live)).catch(() => {});
-    fetchStats();
-    const interval = setInterval(fetchStats, 30_000);
-    return () => clearInterval(interval);
+    let alive = true;
+    const load = async () => {
+      try {
+        const res = await fetch("/api/stats/live", { cache: "no-store" });
+        const data = (await res.json()) as { live?: number; count?: number };
+        if (!alive) return;
+        setCount(data.live ?? data.count ?? null);
+      } catch {}
+    };
+    load();
+    const timer = setInterval(load, 15000);
+    return () => {
+      alive = false;
+      clearInterval(timer);
+    };
   }, []);
 
-  return (
-    <div className={`flex items-center gap-1.5 text-xs text-[#8ba3c1] ${className}`}>
-      <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#00c896]" />
-      <span>{live} live</span>
-    </div>
-  );
+  return <span>{count ?? "--"} live</span>;
 }

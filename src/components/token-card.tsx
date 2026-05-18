@@ -1,42 +1,62 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { TokenRecord } from "../lib/shared";
+import { ProgressBar } from "./progress-bar";
 
 function statusMeta(token: TokenRecord) {
-  if (token.status === "GRADUATED") return { label: "Вышел", className: "bg-white/10 text-white" };
+  if (token.status === "GRADUATED") return { label: "✅ Выпустился", className: "bg-white/10 text-white" };
   const pct = token.state.progress * 100;
-  if (pct >= 75) return { label: "~Grad", className: "bg-[color:var(--green-dim)] text-[color:var(--green)]" };
-  if (pct >= 40) return { label: "Тренд", className: "bg-[color:var(--blue-dim)] text-[#53f6ff]" };
-  return { label: "Новый", className: "bg-white/5 text-[color:var(--text-muted)]" };
+  if (pct >= 75) return { label: "💎 Почти", className: "bg-[#00c896]/20 text-[#00c896]" };
+  if (pct >= 40) return { label: "🔥 Тренд", className: "bg-[#0088cc]/20 text-[#0088cc]" };
+  return { label: "🆕 Новый", className: "bg-[#ff4757]/20 text-[#ff4757]" };
 }
 
 function timeAgo(value: string) {
-  const diff = Math.max(1, Math.floor((Date.now() - new Date(value).getTime()) / 60000));
-  if (diff < 60) return `${diff}м`;
-  const hours = Math.floor(diff / 60);
-  if (hours < 24) return `${hours}ч`;
-  return `${Math.floor(hours / 24)}д`;
+  const mins = Math.floor((Date.now() - new Date(value).getTime()) / 60000);
+  if (mins < 1) return "только что";
+  if (mins < 60) return `${mins} мин назад`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours} ч назад`;
+  return `${Math.floor(hours / 24)} дн назад`;
 }
 
 export function TokenCard({ token }: { token: TokenRecord }) {
   const status = statusMeta(token);
   const progress = Math.round(token.state.progress * 100);
   const creator = token.creatorTelegramId ? `@${token.creatorTelegramId}` : null;
-  const progressTone = progress >= 75 ? "from-[#3df6a2] to-[#53f6ff]" : "from-[#53f6ff] to-[#ff46c7]";
 
   return (
-    <Link href={`/token/${token.id}`} className="card block overflow-hidden transition-all duration-150 hover:-translate-y-[1px] hover:border-[#53f6ff]/40 hover:shadow-neon active:scale-[0.98]">
-      <div className="relative aspect-square overflow-hidden">
-        <Image src={token.image || "/brand/img_04.jpg"} alt={token.name} fill className="object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#06030a] via-transparent to-transparent" />
-        <div className="absolute left-2 top-2"><span className={`badge ${status.className}`}>{status.label}</span></div>
+    <Link href={`/token/${token.id}`} className="glass-card block overflow-hidden">
+      <div className="relative aspect-square w-full overflow-hidden rounded-t-xl">
+        <Image src={token.image || "/brand/img_04.png"} alt={token.name} fill className="object-cover" />
+        <div className="absolute right-2 top-2">
+          <span className={`badge ${status.className}`}>{status.label}</span>
+        </div>
       </div>
+
       <div className="space-y-2 p-3">
-        <div className="flex items-center justify-between gap-2"><span className="truncate text-sm font-bold text-[color:var(--text-primary)]">{token.name}</span><span className="font-mono text-xs text-[#53f6ff]">${token.ticker}</span></div>
-        {token.description ? <p className="line-clamp-1 text-xs text-[color:var(--text-muted)]">{token.description}</p> : null}
-        <div className="h-2 w-full overflow-hidden rounded-full bg-[#24122b]"><div className={`h-full rounded-full bg-gradient-to-r ${progressTone} animate-pulsebar transition-all duration-500`} style={{ width: `${progress}%` }} /></div>
-        <div className="flex justify-between text-[11px] text-[color:var(--text-muted)]"><span>{progress}% to grad</span><span className="font-mono text-[#d7ff4f]">{token.state.marketCapTon.toFixed(1)} TON</span></div>
-        <div className="text-xs text-[color:var(--text-muted)]">{timeAgo(token.createdAt)}{creator ? ` · ${creator}` : ""}</div>
+        <div className="flex items-center justify-between gap-2">
+          <span className="truncate text-sm font-bold text-white">{token.name}</span>
+          <span className="flex-shrink-0 font-mono text-xs text-[#8ba3c1]">${token.ticker}</span>
+        </div>
+
+        {token.description ? <p className="line-clamp-1 text-xs text-[#8ba3c1]">{token.description}</p> : null}
+
+        <ProgressBar progress={progress} />
+
+        <div className="flex justify-between text-xs text-[#8ba3c1]">
+          <span>{progress}% до выхода</span>
+        </div>
+
+        <div className="flex items-center justify-between text-xs">
+          <span className="font-mono font-bold text-[#00c896]">💎 {token.state.marketCapTon.toFixed(2)} TON</span>
+          <span className="text-[#8ba3c1]">👥 {token.holderCount}</span>
+        </div>
+
+        <div className="text-xs text-[#8ba3c1]">
+          {timeAgo(token.createdAt)}
+          {creator ? ` · ${creator}` : ""}
+        </div>
       </div>
     </Link>
   );

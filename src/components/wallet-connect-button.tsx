@@ -3,23 +3,23 @@
 import { TonConnectButton } from "@tonconnect/ui-react";
 import { useWallet } from "./wallet-context";
 
-const shorten = (wallet: string): string => wallet.length < 12 ? wallet : `${wallet.slice(0, 6)}...${wallet.slice(-4)}`;
+const shorten = (wallet: string): string => wallet.length < 12 ? wallet : `${wallet.slice(0, 4)}...${wallet.slice(-4)}`;
 
 export function WalletConnectButton() {
-  const { wallet, walletSource, canUseDemoWallet, isTestnet, networkWarning, setDemoWallet } = useWallet();
+  const { wallet, walletSource, networkWarning, isMainnet } = useWallet();
+
+  if (walletSource === "tonconnect" && wallet) {
+    return (
+      <div className={`rounded-xl border px-3 py-2 text-xs font-mono ${isMainnet ? "border-[#1e3a5f] bg-[#1a2235] text-white" : "border-[#ff4757]/30 bg-[#ff4757]/10 text-[#ff4757]"}`}>
+        {isMainnet ? shorten(wallet) : "Нужен mainnet"}
+        {networkWarning && !isMainnet ? <span className="block pt-1 font-sans text-[10px]">{networkWarning}</span> : null}
+      </div>
+    );
+  }
 
   return (
-    <div className="flex items-center gap-2">
-      <div className="rounded-lg border border-[color:var(--border)] bg-[color:var(--surface-2)] px-2 py-1 shadow-neon">
-        <TonConnectButton className="!w-auto" />
-      </div>
-      {walletSource === "tonconnect" && wallet ? (
-        <div className={`max-w-[220px] rounded-lg px-3 py-2 text-xs leading-5 ${isTestnet ? "bg-[color:var(--green-dim)] text-[color:var(--green)]" : "bg-[color:var(--red-dim)] text-[color:var(--red)]"}`}>
-          {isTestnet ? `TESTNET · ${shorten(wallet)}` : "TonKeeper → Settings → Dev Tools → Switch to Testnet"}
-          {networkWarning && !isTestnet ? <span className="block pt-1 opacity-90">Иначе транзакция не пройдёт.</span> : null}
-        </div>
-      ) : null}
-      {canUseDemoWallet && !wallet ? <button type="button" onClick={() => setDemoWallet("EQDEMO11111111111111111111111111111111111111111")} className="hidden rounded-lg border border-[color:var(--border)] px-3 py-2 text-xs text-[color:var(--text-muted)] sm:block">Demo</button> : null}
+    <div className="rounded-xl border border-[#1e3a5f] bg-[#1a2235] px-1 py-1">
+      <TonConnectButton className="!w-auto" />
     </div>
   );
 }

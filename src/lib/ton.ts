@@ -53,8 +53,8 @@ export const isTonAddress = (value: string): boolean => {
   }
 };
 
-export const toTestnetAddress = (value: string): string =>
-  address(value).toString({ bounceable: true, testOnly: true });
+export const toMainnetAddress = (value: string): string =>
+  address(value).toString({ bounceable: true, testOnly: false });
 
 const toBps = (value: number): bigint => BigInt(Math.round(value * 10_000));
 
