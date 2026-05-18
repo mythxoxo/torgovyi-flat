@@ -5,7 +5,7 @@ export const PLATFORM_SUPPLY = 5_000_000;
 
 export const CREATION_FEE_TON = 1;
 export const CREATOR_REFUND_TON = 1;
-export const GRADUATION_FEE_TON = 30;
+export const GRADUATION_FEE_TON = 8888;
 export const VESTING_DURATION_DAYS = 60;
 
 export const BASE_TRADE_FEE_RATE = 0.0075;

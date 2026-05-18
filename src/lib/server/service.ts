@@ -132,7 +132,7 @@ const buildToken = (input: CreateTokenInput): TokenRecord => {
       adapterStatus: "MOCK_READY",
       routerAddress: DEFAULT_STONFI_ROUTER,
       lpState: "NONE",
-      graduationFeeTon: 30,
+      graduationFeeTon: 8888,
       creatorRefundTon: 0,
       liquidityTon: 0,
       liquidityTokens: LIQUIDITY_SUPPLY
