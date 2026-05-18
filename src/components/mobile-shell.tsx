@@ -7,6 +7,7 @@ import type { ReactNode } from "react";
 import { Home, Link2, Rocket, Wallet } from "lucide-react";
 import { WalletConnectButton } from "./wallet-connect-button";
 import { LivePill } from "./shared/live-pill";
+import { TonPricePill } from "./shared/ton-price-pill";
 import { getTelegramUser } from "../lib/telegram";
 
 const navItems = [
@@ -39,9 +40,14 @@ export function MobileShell({ children }: { children: ReactNode }) {
           </span>
         </div>
 
-        <div className="flex items-center gap-1.5 text-xs text-[#8ba3c1]">
-          <span className="h-1.5 w-1.5 rounded-full bg-[#00c896] animate-pulse" />
-          <LivePill />
+        <div className="flex flex-col items-end gap-1 text-[10px] leading-none text-[#8ba3c1]">
+          <div className="flex items-center gap-1.5">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#00c896] animate-pulse" />
+            <LivePill />
+          </div>
+          <div className="rounded-full border border-[#1e3a5f] bg-[#111827]/80 px-2 py-1 font-mono text-[10px] text-[#7dd3fc]">
+            <TonPricePill />
+          </div>
         </div>
 
         <div className="flex items-center gap-2">

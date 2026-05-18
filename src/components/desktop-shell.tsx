@@ -7,6 +7,7 @@ import { Home, Link2, Rocket, Wallet } from "lucide-react";
 import { WalletConnectButton } from "./wallet-connect-button";
 import type { ReactNode } from "react";
 import { LivePill } from "./shared/live-pill";
+import { TonPricePill } from "./shared/ton-price-pill";
 
 const navItems = [
   { href: "/", label: "Маркет", icon: Home },
@@ -39,8 +40,9 @@ export function DesktopShell({ children }: { children: ReactNode }) {
             );
           })}
         </nav>
-        <div className="border-t p-4" style={{ borderColor: "var(--border)" }}>
-          <LivePill />
+        <div className="border-t space-y-2 p-4" style={{ borderColor: "var(--border)" }}>
+          <div className="rounded-xl border border-[#1e3a5f] bg-[#111827]/80 px-3 py-2 text-xs text-[#8ba3c1]"><LivePill /></div>
+          <div className="rounded-xl border border-[#1e3a5f] bg-[#111827]/80 px-3 py-2 font-mono text-xs text-[#7dd3fc]"><TonPricePill /></div>
         </div>
       </aside>
 
