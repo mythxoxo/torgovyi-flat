@@ -37,9 +37,17 @@ npm run test:buy-flow
 npm run prepare:factory-tonconnect
 npm run prepare:token-flow-tonconnect -- --target 5
 npm run prepare:buy-tonconnect -- --pool <pool> --amount 0.05
+npm run index:once
+npm run index:dry-run
 npm run security:check
 npm run build
 ```
+
+## Vercel Hobby note
+
+- frequent Vercel cron is disabled for investor/demo deploys
+- indexer is run manually for investor/demo mode
+- production worker/indexer should move to VPS, separate worker, or Vercel Pro later
 
 ## Docs
 

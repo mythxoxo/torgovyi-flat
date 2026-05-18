@@ -24,3 +24,9 @@
 - manual wallet signing
 - TON funds for deploy/buy gas
 - live tx hashes / live chain evidence
+
+## INFRASTRUCTURE NOTE
+
+- Vercel Hobby frequent cron is disabled for investor/demo mode
+- indexer is manual in investor/demo mode via `npm run index:once` and `npm run index:dry-run`
+- production worker/indexer should be moved to VPS or Vercel Pro later

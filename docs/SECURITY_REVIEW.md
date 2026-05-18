@@ -7,9 +7,15 @@
 - no fake live stats
 - no fake addresses
 - no mnemonic-based mandatory runtime path
+- no seed storage in app flow
+- manual signing only for future live actions
 - env/secrets ignored by git rules
+- database is cache only
+- blockchain is source of truth
 - JettonMinter admin transfer to Pool modeled and sandbox-verified
-- test target and production target separated in config
+- test target clearly marked
+- production target 8888 preserved
+- TonConnect manifest configured for production URL
 
 ## Known remaining risks
 
