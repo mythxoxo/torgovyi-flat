@@ -1,0 +1,44 @@
+{
+  "projects": [
+    {
+      "name": "LaunchpadFactory",
+      "path": "contracts/LaunchpadFactory.tact",
+      "output": "build/launchpad-factory",
+      "options": {
+        "debug": true,
+        "external": true,
+        "ipfsAbiGetter": false
+      }
+    },
+    {
+      "name": "LaunchpadPool",
+      "path": "contracts/LaunchpadPool.tact",
+      "output": "build/launchpad-pool",
+      "options": {
+        "debug": true,
+        "external": true,
+        "ipfsAbiGetter": false
+      }
+    },
+    {
+      "name": "JettonMinter",
+      "path": "contracts/jetton/JettonMinter.tact",
+      "output": "build/jetton-minter",
+      "options": {
+        "debug": true,
+        "external": true,
+        "ipfsAbiGetter": false
+      }
+    },
+    {
+      "name": "LPLock",
+      "path": "contracts/LPLock.tact",
+      "output": "build/lp-lock",
+      "options": {
+        "debug": true,
+        "external": true,
+        "ipfsAbiGetter": false
+      }
+    }
+  ]
+}

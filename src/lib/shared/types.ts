@@ -1,9 +1,15 @@
-export type TokenStatus = "BONDING" | "GRADUATED" | "MIGRATION_PENDING" | "FAILED_MIGRATION";
+export type TokenStatus =
+  | "PENDING"
+  | "BONDING"
+  | "GRADUATED_READY"
+  | "LISTED"
+  | "FAILED_LISTING";
+
 export type MetadataStatus = "READY" | "PENDING" | "FAILED_UPLOAD";
 export type RefundStatus = "LOCKED" | "CLAIMABLE" | "REFUNDED" | "FORFEITED";
 export type TradeSide = "BUY" | "SELL";
 export type CreatorTaxMode = "normal" | "burn" | "buyback_burn" | "custom";
-export type MigrationAdapterStatus = "MOCK_READY" | "REAL_READY" | "MIGRATED" | "FAILED";
+export type MigrationAdapterStatus = "PENDING" | "READY" | "LISTED" | "FAILED";
 
 export interface CreatorTaxConfig {
   mode: CreatorTaxMode;
@@ -40,6 +46,10 @@ export interface BondingState {
   circulatingSupply: number;
   antiSnipeEndsAt: string;
   canGraduate: boolean;
+  collectedTon?: number;
+  targetTon?: number;
+  isGraduated?: boolean;
+  isListed?: boolean;
 }
 
 export interface TradeRecord {
@@ -51,10 +61,12 @@ export interface TradeRecord {
   tonAmountNet: number;
   spotPriceTon: number;
   slippageBps: number;
-  feeBreakdown: FeeBreakdown;
+  feeBreakdown?: FeeBreakdown;
   referralCode?: string;
   referralWallet?: string;
   createdAt: string;
+  txHash?: string;
+  lt?: string;
 }
 
 export interface TokenComment {
@@ -98,6 +110,19 @@ export interface MigrationState {
   creatorRefundTon: number;
   liquidityTon: number;
   liquidityTokens: number;
+  lpLockAddress?: string;
+  stonfiPoolAddress?: string;
+  listingTxHash?: string;
+}
+
+export interface TokenContractAddresses {
+  factory: string;
+  jettonMaster: string;
+  bondingCurve: string;
+  feeVault?: string;
+  platformVestingVault?: string;
+  liquidityMigrator?: string;
+  lpLock?: string;
 }
 
 export interface TokenRecord {
@@ -133,14 +158,7 @@ export interface TokenRecord {
   feeVault: FeeVaultSnapshot;
   platformVesting: PlatformVestingSnapshot;
   migration: MigrationState;
-  contractAddresses: {
-    factory: string;
-    jettonMaster: string;
-    bondingCurve: string;
-    feeVault: string;
-    platformVestingVault: string;
-    liquidityMigrator: string;
-  };
+  contractAddresses: TokenContractAddresses;
 }
 
 export interface ReferralEntry {
@@ -203,6 +221,8 @@ export interface CreateTokenInput {
   creatorWallet: string;
   creatorTelegramId?: string;
   creatorTax?: Partial<CreatorTaxConfig>;
+  totalSupply?: string | number;
+  curveConfig?: Record<string, unknown>;
 }
 
 export interface BuySellRequest {
@@ -210,6 +230,7 @@ export interface BuySellRequest {
   tokenId: string;
   referralCode?: string;
   slippageBps?: number;
+  txHash?: string;
 }
 
 export interface BuyRequest extends BuySellRequest {
@@ -231,4 +252,48 @@ export interface SellQuote {
   tonAmountNet: number;
   feeBreakdown: FeeBreakdown;
   newState: BondingState;
+}
+
+export interface TokenRow {
+  pool_address: string;
+  jetton_address: string;
+  creator: string;
+  name: string;
+  symbol: string;
+  description: string | null;
+  image_url: string | null;
+  collected_ton: string | number;
+  target_ton: string | number;
+  sold_tokens: string | number;
+  status: string;
+  is_listed: boolean;
+  lp_lock_address: string | null;
+  stonfi_pool_address: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface TradeRow {
+  id?: number;
+  pool_address: string;
+  buyer: string;
+  ton_amount: string | number;
+  token_amount: string | number;
+  tx_hash: string;
+  lt: string | null;
+  created_at: string;
+}
+
+export interface ListingRow {
+  id?: number;
+  pool_address: string;
+  jetton_address: string;
+  ton_amount: string | number;
+  jetton_amount: string | number;
+  lp_lock_address: string;
+  stonfi_tx_hash: string | null;
+  status: string;
+  error: string | null;
+  created_at: string;
+  updated_at: string;
 }

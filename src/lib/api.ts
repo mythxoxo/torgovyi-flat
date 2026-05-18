@@ -11,12 +11,7 @@ const resolveApiBase = (): string => {
     process.env.NEXT_PUBLIC_API_URL ||
     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "");
 
-  if (configured) {
-    return configured.replace(/\/$/, "");
-  }
-
-  // Same-domain Next.js API routes
-  return typeof window === "undefined" ? "" : "";
+  return configured ? configured.replace(/\/$/, "") : "";
 };
 
 async function requestJson<T>(path: string, init?: RequestInit): Promise<T> {
@@ -38,12 +33,9 @@ async function requestJson<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 export const listTokens = (filter = "trending") =>
-  requestJson<TokenRecord[]>(`/api/${filter === "trending" ? "" : "?filter=" + filter}tokens`).catch(
-    () => requestJson<TokenRecord[]>(`/api/tokens?filter=${filter}`)
-  );
+  requestJson<TokenRecord[]>(`/api/tokens?filter=${encodeURIComponent(filter)}`);
 
-export const getTokenList = (filter = "trending") =>
-  requestJson<TokenRecord[]>(`/api/tokens?filter=${filter}`);
+export const getTokenList = listTokens;
 
 export const getToken = (id: string) =>
   requestJson<{ token: TokenRecord; shareUrl: string }>(`/api/tokens/${id}`);
@@ -52,7 +44,7 @@ export const getTrades = (id: string) =>
   requestJson<TradeRecord[]>(`/api/tokens/${id}/trades`);
 
 export const createToken = (input: CreateTokenInput) =>
-  requestJson<TokenRecord>("/api/tokens", {
+  requestJson<{ ok: true; pending: true; message: string }>("/api/tokens", {
     method: "POST",
     body: JSON.stringify(input)
   });
@@ -62,30 +54,26 @@ export const buyToken = (
   wallet: string,
   tonAmount: number,
   referralCode?: string,
-  slippageBps = 500
+  slippageBps = 500,
+  txHash?: string
 ) =>
-  requestJson(`/api/tokens/${id}/buy`, {
+  requestJson<{ ok: true; pending: true; message: string }>(`/api/tokens/${id}/buy`, {
     method: "POST",
-    body: JSON.stringify({ wallet, tonAmount, referralCode, slippageBps })
+    body: JSON.stringify({ wallet, tonAmount, referralCode, slippageBps, txHash })
   });
 
-export const sellToken = (
-  id: string,
-  wallet: string,
-  tokenAmount: number,
-  referralCode?: string,
-  slippageBps = 500
-) =>
-  requestJson(`/api/tokens/${id}/sell`, {
-    method: "POST",
-    body: JSON.stringify({ wallet, tokenAmount, referralCode, slippageBps })
-  });
+export const sellToken = async () => {
+  throw new Error("Sell will be available after bonding/listing through STON.fi.");
+};
 
 export const resolveReferral = (wallet: string, code?: string) =>
-  requestJson<{ code: string | null; valid: boolean; wallet: string | null; fallbackToTreasury: boolean }>("/api/referral/resolve", {
-    method: "POST",
-    body: JSON.stringify({ wallet, code })
-  });
+  requestJson<{ code: string | null; valid: boolean; wallet: string | null; fallbackToTreasury: boolean }>(
+    "/api/referral/resolve",
+    {
+      method: "POST",
+      body: JSON.stringify({ wallet, code })
+    }
+  );
 
 export const claimFunds = (body: {
   wallet: string;

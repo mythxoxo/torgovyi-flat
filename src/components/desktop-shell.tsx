@@ -8,25 +8,31 @@ import { WalletConnectButton } from "./wallet-connect-button";
 import type { ReactNode } from "react";
 import { LivePill } from "./shared/live-pill";
 import { TonPricePill } from "./shared/ton-price-pill";
-
-const navItems = [
-  { href: "/", label: "Маркет", icon: Home },
-  { href: "/create", label: "Запуск", icon: Rocket },
-  { href: "/my-tokens", label: "Портфель", icon: Wallet },
-  { href: "/referrals", label: "Рефералы", icon: Link2 }
-];
+import { useUi } from "./page-shell";
 
 export function DesktopShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const { locale, setLocale, t } = useUi();
+  const navItems = [
+    { href: "/", label: t.nav.market, icon: Home },
+    { href: "/create", label: t.nav.create, icon: Rocket },
+    { href: "/my-tokens", label: t.nav.portfolio, icon: Wallet },
+    { href: "/referrals", label: t.nav.referrals, icon: Link2 }
+  ];
 
   return (
     <div className="flex h-screen w-full overflow-hidden" style={{ background: "var(--bg)" }}>
-      <aside className="flex w-[250px] shrink-0 flex-col border-r" style={{ borderColor: "var(--border)", background: "rgba(7,4,10,0.96)" }}>
-        <div className="flex items-center gap-3 border-b px-5 py-4" style={{ borderColor: "var(--border)" }}>
-          <Image src="/brand/logo-icon.svg" alt="TONK.MEM" width={36} height={36} className="logo-animated" />
-          <div>
-            <div className="font-display text-[26px] uppercase tracking-[0.08em] text-white">TONK<span className="gradient-text">.MEM</span></div>
-            <div className="text-[10px] font-bold tracking-[0.26em] text-[#3df6a2]">MAINNET</div>
+      <aside className="flex w-[280px] shrink-0 flex-col border-r" style={{ borderColor: "var(--border)", background: "rgba(7,4,10,0.96)" }}>
+        <div className="border-b px-5 py-5" style={{ borderColor: "var(--border)" }}>
+          <div className="relative overflow-hidden rounded-[28px] border border-white/10 bg-[#0e1523] p-4">
+            <div className="absolute inset-0 opacity-30"><Image src="/brand/img_12.jpg" alt="brand" fill className="object-cover" /></div>
+            <div className="relative flex items-center gap-3">
+              <Image src="/brand/logo-icon.svg" alt="TONK.MEM" width={42} height={42} className="logo-animated" />
+              <div>
+                <div className="font-display text-[28px] uppercase tracking-[0.08em] text-white">TONK<span className="gradient-text">.MEM</span></div>
+                <div className="text-[10px] font-bold tracking-[0.26em] text-[#3df6a2]">MAINNET LAUNCHPAD</div>
+              </div>
+            </div>
           </div>
         </div>
         <nav className="flex flex-1 flex-col gap-2 p-3">
@@ -40,9 +46,16 @@ export function DesktopShell({ children }: { children: ReactNode }) {
             );
           })}
         </nav>
-        <div className="border-t space-y-2 p-4" style={{ borderColor: "var(--border)" }}>
-          <div className="rounded-xl border border-[#1e3a5f] bg-[#111827]/80 px-3 py-2 text-xs text-[#8ba3c1]"><LivePill /></div>
-          <div className="rounded-xl border border-[#1e3a5f] bg-[#111827]/80 px-3 py-2 font-mono text-xs text-[#7dd3fc]"><TonPricePill /></div>
+        <div className="border-t space-y-3 p-4" style={{ borderColor: "var(--border)" }}>
+          <div className="rounded-2xl border border-[#1e3a5f] bg-[#111827]/80 px-3 py-3 text-xs text-[#8ba3c1]"><LivePill /></div>
+          <div className="rounded-2xl border border-[#1e3a5f] bg-[#111827]/80 px-3 py-3 font-mono text-xs text-[#7dd3fc]"><TonPricePill /></div>
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-3">
+            <div className="mb-2 text-[11px] uppercase tracking-[0.18em] text-[#8ba3c1]">{t.misc.language}</div>
+            <div className="grid grid-cols-2 gap-2">
+              <button type="button" onClick={() => setLocale("ru")} className={`rounded-xl px-3 py-2 text-sm font-medium ${locale === "ru" ? "bg-[#7dd3fc] text-black" : "bg-white/5 text-white"}`}>{t.misc.russian}</button>
+              <button type="button" onClick={() => setLocale("en")} className={`rounded-xl px-3 py-2 text-sm font-medium ${locale === "en" ? "bg-[#7dd3fc] text-black" : "bg-white/5 text-white"}`}>{t.misc.english}</button>
+            </div>
+          </div>
         </div>
       </aside>
 

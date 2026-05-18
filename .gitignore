@@ -7,9 +7,15 @@ out/
 
 # Env files
 .env
+.env.*
 .env.local
+.env.local.example
 .env.production
+.env.production.local
 .env.*.local
+*.key
+mnemonic*
+secrets*
 
 # Data (local only, use DATABASE_URL on Vercel)
 data/

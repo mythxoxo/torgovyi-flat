@@ -4,7 +4,8 @@ import type { TokenRecord } from "../lib/shared";
 import { ProgressBar } from "./progress-bar";
 
 function statusMeta(token: TokenRecord) {
-  if (token.status === "GRADUATED") return { label: "✅ Выпустился", className: "bg-white/10 text-white" };
+  if (token.status === "LISTED") return { label: "✅ Listed", className: "bg-white/10 text-white" };
+  if (token.status === "GRADUATED_READY") return { label: "🎓 Graduated", className: "bg-[#00c896]/20 text-[#00c896]" };
   const pct = token.state.progress * 100;
   if (pct >= 75) return { label: "💎 Почти", className: "bg-[#00c896]/20 text-[#00c896]" };
   if (pct >= 40) return { label: "🔥 Тренд", className: "bg-[#0088cc]/20 text-[#0088cc]" };
@@ -37,7 +38,7 @@ export function TokenCard({ token }: { token: TokenRecord }) {
       <div className="space-y-2 p-3">
         <div className="flex items-center justify-between gap-2">
           <span className="truncate text-sm font-bold text-white">{token.name}</span>
-          <span className="flex-shrink-0 font-mono text-xs text-[#8ba3c1]">${token.ticker}</span>
+          <span className="flex-shrink-0 font-mono text-xs text-[#8ba3c1]">{token.ticker}</span>
         </div>
 
         {token.description ? <p className="line-clamp-1 text-xs text-[#8ba3c1]">{token.description}</p> : null}
@@ -49,7 +50,7 @@ export function TokenCard({ token }: { token: TokenRecord }) {
         </div>
 
         <div className="flex items-center justify-between text-xs">
-          <span className="font-mono font-bold text-[#00c896]">💎 {token.state.marketCapTon.toFixed(2)} TON</span>
+          <span className="font-mono font-bold text-[#00c896]">💎 {(token.state.collectedTon ?? token.state.marketCapTon).toFixed(2)} TON</span>
           <span className="text-[#8ba3c1]">👥 {token.holderCount}</span>
         </div>
 

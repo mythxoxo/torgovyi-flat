@@ -3,19 +3,25 @@
 import Image from "next/image";
 import { Search } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import type { TokenRecord } from "../lib/shared";
 import { TokenList } from "../components/token-list";
 import { getTokenList } from "../lib/api";
-
-const tabs = [
-  { key: "trending", label: "Тренд" },
-  { key: "new", label: "Новые" },
-  { key: "almost-graduated", label: "Почти" },
-  { key: "graduated", label: "Вышли" },
-  { key: "top-volume", label: "Объём" }
-] as const;
+import { useUi } from "../components/page-shell";
+import { getLaunchpadTargetTon, isTestTargetMode } from "../lib/launch-config";
 
 export default function HomePage() {
+  const { t } = useUi();
+  const targetTon = getLaunchpadTargetTon();
+  const testMode = isTestTargetMode();
+  const factoryLive = Boolean(process.env.NEXT_PUBLIC_FACTORY_ADDRESS);
+  const tabs = [
+    { key: "trending", label: t.home.trending },
+    { key: "new", label: t.home.newest },
+    { key: "almost-graduated", label: t.home.almost },
+    { key: "graduated", label: t.home.graduated },
+    { key: "top-volume", label: t.home.volume }
+  ] as const;
   const [tokens, setTokens] = useState<TokenRecord[]>([]);
   const [visibleCount, setVisibleCount] = useState(6);
   const [active, setActive] = useState<(typeof tabs)[number]["key"]>("trending");
@@ -78,26 +84,32 @@ export default function HomePage() {
       </div>
       <div className="relative z-10">
       <section className="px-4 pt-4">
-        <div className="glass-card relative overflow-hidden rounded-[28px] border border-white/10 p-5 sm:p-6">
+        <div className="relative overflow-hidden rounded-[32px] border border-white/10 bg-[#0d1422] p-5 shadow-[0_30px_80px_rgba(0,0,0,0.35)] sm:p-6">
           <div className="absolute inset-0">
-            <Image src="/brand/img_01.jpg" alt="TONK.MEM hero" fill className="object-cover opacity-40" priority />
-            <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(6,12,24,0.92),rgba(6,12,24,0.52)_48%,rgba(6,12,24,0.88))]" />
+            <Image src="/brand/img_01.jpg" alt="TONK.MEM hero" fill className="object-cover object-center opacity-72" priority />
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,12,20,0.18),rgba(8,12,20,0.82))]" />
           </div>
-          <div className="relative max-w-[26rem]">
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#6ee7ff]/20 bg-[#0b1325]/70 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-[#7dd3fc]">
-              <span className="h-2 w-2 rounded-full bg-[#00c896]" /> Premium launchpad
+          <div className="relative">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-black/30 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#7dd3fc]">
+              <span className="h-2 w-2 rounded-full bg-[#00c896]" /> {t.home.badge}
             </div>
-            <h1 className="mt-4 font-display text-4xl font-extrabold leading-none text-white sm:text-5xl">
-              TONK.MEM
-              <span className="mt-2 block bg-gradient-to-r from-[#7dd3fc] via-white to-[#00c896] bg-clip-text text-transparent">Launch fast. Trade loud.</span>
+            <h1 className="mt-4 max-w-[13rem] font-display text-[42px] font-black leading-[0.92] text-white">
+              {t.home.title}
             </h1>
-            <p className="mt-4 max-w-md text-sm leading-6 text-[#c4d7ef] sm:text-base">
-              Премиум-мемпад на TON: запускай токены, лови ликвидность и тащи сильные штуки в маркет без дешёвого TMA вайба.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-3 text-xs text-[#d7e6f7] sm:text-sm">
-              <div className="rounded-2xl border border-white/10 bg-black/20 px-3 py-2">⚡ Telegram-native UX</div>
-              <div className="rounded-2xl border border-white/10 bg-black/20 px-3 py-2">💎 Bonding → STON.fi</div>
-              <div className="rounded-2xl border border-white/10 bg-black/20 px-3 py-2">🚀 Fast launch flow</div>
+            <p className="mt-3 max-w-[15rem] text-base font-medium leading-6 text-white/90">{t.home.subtitle}</p>
+            <p className="mt-3 max-w-[18rem] text-sm leading-6 text-[#d5e1f1]">{t.home.description}</p>
+            <div className="mt-4 space-y-2">
+              {!factoryLive ? <div className="inline-flex rounded-full border border-[#ffcc80]/30 bg-[#ffcc80]/10 px-3 py-1 text-xs text-[#ffd89b]">Mainnet deployment pending</div> : null}
+              {testMode ? <div className="inline-flex rounded-full border border-[#7dd3fc]/30 bg-[#7dd3fc]/10 px-3 py-1 text-xs text-[#7dd3fc]">Test target: {targetTon} TON</div> : null}
+            </div>
+            <div className="mt-5 flex gap-3">
+              <Link href="/create" className="btn-primary !rounded-2xl">{t.home.ctaPrimary}</Link>
+              <a href="#faq" className="rounded-2xl border border-white/14 bg-white/8 px-4 py-3 text-sm font-semibold text-white">{t.home.ctaSecondary}</a>
+            </div>
+            <div className="mt-5 grid grid-cols-3 gap-2 text-[11px] text-[#d7e6f7]">
+              <div className="rounded-2xl border border-white/10 bg-black/20 px-3 py-3 text-center">Target {targetTon} TON</div>
+              <div className="rounded-2xl border border-white/10 bg-black/20 px-3 py-3 text-center">No backend custody</div>
+              <div className="rounded-2xl border border-white/10 bg-black/20 px-3 py-3 text-center">Manual wallet signing</div>
             </div>
           </div>
         </div>
@@ -132,15 +144,41 @@ export default function HomePage() {
         ))}
       </div>
 
-      <div className="relative mx-4 mt-3">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#8ba3c1]" />
-        <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Поиск по имени или тикеру..." className="input-field pl-9" />
+      <div className="relative mx-4 mt-3 overflow-hidden rounded-[22px] border border-white/10 bg-white/5 shadow-[0_10px_30px_rgba(0,0,0,0.18)]">
+        <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#7dd3fc]" />
+        <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t.home.search} className="w-full bg-transparent px-11 py-4 text-sm text-white outline-none placeholder:text-[#8ba3c1]" />
       </div>
 
       {error ? <p className="px-4 pt-4 text-sm text-[#ff4757]">{error}</p> : null}
 
       <div className="py-4">
         <TokenList tokens={visibleTokens} loading={loading} searchQuery={query} />
+        <section id="faq" className="mx-4 mt-6 space-y-4 rounded-[32px] border border-white/10 bg-[#0d1422]/90 p-5 shadow-[0_24px_70px_rgba(0,0,0,0.28)]">
+          <div>
+            <p className="text-[11px] uppercase tracking-[0.2em] text-[#7dd3fc]">{t.faq.title}</p>
+            <h2 className="mt-2 font-display text-2xl font-bold text-white">{t.faq.subtitle}</h2>
+          </div>
+          <div className="space-y-3">
+            {t.faqItems.map((item) => (
+              <div key={item.q} className="rounded-2xl border border-white/10 bg-white/4 p-4">
+                <div className="text-sm font-semibold text-white">{item.q}</div>
+                <div className="mt-2 text-sm leading-6 text-[#c6d4ea]">{item.a}</div>
+              </div>
+            ))}
+          </div>
+          <div id="rules" className="rounded-2xl border border-white/10 bg-white/4 p-4">
+            <div className="text-[11px] uppercase tracking-[0.18em] text-[#7dd3fc]">{t.faq.rulesTitle}</div>
+            <ul className="mt-3 space-y-2 text-sm leading-6 text-[#c6d4ea]">
+              {t.rules.map((rule) => <li key={rule}>• {rule}</li>)}
+            </ul>
+          </div>
+          <div id="risks" className="rounded-2xl border border-[#ff8a80]/20 bg-[#1a1113] p-4">
+            <div className="text-[11px] uppercase tracking-[0.18em] text-[#ff9d8f]">{t.faq.risksTitle}</div>
+            <ul className="mt-3 space-y-2 text-sm leading-6 text-[#f5c3bb]">
+              {t.risks.map((risk) => <li key={risk}>• {risk}</li>)}
+            </ul>
+          </div>
+        </section>
         <div ref={sentinelRef} className="h-8" />
       </div>
       </div>

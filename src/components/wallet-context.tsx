@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  createContext,
-  useContext,
-  useMemo,
-  type ReactNode
-} from "react";
+import { createContext, useContext, useMemo, type ReactNode } from "react";
 import {
   CHAIN,
   TonConnectUIProvider,
@@ -15,11 +10,13 @@ import {
   useTonWallet
 } from "@tonconnect/ui-react";
 
-import type { TonTransactionDraft } from "../lib/ton";
+import type { TonTransactionDraft } from "../lib/onchain";
 
 type WalletSource = "tonconnect" | "none";
 const REQUIRED_CHAIN = CHAIN.MAINNET;
-const FALLBACK_MANIFEST = "https://tonk.mem/tonconnect-manifest.json";
+const MANIFEST_URL =
+  process.env.NEXT_PUBLIC_TONCONNECT_MANIFEST_URL ||
+  "https://torgovyi-flat.vercel.app/tonconnect-manifest.json";
 
 const WalletContext = createContext<{
   wallet: string;
@@ -91,7 +88,7 @@ function WalletBridge({ children }: { children: ReactNode }) {
 
 export function Providers({ children }: { children: ReactNode }) {
   return (
-    <TonConnectUIProvider manifestUrl={FALLBACK_MANIFEST}>
+    <TonConnectUIProvider manifestUrl={MANIFEST_URL}>
       <WalletBridge>{children}</WalletBridge>
     </TonConnectUIProvider>
   );

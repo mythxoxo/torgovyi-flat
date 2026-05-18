@@ -6,14 +6,13 @@ import { ChevronRight } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import type { UserSummary } from "../../lib/shared";
 import { useWallet } from "../../components/wallet-context";
-import { claimFunds, getUser } from "../../lib/api";
+import { getUser } from "../../lib/api";
 import { ProgressBar } from "../../components/progress-bar";
 
 export default function MyTokensPage() {
   const { wallet } = useWallet();
   const [user, setUser] = useState<UserSummary | null>(null);
   const [error, setError] = useState("");
-  const [claiming, setClaiming] = useState(false);
 
   useEffect(() => {
     if (!wallet) return;
@@ -23,25 +22,15 @@ export default function MyTokensPage() {
   const stats = useMemo(() => {
     const tokens = user?.createdTokens ?? [];
     return {
-      totalVolume: tokens.reduce((sum, token) => sum + token.state.marketCapTon, 0),
+      totalVolume: tokens.reduce((sum, token) => sum + (token.state.collectedTon ?? token.state.marketCapTon), 0),
       avgProgress: tokens.length ? Math.round(tokens.reduce((sum, token) => sum + token.state.progress * 100, 0) / tokens.length) : 0
     };
   }, [user]);
 
-  const claim = async (type: "creator" | "refund", tokenId?: string) => {
-    try {
-      setClaiming(true);
-      const result = await claimFunds({ wallet, type, tokenId });
-      setUser(result.user);
-    } finally {
-      setClaiming(false);
-    }
-  };
-
   const tokens = user?.createdTokens ?? [];
 
   if (!wallet || tokens.length === 0) {
-    return <div className="px-4 py-12"><div className="glass-card relative overflow-hidden rounded-[28px] p-8 text-center"><div className="absolute inset-0"><Image src="/brand/img_06.jpg" alt="no tokens" fill className="object-cover opacity-22" /><div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,12,24,0.78),rgba(6,12,24,0.94))]" /></div><div className="relative mx-auto max-w-sm"><h2 className="mb-2 font-display text-2xl font-bold text-white">Ваших токенов пока нет</h2><p className="mb-6 text-sm leading-6 text-[#c4d7ef]">{wallet ? "Чемодан пока пустой — пора закинуть туда первый запуск." : "Подключи кошелёк, чтобы увидеть портфель и будущие запуски."}</p><Link href="/create" className="btn-primary">🚀 Запустить токен</Link></div></div></div>;
+    return <div className="px-4 py-12"><div className="glass-card relative overflow-hidden rounded-[28px] p-8 text-center"><div className="absolute inset-0"><Image src="/brand/img_06.jpg" alt="no tokens" fill className="object-cover opacity-22" /><div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,12,24,0.78),rgba(6,12,24,0.94))]" /></div><div className="relative mx-auto max-w-sm"><h2 className="mb-2 font-display text-2xl font-bold text-white">Ваших токенов пока нет</h2><p className="mb-6 text-sm leading-6 text-[#c4d7ef]">{wallet ? "Ждём indexer confirmation после create tx." : "Подключи кошелёк, чтобы увидеть реальные on-chain запуски."}</p><Link href="/create" className="btn-primary">🚀 Запустить токен</Link></div></div></div>;
   }
 
   return (
@@ -52,29 +41,27 @@ export default function MyTokensPage() {
 
         <div className="mb-4 grid grid-cols-3 gap-2">
           <div className="glass-card p-3 text-center"><div className="font-mono font-bold text-white">{tokens.length}</div><div className="text-xs text-[#8ba3c1]">Токенов</div></div>
-          <div className="glass-card p-3 text-center"><div className="font-mono font-bold text-[#00c896]">💎 {stats.totalVolume.toFixed(1)}</div><div className="text-xs text-[#8ba3c1]">Объём</div></div>
+          <div className="glass-card p-3 text-center"><div className="font-mono font-bold text-[#00c896]">💎 {stats.totalVolume.toFixed(1)}</div><div className="text-xs text-[#8ba3c1]">Собрано</div></div>
           <div className="glass-card p-3 text-center"><div className="font-mono font-bold text-white">{stats.avgProgress}%</div><div className="text-xs text-[#8ba3c1]">Ср. прогресс</div></div>
         </div>
       </div>
 
       {error ? <p className="px-4 text-sm text-[#ff4757]">{error}</p> : null}
-      {user?.creatorClaimableTon ? <div className="mx-4 glass-card p-4"><p className="text-sm text-[#8ba3c1]">Доступно создателю: <span className="font-mono text-white">{user.creatorClaimableTon.toFixed(3)} TON</span></p><button type="button" disabled={claiming} onClick={() => void claim("creator")} className="mt-3 rounded-xl border border-[#0088cc]/30 px-4 py-2 text-sm text-[#0088cc]">{claiming ? "Получение..." : "Забрать"}</button></div> : null}
+      <div className="mx-4 glass-card p-4 text-sm text-[#8ba3c1]">My Tokens строится из indexer data. Пока без mock creator/refund claim logic.</div>
 
       <div className="space-y-3 px-4">
         {tokens.map((token) => (
           <div key={token.id} className="glass-card flex items-center gap-3 p-4">
             <div className="h-12 w-12 overflow-hidden rounded-xl flex-shrink-0"><Image src={token.image || "/brand/img_04.jpg"} alt={token.name} width={48} height={48} className="h-full w-full object-cover" /></div>
             <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2"><span className="truncate font-bold text-white">{token.name}</span><span className="flex-shrink-0 font-mono text-sm text-[#0088cc]">${token.ticker}</span></div>
+              <div className="flex items-center gap-2"><span className="truncate font-bold text-white">{token.name}</span><span className="flex-shrink-0 font-mono text-sm text-[#0088cc]">{token.ticker}</span></div>
               <ProgressBar progress={token.state.progress} className="mt-1.5" />
-              <div className="mt-1 flex justify-between text-xs text-[#8ba3c1]"><span>💎 {token.state.marketCapTon.toFixed(2)} TON</span><span>{Math.round(token.state.progress * 100)}% до выхода</span></div>
+              <div className="mt-1 flex justify-between text-xs text-[#8ba3c1]"><span>💎 {(token.state.collectedTon ?? token.state.marketCapTon).toFixed(2)} TON</span><span>{Math.round(token.state.progress * 100)}% до выхода</span></div>
             </div>
             <Link href={`/token/${token.id}`}><ChevronRight className="text-[#8ba3c1]" /></Link>
           </div>
         ))}
       </div>
-
-      {user?.refunds.filter((r) => r.status === "CLAIMABLE").map((r) => <div key={r.tokenId} className="mx-4 glass-card flex items-center justify-between p-4 text-sm"><span className="text-[#8ba3c1]">Возврат {r.tokenId}</span><button type="button" disabled={claiming} onClick={() => void claim("refund", r.tokenId)} className="rounded-xl border border-[#1e3a5f] px-3 py-2 text-[#00c896]">Забрать {r.claimableTon.toFixed(3)} TON</button></div>)}
     </div>
   );
 }
