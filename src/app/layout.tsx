@@ -9,6 +9,7 @@ const syne = Syne({ subsets: ["latin"], variable: "--font-syne" });
 const mono = Space_Mono({ subsets: ["latin"], weight: ["400", "700"], variable: "--font-mono" });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://torgovyi-flat.vercel.app"),
   title: "TONK.MEM Mainnet",
   description: "TONK.MEM Mainnet",
   openGraph: {

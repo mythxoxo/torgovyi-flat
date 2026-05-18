@@ -6,14 +6,27 @@ import { Pool } from "pg";
 import { createDemoSnapshot, type LaunchpadSnapshot } from "../shared";
 
 const seededDemoNames = new Set(["Moon Drip", "Bark TON", "Liquid Cat", "Graduated Pepe"]);
+const bannedTickers = new Set(["MIGR"]);
+const bannedNames = new Set(["Migr", "MIGR"]);
 
 const normalizeSnapshot = (snapshot: LaunchpadSnapshot): LaunchpadSnapshot => {
-  const looksSeeded = snapshot.tokens.some((token) => seededDemoNames.has(token.name));
-  if (!looksSeeded) return snapshot;
+  const filteredTokens = snapshot.tokens.filter((token) => {
+    const ticker = token.ticker?.trim().toUpperCase();
+    const name = token.name?.trim();
+    if (bannedTickers.has(ticker ?? "")) return false;
+    if (bannedNames.has(name ?? "")) return false;
+    if (seededDemoNames.has(name ?? "")) return false;
+    return true;
+  });
+
+  if (filteredTokens.length === snapshot.tokens.length) {
+    return snapshot;
+  }
+
   return {
     ...snapshot,
     updatedAt: new Date().toISOString(),
-    tokens: []
+    tokens: filteredTokens
   };
 };
 
