@@ -63,7 +63,7 @@ export default function MyTokensPage() {
       <div className="space-y-3 px-4">
         {tokens.map((token) => (
           <div key={token.id} className="glass-card flex items-center gap-3 p-4">
-            <div className="h-12 w-12 overflow-hidden rounded-xl flex-shrink-0"><Image src={token.image || "/brand/img_04.png"} alt={token.name} width={48} height={48} className="h-full w-full object-cover" /></div>
+            <div className="h-12 w-12 overflow-hidden rounded-xl flex-shrink-0"><Image src={token.image || "/brand/img_04.jpg"} alt={token.name} width={48} height={48} className="h-full w-full object-cover" /></div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2"><span className="truncate font-bold text-white">{token.name}</span><span className="flex-shrink-0 font-mono text-sm text-[#0088cc]">${token.ticker}</span></div>
               <ProgressBar progress={token.state.progress} className="mt-1.5" />
