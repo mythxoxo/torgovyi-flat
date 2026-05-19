@@ -67,7 +67,7 @@ export function MobileShell({ children }: { children: ReactNode }) {
             <div className="mb-4 flex items-center justify-between">
               <div>
                 <div className="font-display text-lg font-bold text-white">TONK<span className="gradient-text">.MEM</span></div>
-                <div className="mt-1 text-[11px] text-[#8ba3c1]">Mainnet TMA</div>
+                <div className="mt-1 text-[11px] text-[#8ba3c1]">Investor-review MVP</div>
               </div>
               <button type="button" onClick={() => setMenuOpen(false)} className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-white">
                 <X className="h-5 w-5" />

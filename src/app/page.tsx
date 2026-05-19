@@ -14,7 +14,6 @@ export default function HomePage() {
   const { t } = useUi();
   const targetTon = getLaunchpadTargetTon();
   const testMode = isTestTargetMode();
-  const factoryLive = Boolean(process.env.NEXT_PUBLIC_FACTORY_ADDRESS);
   const tabs = [
     { key: "trending", label: t.home.trending },
     { key: "new", label: t.home.newest },
@@ -91,25 +90,28 @@ export default function HomePage() {
           </div>
           <div className="relative">
             <div className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-black/30 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#7dd3fc]">
-              <span className="h-2 w-2 rounded-full bg-[#00c896]" /> {t.home.badge}
+              <span className="h-2 w-2 rounded-full bg-[#7dd3fc]" /> {t.home.badge}
             </div>
-            <h1 className="mt-4 max-w-[13rem] font-display text-[42px] font-black leading-[0.92] text-white">
+            <h1 className="mt-4 max-w-[18rem] font-display text-[40px] font-black leading-[0.96] text-white sm:text-[46px]">
               {t.home.title}
             </h1>
-            <p className="mt-3 max-w-[15rem] text-base font-medium leading-6 text-white/90">{t.home.subtitle}</p>
-            <p className="mt-3 max-w-[18rem] text-sm leading-6 text-[#d5e1f1]">{t.home.description}</p>
-            <div className="mt-4 space-y-2">
-              {!factoryLive ? <div className="inline-flex rounded-full border border-[#ffcc80]/30 bg-[#ffcc80]/10 px-3 py-1 text-xs text-[#ffd89b]">Mainnet deployment pending</div> : null}
-              {testMode ? <div className="inline-flex rounded-full border border-[#7dd3fc]/30 bg-[#7dd3fc]/10 px-3 py-1 text-xs text-[#7dd3fc]">Test target: {targetTon} TON</div> : null}
+            <p className="mt-4 max-w-[22rem] text-base font-medium leading-7 text-white/92">{t.home.subtitle}</p>
+            <p className="mt-3 max-w-[24rem] text-sm leading-6 text-[#d5e1f1]">{t.home.description}</p>
+            <div className="mt-5 flex flex-wrap gap-2 text-xs">
+              <div className="rounded-full border border-[#3df6a2]/25 bg-[#3df6a2]/10 px-3 py-1 text-[#9cf9cb]">Sandbox verified</div>
+              <div className="rounded-full border border-[#7dd3fc]/30 bg-[#7dd3fc]/10 px-3 py-1 text-[#7dd3fc]">Manual TonConnect ready</div>
+              <div className="rounded-full border border-[#7dd3fc]/30 bg-[#7dd3fc]/10 px-3 py-1 text-[#7dd3fc]">Test target: 5 TON</div>
+              <div className="rounded-full border border-white/12 bg-white/5 px-3 py-1 text-white/90">Production target: 8888 TON</div>
+              <div className="rounded-full border border-[#ffcc80]/30 bg-[#ffcc80]/10 px-3 py-1 text-[#ffd89b]">Mainnet proof pending</div>
             </div>
             <div className="mt-5 flex gap-3">
               <Link href="/create" className="btn-primary !rounded-2xl">{t.home.ctaPrimary}</Link>
-              <a href="#faq" className="rounded-2xl border border-white/14 bg-white/8 px-4 py-3 text-sm font-semibold text-white">{t.home.ctaSecondary}</a>
+              <Link href="/technical-status" className="rounded-2xl border border-white/14 bg-white/8 px-4 py-3 text-sm font-semibold text-white">{t.home.ctaSecondary}</Link>
             </div>
             <div className="mt-5 grid grid-cols-3 gap-2 text-[11px] text-[#d7e6f7]">
-              <div className="rounded-2xl border border-white/10 bg-black/20 px-3 py-3 text-center">Target {targetTon} TON</div>
-              <div className="rounded-2xl border border-white/10 bg-black/20 px-3 py-3 text-center">No backend custody</div>
-              <div className="rounded-2xl border border-white/10 bg-black/20 px-3 py-3 text-center">Manual wallet signing</div>
+              <div className="rounded-2xl border border-white/10 bg-black/20 px-3 py-3 text-center">{t.home.statsA}</div>
+              <div className="rounded-2xl border border-white/10 bg-black/20 px-3 py-3 text-center">{t.home.statsB}</div>
+              <div className="rounded-2xl border border-white/10 bg-black/20 px-3 py-3 text-center">{t.home.statsC}</div>
             </div>
           </div>
         </div>

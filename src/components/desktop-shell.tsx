@@ -30,7 +30,7 @@ export function DesktopShell({ children }: { children: ReactNode }) {
               <Image src="/brand/logo-icon.svg" alt="TONK.MEM" width={42} height={42} className="logo-animated" />
               <div>
                 <div className="font-display text-[28px] uppercase tracking-[0.08em] text-white">TONK<span className="gradient-text">.MEM</span></div>
-                <div className="text-[10px] font-bold tracking-[0.26em] text-[#3df6a2]">MAINNET LAUNCHPAD</div>
+                <div className="text-[10px] font-bold tracking-[0.26em] text-[#7dd3fc]">INVESTOR REVIEW MVP</div>
               </div>
             </div>
           </div>
