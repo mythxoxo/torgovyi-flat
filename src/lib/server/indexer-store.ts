@@ -1,7 +1,10 @@
 import type { ListingRow, TokenRow, TradeRow } from "../shared";
 import { ensureSchema, getDb } from "./db";
 
+const isDbConfigured = () => Boolean(process.env.DATABASE_URL);
+
 export const listIndexedTokens = async (filter = "trending"): Promise<TokenRow[]> => {
+  if (!isDbConfigured()) return [];
   await ensureSchema();
   const db = getDb();
 
@@ -34,26 +37,23 @@ export const listIndexedTokens = async (filter = "trending"): Promise<TokenRow[]
 };
 
 export const getIndexedToken = async (poolAddress: string): Promise<TokenRow | null> => {
+  if (!isDbConfigured()) return null;
   await ensureSchema();
   const db = getDb();
-  const { rows } = await db.query<TokenRow>(
-    `SELECT * FROM tokens WHERE pool_address = $1 LIMIT 1`,
-    [poolAddress]
-  );
+  const { rows } = await db.query<TokenRow>(`SELECT * FROM tokens WHERE pool_address = $1 LIMIT 1`, [poolAddress]);
   return rows[0] || null;
 };
 
 export const getTradesByPool = async (poolAddress: string): Promise<TradeRow[]> => {
+  if (!isDbConfigured()) return [];
   await ensureSchema();
   const db = getDb();
-  const { rows } = await db.query<TradeRow>(
-    `SELECT * FROM trades WHERE pool_address = $1 ORDER BY created_at DESC LIMIT 100`,
-    [poolAddress]
-  );
+  const { rows } = await db.query<TradeRow>(`SELECT * FROM trades WHERE pool_address = $1 ORDER BY created_at DESC LIMIT 100`, [poolAddress]);
   return rows;
 };
 
 export const upsertTokenRow = async (row: TokenRow) => {
+  if (!isDbConfigured()) throw new Error("DATABASE_URL is required for indexer writes");
   await ensureSchema();
   const db = getDb();
   await db.query(
@@ -103,6 +103,7 @@ export const upsertTokenRow = async (row: TokenRow) => {
 };
 
 export const upsertTradeRow = async (row: TradeRow) => {
+  if (!isDbConfigured()) throw new Error("DATABASE_URL is required for indexer writes");
   await ensureSchema();
   const db = getDb();
   await db.query(
@@ -116,6 +117,7 @@ export const upsertTradeRow = async (row: TradeRow) => {
 };
 
 export const upsertListingRow = async (row: ListingRow) => {
+  if (!isDbConfigured()) throw new Error("DATABASE_URL is required for indexer writes");
   await ensureSchema();
   const db = getDb();
   await db.query(

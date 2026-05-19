@@ -21,18 +21,12 @@ export default function CreatePage() {
   }, [router]);
 
   return (
-    <div className="space-y-4 pb-24 pt-4">
-      <section className="px-4">
-        <div className="glass-card relative overflow-hidden rounded-[24px] p-5">
-          <div className="absolute inset-0">
-            <img src="/brand/img_05.jpg" alt="Create token" className="h-full w-full object-cover opacity-25" />
-            <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(6,12,24,0.94),rgba(6,12,24,0.66))]" />
-          </div>
-          <div className="relative max-w-md">
-            <p className="mb-1 text-xs uppercase tracking-[0.22em] text-[#7dd3fc]">Create / Launch</p>
-            <h2 className="font-display text-3xl font-bold text-white">Создай мем-токен</h2>
-            <p className="mt-2 text-sm leading-6 text-[#c4d7ef]">Загрузи арт, задай тикер и выкати токен в премиальном лончпаде TONK.MEM.</p>
-          </div>
+    <div className="space-y-6 pb-24">
+      <section className="rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,rgba(14,24,39,0.94),rgba(7,13,24,0.98))] p-6 shadow-[0_20px_60px_rgba(0,0,0,0.22)]">
+        <div className="max-w-3xl">
+          <p className="text-xs uppercase tracking-[0.22em] text-[#7dd3fc]">Create / Launch</p>
+          <h1 className="mt-2 font-display text-3xl font-bold text-white sm:text-4xl">Create a TON meme token</h1>
+          <p className="mt-3 max-w-2xl text-sm leading-7 text-[#c6d4ea]">Prepare token metadata and generate manual TonConnect transactions. No backend custody, no mnemonic upload.</p>
         </div>
       </section>
       <CreateTokenForm />

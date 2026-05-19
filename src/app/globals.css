@@ -3,8 +3,8 @@
 
 :root {
   color-scheme: dark;
-  --grad-primary: linear-gradient(135deg, #0088cc, #00c896);
-  --grad-card: linear-gradient(180deg, #111827 0%, #0a0f1a 100%);
+  --grad-primary: linear-gradient(135deg, #1db4ff, #6cf2cf);
+  --grad-card: linear-gradient(180deg, #101a2b 0%, #0a111d 100%);
 }
 
 html,
@@ -15,11 +15,8 @@ body {
 
 body {
   min-height: 100vh;
-  background-color: #0a0f1a;
-  background-image: url('/brand/hex-pattern.svg');
-  background-repeat: repeat;
-  background-size: 60px;
-  background-attachment: fixed;
+  background-color: #07111d;
+  background-image: radial-gradient(circle at top, rgba(29, 180, 255, 0.12), transparent 28%), linear-gradient(180deg, #07111d 0%, #091321 48%, #08111c 100%);
   color: white;
   overflow-x: hidden;
   font-family: system-ui, sans-serif;
@@ -28,20 +25,20 @@ body {
 .glass-card,
 .card,
 .card-surface {
-  background: rgba(17, 24, 39, 0.8);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(0, 136, 204, 0.15);
-  border-radius: 16px;
+  background: rgba(15, 24, 39, 0.82);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(125, 211, 252, 0.14);
+  border-radius: 24px;
 }
 
 .input-field {
-  @apply w-full rounded-xl border px-4 py-3 text-sm text-white transition-colors placeholder:text-[#8ba3c1] focus:outline-none;
-  background: #1a2235;
-  border-color: #1e3a5f;
+  @apply w-full rounded-2xl border px-4 py-3.5 text-sm text-white transition-colors placeholder:text-[#8ba3c1] focus:outline-none;
+  background: #111b2c;
+  border-color: rgba(125, 211, 252, 0.16);
 }
 
 .input-field:focus {
-  border-color: #0088cc;
+  border-color: #1db4ff;
 }
 
 .scrollbar-none {
@@ -51,57 +48,83 @@ body {
 .scrollbar-none::-webkit-scrollbar { display: none; }
 
 .gradient-text {
-  @apply bg-gradient-to-r from-[#0088cc] to-[#00c896] bg-clip-text text-transparent;
+  @apply bg-gradient-to-r from-[#1db4ff] to-[#6cf2cf] bg-clip-text text-transparent;
 }
 
 .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
 
 .btn-primary {
-  background: linear-gradient(90deg, #0088cc, #00c896);
-  color: black;
-  border-radius: 12px;
+  background: linear-gradient(135deg, #1db4ff, #6cf2cf);
+  color: #02111d;
+  border-radius: 999px;
   font-weight: 700;
   font-size: 0.95rem;
-  padding: 0.9rem 1.25rem;
+  padding: 0.95rem 1.35rem;
 }
 
 .btn-secondary {
-  border: 1px solid #0088cc;
-  color: #0088cc;
-  border-radius: 12px;
-  padding: 0.9rem 1.25rem;
+  border: 1px solid rgba(125, 211, 252, 0.2);
+  color: #e7f5ff;
+  border-radius: 999px;
+  padding: 0.95rem 1.35rem;
+  background: rgba(255,255,255,0.04);
 }
 
 .badge {
   border-radius: 9999px;
-  padding: 2px 8px;
+  padding: 4px 10px;
   font-size: 0.75rem;
   line-height: 1rem;
   font-weight: 600;
 }
 
+.wallet-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  border-radius: 999px;
+  border: 1px solid rgba(125, 211, 252, 0.18);
+  background: linear-gradient(135deg, rgba(29,180,255,0.18), rgba(108,242,207,0.18));
+  padding: 0.35rem 0.8rem 0.35rem 0.7rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.22);
+}
+
+.wallet-cta--compact {
+  padding: 0.25rem 0.65rem 0.25rem 0.55rem;
+}
+
+.wallet-cta__icon {
+  height: 0.95rem;
+  width: 0.95rem;
+  color: #dff8ff;
+}
+
+.wallet-cta__fallback-label {
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
 [data-tc-button] {
-  background: #1a2235 !important;
-  border: 1px solid #1e3a5f !important;
-  border-radius: 12px !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 999px !important;
   color: white !important;
-  font-size: 0.75rem !important;
-  height: 32px !important;
+  font-size: 0.85rem !important;
+  height: 36px !important;
   min-width: auto !important;
-  padding: 0 12px !important;
+  padding: 0 6px !important;
+  box-shadow: none !important;
 }
 
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+[data-tc-root] {
+  width: auto !important;
 }
 
-.animate-marquee {
-  animation: marquee 30s linear infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .animate-marquee {
-    animation: none;
+@media (max-width: 640px) {
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+    text-align: center;
   }
 }

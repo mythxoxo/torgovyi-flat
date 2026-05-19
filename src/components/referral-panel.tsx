@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { Copy, Send } from "lucide-react";
 import { WalletConnectButton } from "./wallet-connect-button";
 import { getTelegramWebApp, getTelegramUser } from "../lib/telegram";
@@ -9,39 +8,31 @@ export function ReferralPanel({ referralCode, shareUrl, earnedTon, volumeTon, pe
   const app = getTelegramWebApp();
   const user = getTelegramUser();
   const hasReferral = connected && Boolean((user?.id || referralCode) && String(user?.id || referralCode).trim());
-  const refUrl = hasReferral ? `https://t.me/Myclawxyz_bot?ref=${user?.id ?? referralCode}` : "Connect wallet to generate referral link";
+  const refUrl = hasReferral ? `https://t.me/Myclawxyz_bot?ref=${user?.id ?? referralCode}` : "Connect wallet to generate your referral link.";
   const copy = async () => hasReferral ? navigator.clipboard.writeText(refUrl) : undefined;
   const shareRef = () => hasReferral ? app?.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(refUrl)}&text=${encodeURIComponent("TONK.MEM referral access")}`) : undefined;
 
   return (
-    <>
-      <div className="px-4 pt-4">
-        <div className="glass-card relative overflow-hidden rounded-[24px] p-5">
-          <div className="absolute inset-0">
-            <Image src="/brand/img_07.jpg" alt="referrals" fill className="object-cover opacity-18" />
-            <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(6,12,24,0.9),rgba(6,12,24,0.58))]" />
-          </div>
-          <div className="relative max-w-sm">
-            <p className="mb-1 text-xs uppercase tracking-[0.22em] text-[#7dd3fc]">Referral system</p>
-            <h1 className="mb-2 font-display text-2xl font-bold text-white">Referrals</h1>
-            <p className="text-sm leading-6 text-[#c4d7ef]">Referral flow stays hidden until wallet/ref data is actually available. No fake empty `ref_` values.</p>
-          </div>
-        </div>
-      </div>
+    <div className="space-y-5">
+      <section className="glass-card rounded-[28px] p-6">
+        <p className="text-xs uppercase tracking-[0.2em] text-[#7dd3fc]">Referrals</p>
+        <h1 className="mt-2 font-display text-3xl font-bold text-white">Referral tracking is pending live deployment.</h1>
+        <p className="mt-3 max-w-2xl text-sm leading-7 text-[#c6d4ea]">The referral system is visible for product review, but earnings and attribution should not be treated as live until manual mainnet deployment is completed.</p>
+      </section>
 
-      <div className="mx-4 glass-card space-y-3 p-4">
-        <p className="text-xs text-[#8ba3c1]">Your referral link</p>
-        <div className="flex items-center gap-2 rounded-xl bg-[#1a2235] px-3 py-2.5"><span className="flex-1 truncate font-mono text-xs text-white">{refUrl}</span>{hasReferral ? <button onClick={copy}><Copy className="h-4 w-4 text-[#8ba3c1]" /></button> : null}</div>
-        {hasReferral ? <button onClick={shareRef} className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#0088cc] py-3 text-sm font-medium text-white"><Send className="h-4 w-4" /> Share in Telegram</button> : <WalletConnectButton />}
-      </div>
+      <section className="glass-card rounded-[28px] p-5">
+        <p className="text-xs uppercase tracking-[0.2em] text-[#8ba3c1]">Referral link</p>
+        <div className="mt-3 flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3"><span className="flex-1 truncate font-mono text-xs text-white">{refUrl}</span>{hasReferral ? <button onClick={copy}><Copy className="h-4 w-4 text-[#8ba3c1]" /></button> : null}</div>
+        <div className="mt-4">{hasReferral ? <button onClick={shareRef} className="btn-primary flex w-full items-center justify-center gap-2"><Send className="h-4 w-4" /> Share in Telegram</button> : <WalletConnectButton label="Connect Wallet" />}</div>
+      </section>
 
-      <div className="mx-4 mt-4 grid grid-cols-3 gap-3">
-        {[{ label: 'Referrals', value: hasReferral ? 'active' : '—' }, { label: 'Earned', value: hasReferral ? `💎 ${earnedTon.toFixed(2)}` : '—' }, { label: 'Pending', value: hasReferral ? `💎 ${pendingTon.toFixed(2)}` : '—' }].map((stat) => (
-          <div key={stat.label} className="glass-card p-3 text-center"><div className="font-mono text-lg font-bold text-white">{stat.value}</div><div className="mt-0.5 text-xs text-[#8ba3c1]">{stat.label}</div></div>
+      <section className="grid gap-3 sm:grid-cols-3">
+        {[{ label: 'Status', value: hasReferral ? 'Ready after live deploy' : 'Pending' }, { label: 'Earned', value: hasReferral ? `💎 ${earnedTon.toFixed(2)}` : '—' }, { label: 'Pending', value: hasReferral ? `💎 ${pendingTon.toFixed(2)}` : '—' }].map((stat) => (
+          <div key={stat.label} className="glass-card p-4 text-center"><div className="font-mono text-lg font-bold text-white">{stat.value}</div><div className="mt-1 text-xs text-[#8ba3c1]">{stat.label}</div></div>
         ))}
-      </div>
+      </section>
 
-      <div className="mx-4 mt-4 glass-card grid grid-cols-2 gap-3 p-4 text-sm text-[#8ba3c1]"><div><p>Volume</p><p className="mt-1 text-lg text-white">💎 {hasReferral ? volumeTon.toFixed(2) : '—'}</p></div><div><p>Code</p><p className="mt-1 text-lg text-[#00c896]">{hasReferral ? referralCode : '—'}</p></div></div>
-    </>
+      <section className="glass-card rounded-[28px] p-5 text-sm text-[#c6d4ea]">{hasReferral ? `Current review metrics: volume ${volumeTon.toFixed(2)} TON, code ${referralCode}.` : "Connect wallet to generate your referral link. Live referral tracking is not active yet."}</section>
+    </div>
   );
 }

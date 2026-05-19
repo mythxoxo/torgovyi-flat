@@ -2,20 +2,18 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronDown, Globe, Send } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { buildCreateTokenDraft, isTonAddress, toMainnetAddress, BONDING_TARGET_TON } from "../lib/onchain";
+import { buildCreateTokenDraft, isTonAddress, toMainnetAddress } from "../lib/onchain";
 import { normalizeCreatorTax } from "../lib/shared";
 import { createToken as createTokenRequest, uploadTokenImage as uploadImage } from "../lib/api";
 import { useWallet } from "./wallet-context";
+import { WalletConnectButton } from "./wallet-connect-button";
 import { getTelegramWebApp } from "../lib/telegram";
 
-const taxModes = [
-  { id: "normal", label: "Mode A: Normal", desc: "Без creator tax", tax: "0%" },
-  { id: "burn", label: "Mode B: Burn", desc: "1% tax, 100% сжигается", tax: "1%" },
-  { id: "buyback_burn", label: "Mode C: Buyback + Burn", desc: "1.5% tax, 70% buyback / 30% burn", tax: "1.5%" },
-  { id: "custom", label: "Mode D: Custom", desc: "До 2%, кастомный сплит", tax: "до 2%" }
+const targetModes = [
+  { id: "test", label: "Test: 5 TON", targetTon: 5 },
+  { id: "production", label: "Production: 8888 TON", targetTon: 8888 }
 ] as const;
 
 export function CreateTokenForm() {
@@ -26,16 +24,9 @@ export function CreateTokenForm() {
   const [name, setName] = useState("");
   const [ticker, setTicker] = useState("");
   const [description, setDescription] = useState("");
-  const [telegramLink, setTelegramLink] = useState("");
-  const [twitterLink, setTwitterLink] = useState("");
-  const [websiteLink, setWebsiteLink] = useState("");
   const [image, setImage] = useState("");
   const [preview, setPreview] = useState("");
-  const [mode, setMode] = useState<(typeof taxModes)[number]["id"]>("normal");
-  const [customRate, setCustomRate] = useState("0.5");
-  const [customBuyback, setCustomBuyback] = useState("50");
-  const [customBurn, setCustomBurn] = useState("50");
-  const [showLinks, setShowLinks] = useState(false);
+  const [targetMode, setTargetMode] = useState<(typeof targetModes)[number]["id"]>("test");
   const [loading, setLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [error, setError] = useState("");
@@ -47,20 +38,16 @@ export function CreateTokenForm() {
     setDescription("");
     setPreview("");
     setImage("");
-    setMode("normal");
-    setTelegramLink("");
-    setTwitterLink("");
-    setWebsiteLink("");
+    setTargetMode("test");
   }, []);
 
-  const creatorTax = mode === "normal" ? 0 : mode === "burn" ? 1 : mode === "buyback_burn" ? 1.5 : Number(customRate);
-  const totalFee = (0.75 + creatorTax).toFixed(2);
+  const activeTarget = targetModes.find((m) => m.id === targetMode) || targetModes[0];
   const isValid = name.trim().length > 1 && ticker.trim().length > 1;
 
   const onFile = async (file: File | undefined) => {
     if (!file) return;
     if (file.size > 2_000_000) {
-      setError("Картинка должна быть меньше 2 МБ");
+      setError("Image must be smaller than 2 MB");
       return;
     }
 
@@ -71,7 +58,7 @@ export function CreateTokenForm() {
       const uploaded = await uploadImage(file);
       setImage(uploaded);
     } catch (caughtError) {
-      setError(caughtError instanceof Error ? caughtError.message : "Ошибка загрузки картинки");
+      setError(caughtError instanceof Error ? caughtError.message : "Upload failed");
     } finally {
       setUploadingImage(false);
     }
@@ -79,28 +66,18 @@ export function CreateTokenForm() {
 
   const handleLaunch = async () => {
     try {
-      if (!wallet) throw new Error("Сначала подключи кошелёк");
+      if (!wallet) throw new Error("Connect wallet first");
       setLoading(true);
       setError("");
       app?.HapticFeedback.impactOccurred("medium");
 
-      const normalizedCreatorTax =
-        mode === "custom"
-          ? normalizeCreatorTax({
-              mode,
-              rate: Number(customRate) / 100,
-              buybackSplit: Number(customBuyback) / 100,
-              burnSplit: Number(customBurn) / 100
-            })
-          : normalizeCreatorTax({ mode });
+      const creatorTax = normalizeCreatorTax({ mode: "normal" });
 
-      if (walletSource !== "tonconnect") {
-        throw new Error("Нужен TON Connect для on-chain create");
-      }
-      if (!isMainnet) throw new Error("Нужен TON mainnet");
+      if (walletSource !== "tonconnect") throw new Error("TonConnect is required");
+      if (!isMainnet) throw new Error("TON mainnet is required");
 
       const factoryAddress = process.env.NEXT_PUBLIC_FACTORY_ADDRESS || "";
-      if (!isTonAddress(factoryAddress)) throw new Error("Factory address не настроен");
+      if (!isTonAddress(factoryAddress)) throw new Error("Factory address is not configured yet");
 
       await sendTransaction(
         buildCreateTokenDraft({
@@ -111,8 +88,8 @@ export function CreateTokenForm() {
           description,
           imageUrl: image || "",
           totalSupply: 1_000_000_000n,
-          creatorTax: normalizedCreatorTax,
-          curveConfig: { targetTon: BONDING_TARGET_TON, minBuyTon: 0.05, feeBps: 75 }
+          creatorTax,
+          curveConfig: { targetTon: activeTarget.targetTon, minBuyTon: 0.05, feeBps: 75 }
         })
       );
 
@@ -121,13 +98,10 @@ export function CreateTokenForm() {
         ticker,
         image,
         description,
-        telegramLink,
-        twitterLink,
-        websiteLink,
         creatorWallet: wallet,
-        creatorTax: normalizedCreatorTax,
+        creatorTax,
         totalSupply: "1000000000",
-        curveConfig: { targetTon: BONDING_TARGET_TON, minBuyTon: 0.05, feeBps: 75 }
+        curveConfig: { targetTon: activeTarget.targetTon, minBuyTon: 0.05, feeBps: 75 }
       });
 
       setSuccessUrl("/my-tokens");
@@ -135,116 +109,85 @@ export function CreateTokenForm() {
       router.refresh();
     } catch (caughtError) {
       app?.HapticFeedback.notificationOccurred("error");
-      setError(caughtError instanceof Error ? caughtError.message : "Ошибка запуска");
+      setError(caughtError instanceof Error ? caughtError.message : "Launch preparation failed");
     } finally {
       setLoading(false);
     }
   };
 
-  const shareToTelegram = () => {
-    if (!successUrl) return;
-    app?.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(`${window.location.origin}${successUrl}`)}&text=${encodeURIComponent(`🚀 ${name} ($${ticker}) submitted on TONK.MEM!`)}`);
-  };
-
   return (
-    <div className="space-y-4 pb-8">
-      <div className="mx-4 glass-card p-4">
-        <h2 className="mb-4 font-display text-white text-xl font-bold">Иконка токена</h2>
-        <div
-          onClick={() => fileInputRef.current?.click()}
-          className="relative mx-auto flex aspect-square w-full max-w-[220px] cursor-pointer flex-col items-center justify-center overflow-hidden rounded-3xl border border-[#21446f] bg-[#0b1325] p-4 transition-all hover:border-[#33a7ff]/70"
-        >
-          {preview ? (
-            <Image src={preview} alt="preview" fill className="object-cover" />
-          ) : (
-            <>
-              <Image src="/brand/img_05.jpg" alt="upload" fill className="object-cover opacity-38" />
-              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,12,24,0.08),rgba(6,12,24,0.78))]" />
-              <div className="relative z-10 flex flex-col items-center px-4 text-center">
-                <div className="rounded-full border border-white/10 bg-black/25 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#7dd3fc]">
-                  Token image
-                </div>
-                <p className="mt-3 text-sm font-semibold text-white">Загрузи квадратную иконку токена</p>
-                <p className="mt-1 text-xs text-[#c4d7ef]">1:1 preview, без налезания текста, mobile-safe</p>
-              </div>
-            </>
-          )}
+    <div className="space-y-5 pb-8">
+      {!wallet ? (
+        <section className="glass-card rounded-[28px] p-5">
+          <p className="text-xs uppercase tracking-[0.2em] text-[#7dd3fc]">Wallet required</p>
+          <h2 className="mt-2 font-display text-2xl font-bold text-white">Connect your wallet to prepare launch transactions</h2>
+          <p className="mt-3 text-sm leading-6 text-[#c6d4ea]">You will sign every transaction manually in your wallet.</p>
+          <div className="mt-5"><WalletConnectButton label="Connect Wallet" /></div>
+        </section>
+      ) : (
+        <section className="glass-card rounded-[28px] p-5">
+          <p className="text-xs uppercase tracking-[0.2em] text-[#7dd3fc]">Wallet connected</p>
+          <div className="mt-2 inline-flex rounded-full border border-[#7dd3fc]/20 bg-[#7dd3fc]/10 px-4 py-2 font-mono text-sm text-white">{wallet}</div>
+        </section>
+      )}
+
+      <section className="glass-card rounded-[28px] p-5">
+        <h2 className="font-display text-2xl font-bold text-white">Upload token icon</h2>
+        <p className="mt-2 text-sm leading-6 text-[#c6d4ea]">PNG, JPG or WEBP. Square image recommended.</p>
+        <div onClick={() => fileInputRef.current?.click()} className="mt-4 flex aspect-square w-full max-w-[240px] cursor-pointer flex-col items-center justify-center overflow-hidden rounded-[28px] border border-dashed border-[#2a4e74] bg-[#0b1325] p-4 text-center transition hover:border-[#7dd3fc]">
+          {preview ? <Image src={preview} alt="preview" width={240} height={240} className="h-full w-full rounded-[24px] object-cover" /> : <><div className="text-sm font-semibold text-white">Upload token icon</div><div className="mt-2 text-xs text-[#8ba3c1]">Click to upload a square image</div></>}
         </div>
         <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => onFile(e.target.files?.[0])} />
-        {uploadingImage ? <p className="mt-3 text-center text-xs text-[#8ba3c1]">Загрузка картинки...</p> : null}
-      </div>
+        {uploadingImage ? <p className="mt-3 text-xs text-[#8ba3c1]">Uploading image...</p> : null}
+      </section>
 
-      <div className="mx-4 glass-card space-y-4 p-4">
-        <h2 className="font-display text-xl font-bold text-white">Информация о токене</h2>
-        <div className="space-y-1">
-          <label className="text-xs text-[#8ba3c1]">Название *</label>
-          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Например: PEPE ON TON" className="input-field" />
+      <section className="glass-card rounded-[28px] p-5 space-y-4">
+        <h2 className="font-display text-2xl font-bold text-white">Token details</h2>
+        <div>
+          <label className="mb-2 block text-xs uppercase tracking-[0.16em] text-[#8ba3c1]">Token name</label>
+          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="PEPE on TON" className="input-field" />
         </div>
-        <div className="space-y-1">
-          <label className="text-xs text-[#8ba3c1]">Тикер *</label>
-          <input
-            value={ticker}
-            onChange={(e) => setTicker(e.target.value.toUpperCase().replace("$", "").slice(0, 10))}
-            placeholder="PEPE"
-            className="input-field font-mono uppercase"
-            maxLength={10}
-          />
+        <div>
+          <label className="mb-2 block text-xs uppercase tracking-[0.16em] text-[#8ba3c1]">Ticker</label>
+          <input value={ticker} onChange={(e) => setTicker(e.target.value.toUpperCase().replace("$", "").slice(0, 10))} placeholder="PEPE" className="input-field font-mono uppercase" maxLength={10} />
         </div>
-        <div className="space-y-1">
-          <label className="text-xs text-[#8ba3c1]">Описание</label>
-          <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Расскажи про свой токен..." className="input-field h-20 resize-none" />
+        <div>
+          <label className="mb-2 block text-xs uppercase tracking-[0.16em] text-[#8ba3c1]">Description</label>
+          <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Describe the token and what makes the launch interesting." className="input-field h-24 resize-none" />
         </div>
-      </div>
+      </section>
 
-      <div className="mx-4 overflow-hidden glass-card">
-        <button onClick={() => setShowLinks(!showLinks)} className="flex w-full items-center justify-between p-4 text-sm text-[#8ba3c1]">
-          <span>🔗 Добавить ссылки (опционально)</span>
-          <ChevronDown className={`h-4 w-4 transition-transform ${showLinks ? "rotate-180" : ""}`} />
-        </button>
-        {showLinks ? (
-          <div className="space-y-3 border-t border-[#1e3a5f] px-4 pb-4">
-            <div className="flex items-center gap-3"><Send className="h-5 w-5 flex-shrink-0 text-[#0088cc]" /><input value={telegramLink} onChange={(e) => setTelegramLink(e.target.value)} placeholder="https://t.me/..." className="input-field flex-1" /></div>
-            <div className="flex items-center gap-3"><span className="h-5 w-5 flex-shrink-0 text-center text-[#8ba3c1]">𝕏</span><input value={twitterLink} onChange={(e) => setTwitterLink(e.target.value)} placeholder="https://twitter.com/..." className="input-field flex-1" /></div>
-            <div className="flex items-center gap-3"><Globe className="h-5 w-5 flex-shrink-0 text-[#8ba3c1]" /><input value={websiteLink} onChange={(e) => setWebsiteLink(e.target.value)} placeholder="https://..." className="input-field flex-1" /></div>
-          </div>
-        ) : null}
-      </div>
+      <section className="glass-card rounded-[28px] p-5">
+        <h2 className="font-display text-2xl font-bold text-white">Target mode</h2>
+        <div className="mt-4 grid gap-3 md:grid-cols-2">
+          {targetModes.map((mode) => (
+            <button key={mode.id} type="button" onClick={() => setTargetMode(mode.id)} className={`rounded-[22px] border p-4 text-left transition ${targetMode === mode.id ? "border-[#7dd3fc] bg-[#7dd3fc]/10" : "border-white/10 bg-white/5"}`}>
+              <div className="font-semibold text-white">{mode.label}</div>
+              <div className="mt-1 text-sm text-[#8ba3c1]">{mode.id === "test" ? "Use this for the first manual mainnet dust-test." : "Use this after live proof is complete."}</div>
+            </button>
+          ))}
+        </div>
+      </section>
 
-      <div className="mx-4 glass-card space-y-3 p-4">
-        <h2 className="font-display text-xl font-bold text-white">Режим Creator Tax</h2>
-        {taxModes.map((item) => (
-          <label key={item.id} className={`flex cursor-pointer items-start gap-3 rounded-xl border p-3 transition-all ${mode === item.id ? "border-[#0088cc] bg-[#0088cc]/10" : "border-[#1e3a5f]"}`}>
-            <input type="radio" name="taxMode" value={item.id} className="mt-0.5 accent-[#0088cc]" checked={mode === item.id} onChange={() => setMode(item.id)} />
-            <div><div className="text-sm font-bold text-white">{item.label}</div><div className="mt-0.5 text-xs text-[#8ba3c1]">{item.desc}</div></div>
-            <span className="ml-auto font-mono text-xs font-bold text-[#00c896]">{item.tax}</span>
-          </label>
-        ))}
-        {mode === "custom" ? <div className="grid grid-cols-3 gap-2"><input value={customRate} onChange={(e) => setCustomRate(e.target.value)} className="input-field" placeholder="Tax %" /><input value={customBuyback} onChange={(e) => setCustomBuyback(e.target.value)} className="input-field" placeholder="Buyback %" /><input value={customBurn} onChange={(e) => setCustomBurn(e.target.value)} className="input-field" placeholder="Burn %" /></div> : null}
-      </div>
-
-      <div className="mx-4 glass-card p-4">
-        <h3 className="mb-3 text-xs text-[#8ba3c1]">👁 Превью</h3>
-        <div className="flex items-center gap-3">
-          <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-xl bg-[#1a2235]">
-            {preview ? <Image src={preview} alt="preview" width={48} height={48} className="h-full w-full object-cover" /> : <span className="flex h-full w-full items-center justify-center text-2xl">💎</span>}
-          </div>
+      <section className="glass-card rounded-[28px] p-5">
+        <h3 className="text-xs uppercase tracking-[0.2em] text-[#7dd3fc]">Preview</h3>
+        <div className="mt-4 flex items-center gap-3">
+          <div className="h-14 w-14 overflow-hidden rounded-2xl bg-[#111b2c]">{preview ? <Image src={preview} alt="preview" width={56} height={56} className="h-full w-full object-cover" /> : <div className="flex h-full w-full items-center justify-center text-2xl">💎</div>}</div>
           <div>
-            <div className="font-bold text-white">{name || <span className="text-[#8ba3c1]">Название токена</span>} <span className="font-mono text-sm text-[#0088cc]">{ticker || <span className="text-[#8ba3c1]">TICK</span>}</span></div>
-            <div className="text-xs text-[#8ba3c1]">Bonding curve · Цель: {BONDING_TARGET_TON.toLocaleString("ru-RU")} TON · Комиссия: {totalFee}%</div>
+            <div className="font-bold text-white">{name || "Token name"} <span className="font-mono text-sm text-[#7dd3fc]">{ticker || "TICK"}</span></div>
+            <div className="mt-1 text-sm text-[#8ba3c1]">Target mode: {activeTarget.label}</div>
           </div>
         </div>
+      </section>
+
+      {error ? <div className="rounded-2xl border border-[#7dd3fc]/20 bg-[#7dd3fc]/10 px-4 py-3 text-sm text-[#c6e8ff]">{error}</div> : null}
+
+      <div>
+        <button onClick={handleLaunch} disabled={!isValid || loading || uploadingImage || !wallet} className="btn-primary flex w-full items-center justify-center text-center disabled:cursor-not-allowed disabled:opacity-40">{loading ? "Preparing launch transactions..." : "Prepare launch transactions"}</button>
+        <p className="mt-3 text-center text-sm text-[#8ba3c1]">You will sign every transaction manually in TonConnect / Tonkeeper. No backend custody.</p>
       </div>
 
-      {error ? <p className="mx-4 text-sm text-[#ff4757]">{error}</p> : null}
-
-      <div className="mx-4 mb-8">
-        <button onClick={handleLaunch} disabled={!isValid || loading || uploadingImage} className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#0088cc] to-[#00c896] py-4 text-lg font-bold text-black transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40">
-          {loading ? <span>Отправка create tx...</span> : <><span>🚀</span> Создать on-chain</>}
-        </button>
-        <p className="mt-2 text-center text-xs text-[#8ba3c1]">Create идёт через TonConnect → Factory. После этого ждём indexer confirmation.</p>
-      </div>
-
-      {successUrl ? <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 px-4"><div className="glass-card w-full max-w-md overflow-hidden p-0 text-center"><div className="relative h-40 w-full"><Image src="/brand/img_09.jpg" alt="success" fill className="object-cover" /><div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,12,24,0.08),rgba(6,12,24,0.72))]" /></div><div className="space-y-4 p-6"><h2 className="font-display text-2xl font-bold text-white">Create tx отправлен</h2><p className="text-sm text-[#8ba3c1]">Теперь дождись indexer confirmation — тогда токен появится в Market и My Tokens без фейковых адресов.</p><div className="flex gap-3"><Link href={successUrl} className="btn-primary flex-1 text-center">Мои токены</Link><button onClick={shareToTelegram} className="flex-1 rounded-xl border border-[#0088cc]/30 py-3 text-sm text-[#0088cc]">✈️ Поделиться</button></div></div></div></div> : null}
+      {successUrl ? <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 px-4"><div className="glass-card w-full max-w-md p-6 text-center"><h2 className="font-display text-2xl font-bold text-white">Launch transactions prepared</h2><p className="mt-3 text-sm text-[#8ba3c1]">Now wait for indexer confirmation after signed transactions. No fake deploy state is shown before that.</p><div className="mt-5 flex gap-3"><Link href={successUrl} className="btn-primary flex-1 text-center">My tokens</Link></div></div></div> : null}
     </div>
   );
 }
