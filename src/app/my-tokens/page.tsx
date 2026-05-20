@@ -31,7 +31,7 @@ export default function MyTokensPage() {
   const tokens = user?.createdTokens ?? [];
 
   if (!wallet) {
-    return <div className="glass-card rounded-[28px] p-8 text-center"><h2 className="font-display text-2xl font-bold text-white">Connect your wallet to see your launched tokens.</h2><p className="mx-auto mt-3 max-w-md text-sm leading-6 text-[#c6d4ea]">Wallet connection is required to load your created launches and future manual mainnet history.</p><div className="mt-6 flex justify-center"><WalletConnectButton label="Connect Wallet" /></div></div>;
+    return <div className="glass-card rounded-[28px] p-8 text-center"><h2 className="font-display text-2xl font-bold text-white">Connect your wallet to see your launched tokens.</h2><p className="mx-auto mt-3 max-w-md text-sm leading-6 text-[#c6d4ea]">Wallet connection is required to load your created launches and future manual mainnet history.</p><div className="mt-6 flex justify-center"><WalletConnectButton /></div></div>;
   }
 
   if (tokens.length === 0) {

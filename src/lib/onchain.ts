@@ -47,7 +47,7 @@ export interface ListingConfigView {
   poolAddress: string;
   jettonMaster: string;
   lpLockAddress?: string;
-  stonfiPoolAddress?: string;
+  dedustPoolAddress?: string;
 }
 
 export const isTonAddress = (value: string): boolean => {

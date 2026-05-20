@@ -23,7 +23,7 @@ export function ReferralPanel({ referralCode, shareUrl, earnedTon, volumeTon, pe
       <section className="glass-card rounded-[28px] p-5">
         <p className="text-xs uppercase tracking-[0.2em] text-[#8ba3c1]">Referral link</p>
         <div className="mt-3 flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3"><span className="flex-1 truncate font-mono text-xs text-white">{refUrl}</span>{hasReferral ? <button onClick={copy}><Copy className="h-4 w-4 text-[#8ba3c1]" /></button> : null}</div>
-        <div className="mt-4">{hasReferral ? <button onClick={shareRef} className="btn-primary flex w-full items-center justify-center gap-2"><Send className="h-4 w-4" /> Share in Telegram</button> : <WalletConnectButton label="Connect Wallet" />}</div>
+        <div className="mt-4">{hasReferral ? <button onClick={shareRef} className="btn-primary flex w-full items-center justify-center gap-2"><Send className="h-4 w-4" /> Share in Telegram</button> : <WalletConnectButton />}</div>
       </section>
 
       <section className="grid gap-3 sm:grid-cols-3">

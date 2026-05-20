@@ -20,4 +20,4 @@ Verification steps:
 2. confirm output shows `targetTon: 8888`
 3. run `npm run test:buy-flow`
 4. run `npm run build`
-5. confirm investor-facing docs no longer describe active test target deployment
+5. confirm public-facing docs no longer describe active test target deployment

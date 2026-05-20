@@ -63,14 +63,14 @@ const mapCreatedToken = (row: Awaited<ReturnType<typeof listIndexedTokens>>[numb
   },
   migration: {
     adapterStatus: row.is_listed ? "LISTED" : row.status === "GRADUATED_READY" ? "READY" : "PENDING",
-    routerAddress: process.env.STONFI_ROUTER_ADDRESS || "",
+    routerAddress: process.env.DEDUST_ROUTER_ADDRESS || "",
     lpState: row.lp_lock_address ? "LOCKED" : "NONE",
     graduationFeeTon: Number(row.target_ton),
     creatorRefundTon: 0,
     liquidityTon: Number(row.collected_ton),
     liquidityTokens: Number(row.sold_tokens),
     lpLockAddress: row.lp_lock_address || undefined,
-    stonfiPoolAddress: row.stonfi_pool_address || undefined
+    dedustPoolAddress: row.dedust_pool_address || undefined
   },
   contractAddresses: {
     factory: process.env.NEXT_PUBLIC_FACTORY_ADDRESS || "",

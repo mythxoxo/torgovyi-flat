@@ -7,16 +7,16 @@ import { Providers } from "../components/wallet-context";
 export const metadata: Metadata = {
   metadataBase: new URL("https://torgovyi-flat.vercel.app"),
   title: "TONK.MEM",
-  description: "Launch TON meme tokens. Graduate to STON.fi.",
+  description: "Launch TON meme tokens. Graduate to DeDust.",
   openGraph: {
     title: "TONK.MEM",
-    description: "Launch TON meme tokens. Graduate to STON.fi.",
+    description: "Launch TON meme tokens. Graduate to DeDust.",
     images: ["/brand/img_02.jpg"]
   },
   twitter: {
     card: "summary_large_image",
     title: "TONK.MEM",
-    description: "Launch TON meme tokens. Graduate to STON.fi.",
+    description: "Launch TON meme tokens. Graduate to DeDust.",
     images: ["/brand/img_02.jpg"]
   }
 };

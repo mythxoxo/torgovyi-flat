@@ -1,0 +1,8 @@
+homepage_desktop
+homepage_mobile
+create_desktop
+create_mobile
+technical_status_desktop
+technical_status_mobile
+tonconnect_modal_homepage
+tonconnect_modal_create

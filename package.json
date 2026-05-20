@@ -30,15 +30,18 @@
     "index:once": "tsx scripts/indexOnce.ts",
     "index:dry-run": "tsx scripts/indexOnce.ts --dry-run",
     "preflight:mainnet": "tsx scripts/preflightMainnet.ts",
-    "list:stonfi": "tsx scripts/listOnStonfi.ts",
     "check:manifest": "tsx scripts/checkManifest.ts",
     "security:check": "tsx scripts/checkSecurity.ts",
-    "verify": "tsx scripts/verify.ts"
+    "verify": "tsx scripts/verify.ts",
+    "prepare:dedust-liquidity": "tsx scripts/prepareDedustLiquidity.ts",
+    "verify:dedust-pool": "tsx scripts/verifyDedustPool.ts",
+    "verify:dedust-lp": "tsx scripts/verifyDedustLp.ts",
+    "package:review": "tsx scripts/buildReviewPackage.ts",
+    "check:public-copy": "tsx scripts/checkPublicCopy.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.540.0",
     "@neondatabase/serverless": "latest",
-    "@ston-fi/sdk": "latest",
     "@ton/core": "latest",
     "@ton/crypto": "latest",
     "@ton/ton": "latest",

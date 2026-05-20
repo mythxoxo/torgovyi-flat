@@ -1,4 +1,4 @@
-# INVESTOR BRIEF
+# PROJECT OVERVIEW
 
 TONK.MEM is a security-first TON meme token launchpad designed for Telegram-native distribution and manual no-custody wallet flow.
 
@@ -6,14 +6,14 @@ TONK.MEM is a security-first TON meme token launchpad designed for Telegram-nati
 
 - Telegram distribution is native to the product surface.
 - TON wallet UX supports in-app/manual signing flows.
-- STON.fi is the natural post-graduation liquidity venue.
+- DeDust is the natural post-graduation liquidity venue.
 
 ## What the product does
 
 - prepares launch contracts and wallet flows for meme token creation
 - runs a bonding-based sale phase
 - tracks pool state on chain
-- prepares graduation path toward STON.fi
+- prepares graduation path toward DeDust
 
 ## How bonding works
 
@@ -42,7 +42,7 @@ TONK.MEM is a security-first TON meme token launchpad designed for Telegram-nati
 - mainnet deploy
 - mainnet buy
 - buyer jetton balance on chain
-- STON.fi live proof
+- DeDust live proof
 
 ## Near-term launch steps
 

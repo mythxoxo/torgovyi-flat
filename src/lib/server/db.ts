@@ -5,7 +5,7 @@ let pool: Pool | undefined;
 export const getDb = () => {
   const connectionString = process.env.DATABASE_URL;
   if (!connectionString) {
-    throw new Error("DATABASE_URL is required");
+    throw new Error("db mode requires DATABASE_URL");
   }
 
   if (!pool) {
@@ -33,7 +33,7 @@ export const ensureSchema = async () => {
       status TEXT NOT NULL DEFAULT 'PENDING',
       is_listed BOOLEAN DEFAULT FALSE,
       lp_lock_address TEXT,
-      stonfi_pool_address TEXT,
+      dedust_pool_address TEXT,
       created_at TIMESTAMPTZ DEFAULT NOW(),
       updated_at TIMESTAMPTZ DEFAULT NOW()
     );
@@ -56,7 +56,7 @@ export const ensureSchema = async () => {
       ton_amount NUMERIC NOT NULL,
       jetton_amount NUMERIC NOT NULL,
       lp_lock_address TEXT NOT NULL,
-      stonfi_tx_hash TEXT UNIQUE,
+      dedust_tx_hash TEXT UNIQUE,
       status TEXT NOT NULL DEFAULT 'PENDING',
       error TEXT,
       created_at TIMESTAMPTZ DEFAULT NOW(),

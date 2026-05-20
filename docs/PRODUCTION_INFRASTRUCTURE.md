@@ -6,9 +6,9 @@
 - TonConnect UI
 - static/public pages
 - no frequent cron on Hobby
-- investor/demo deploy runs without cron
+- public preview deploy runs without cron
 
-## Manual investor/demo indexing
+## Manual public preview indexing
 
 - `npm run index:once`
 - `npm run index:dry-run`
@@ -17,7 +17,7 @@
 
 - indexer worker
 - graduation watcher
-- STON.fi watcher
+- DeDust watcher
 - LP lock watcher
 - logs
 - systemd service or equivalent worker runtime

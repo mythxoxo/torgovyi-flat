@@ -27,7 +27,7 @@ export function DesktopShell({ children }: { children: ReactNode }) {
             <Image src="/brand/logo-icon.svg" alt="TONK.MEM" width={36} height={36} className="h-9 w-9" />
             <div>
               <div className="font-display text-xl font-bold uppercase tracking-[0.08em] text-white">TONK<span className="gradient-text">.MEM</span></div>
-              <div className="text-[11px] tracking-[0.18em] text-[#8ba3c1]">Investor-review MVP</div>
+              <div className="text-[11px] tracking-[0.18em] text-[#8ba3c1]">Public beta</div>
             </div>
           </Link>
 
@@ -49,7 +49,7 @@ export function DesktopShell({ children }: { children: ReactNode }) {
               <button type="button" onClick={() => setLocale("ru")} className={`rounded-full px-3 py-1.5 text-xs ${locale === "ru" ? "bg-white text-black" : "text-[#c7d5e8]"}`}>RU</button>
               <button type="button" onClick={() => setLocale("en")} className={`rounded-full px-3 py-1.5 text-xs ${locale === "en" ? "bg-white text-black" : "text-[#c7d5e8]"}`}>EN</button>
             </div>
-            <WalletConnectButton label="Connect Wallet" />
+            <WalletConnectButton />
           </div>
         </div>
       </header>

@@ -67,7 +67,7 @@ async function main() {
     status: "BONDING",
     is_listed: false,
     lp_lock_address: summary.lpLock,
-    stonfi_pool_address: null,
+    dedust_pool_address: null,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString()
   });

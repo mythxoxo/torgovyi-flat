@@ -111,7 +111,7 @@ export interface MigrationState {
   liquidityTon: number;
   liquidityTokens: number;
   lpLockAddress?: string;
-  stonfiPoolAddress?: string;
+  dedustPoolAddress?: string;
   listingTxHash?: string;
 }
 
@@ -268,7 +268,7 @@ export interface TokenRow {
   status: string;
   is_listed: boolean;
   lp_lock_address: string | null;
-  stonfi_pool_address: string | null;
+  dedust_pool_address: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -291,7 +291,7 @@ export interface ListingRow {
   ton_amount: string | number;
   jetton_amount: string | number;
   lp_lock_address: string;
-  stonfi_tx_hash: string | null;
+  dedust_tx_hash: string | null;
   status: string;
   error: string | null;
   created_at: string;

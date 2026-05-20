@@ -6,15 +6,15 @@ export const messages = {
   ru: {
     nav: { market: "Токены", create: "Запуск", portfolio: "Портфель", referrals: "Рефералы", faq: "FAQ", rules: "Правила", risks: "Риски" },
     home: {
-      badge: "Investor-review MVP",
-      title: "Launch TON meme tokens. Graduate to STON.fi.",
-      subtitle: "A no-custody TON launchpad for meme tokens with verified sandbox buy/mint flow, manual TonConnect signing, and a clean path from test mode to mainnet.",
-      description: "Честный investor-review MVP без fake live claims и без backend custody.",
+      badge: "Technical MVP",
+      title: "Launch TON meme tokens. Graduate to DeDust.",
+      subtitle: "Create meme tokens on TON, test the bonding flow safely, and prepare for DeDust liquidity without giving custody of your wallet.",
+      description: "Честный public preview без fake live claims и без backend custody.",
       ctaPrimary: "Create token",
-      ctaSecondary: "View technical status",
+      ctaSecondary: "View status",
       statsA: "Sandbox verified",
-      statsB: "Manual TonConnect ready",
-      statsC: "Mainnet proof pending",
+      statsB: "Manual signing",
+      statsC: "Mainnet pending",
       search: "Search by name or ticker...",
       trending: "Тренд",
       newest: "Новые",
@@ -38,7 +38,7 @@ export const messages = {
     },
     faq: {
       title: "FAQ / Rules / Risks",
-      subtitle: "Коротко и по делу: как работает launchpad, что происходит на mainnet и где реальные риски.",
+      subtitle: "Коротко и по делу: как работает launchpad, что уже проверено и что ещё требует live proof.",
       faqTitle: "FAQ",
       rulesTitle: "Правила",
       risksTitle: "Риски"
@@ -47,18 +47,18 @@ export const messages = {
       "Только TON mainnet. Тестовые кошельки и кривые сети не поддерживаются.",
       "Не выпускай токен под чужим брендом или от чужого имени.",
       "Ticker, арт и ссылки должны соответствовать тому, что ты реально запускаешь.",
-      "После live proof можно двигаться к логике STON.fi."
+      "После live proof можно двигаться к логике DeDust."
     ],
     risks: [
       "Мем-токены — это высокий риск и возможность полной потери средств.",
-      "Mainnet proof ещё pending, поэтому продукт нельзя выдавать за fully live.",
+      "Mainnet proof ещё pending.",
       "Низкая ликвидность и ранний рынок означают риск сильного проскальзывания.",
       "Ни рост цены, ни листинг, ни рыночный интерес не гарантированы."
     ],
     faqItems: [
       { q: "Как запускается токен?", a: "Подключаешь TON кошелёк, заполняешь метаданные и готовишь manual TonConnect flow." },
       { q: "Почему сначала 5 TON?", a: "Это тестовый target для первого mainnet dust-test перед production режимом." },
-      { q: "Когда будет STON.fi?", a: "После live proof и ручной проверки mainnet-флоу." },
+      { q: "Когда будет DeDust?", a: "После live proof и ручной проверки mainnet-флоу." },
       { q: "Почему no-custody?", a: "Потому что проект не должен хранить сид-фразы и сам подписывать транзакции за пользователя." }
     ],
     misc: {
@@ -84,15 +84,15 @@ export const messages = {
   en: {
     nav: { market: "Tokens", create: "Launch", portfolio: "Portfolio", referrals: "Referrals", faq: "FAQ", rules: "Rules", risks: "Risks" },
     home: {
-      badge: "Investor-review MVP",
-      title: "Launch TON meme tokens. Graduate to STON.fi.",
-      subtitle: "A no-custody TON launchpad for meme tokens with verified sandbox buy/mint flow, manual TonConnect signing, and a clean path from test mode to mainnet.",
-      description: "An honest investor-review MVP without fake live claims or backend custody.",
+      badge: "Technical MVP",
+      title: "Launch TON meme tokens. Graduate to DeDust.",
+      subtitle: "Create meme tokens on TON, test the bonding flow safely, and prepare for DeDust liquidity without giving custody of your wallet.",
+      description: "An honest public preview without fake live claims or backend custody.",
       ctaPrimary: "Create token",
-      ctaSecondary: "View technical status",
+      ctaSecondary: "View status",
       statsA: "Sandbox verified",
-      statsB: "Manual TonConnect ready",
-      statsC: "Mainnet proof pending",
+      statsB: "Manual signing",
+      statsC: "Mainnet pending",
       search: "Search by name or ticker...",
       trending: "Trending",
       newest: "New",
@@ -125,7 +125,7 @@ export const messages = {
       "TON mainnet only.",
       "Do not launch tokens under someone else's brand or identity.",
       "Ticker and artwork should match the actual token you are preparing.",
-      "Move toward STON.fi only after live proof is complete."
+      "Move toward DeDust only after live proof is complete."
     ],
     risks: [
       "Meme tokens are high-risk and can go to zero.",
@@ -136,7 +136,7 @@ export const messages = {
     faqItems: [
       { q: "How do I launch a token?", a: "Connect your TON wallet, fill metadata and prepare the manual TonConnect flow." },
       { q: "Why start with 5 TON?", a: "It is the safer test target for the first manual mainnet dust-test." },
-      { q: "When does STON.fi happen?", a: "After live proof and manual mainnet verification." },
+      { q: "When does DeDust happen?", a: "After live proof and manual mainnet verification." },
       { q: "Why no-custody?", a: "Because the product should not store seeds or sign transactions on behalf of users." }
     ],
     misc: {

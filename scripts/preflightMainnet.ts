@@ -40,7 +40,7 @@ const checks = {
   db
 };
 
-const investorReadinessScore = [checks.targetValid, checks.buildArtifacts, checks.noSecretsTracked, checks.appUrl, checks.manifestUrl].filter(Boolean).length / 5;
+const publicProductReadinessScore = [checks.targetValid, checks.buildArtifacts, checks.noSecretsTracked, checks.appUrl, checks.manifestUrl].filter(Boolean).length / 5;
 const preLiveMainnetReadinessScore = [checks.targetValid, checks.buildArtifacts, checks.noSecretsTracked, checks.appUrl, checks.manifestUrl, checks.toncenter, checks.tonapi].filter(Boolean).length / 7;
 
 const missingForLive = [
@@ -55,7 +55,7 @@ const missingForLive = [
 ].filter(Boolean);
 
 console.log(JSON.stringify({
-  investorReadinessScore: Math.round(investorReadinessScore * 100),
+  publicProductReadinessScore: Math.round(publicProductReadinessScore * 100),
   preLiveMainnetReadinessScore: Math.round(preLiveMainnetReadinessScore * 100),
   targetTon,
   productionTargetTon: PRODUCTION_TARGET_TON,

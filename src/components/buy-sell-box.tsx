@@ -36,7 +36,7 @@ export function BuySellBox({ token }: { token: TokenRecord }) {
   const submit = async () => {
     try {
       if (mode === "SELL") {
-        throw new Error("Sell will be available after bonding/listing through STON.fi.");
+        throw new Error("Sell will be available after bonding/listing through DeDust.");
       }
       if (!wallet) throw new Error("Сначала подключи TON кошелёк");
       if (walletSource === "tonconnect" && !isMainnet) throw new Error("Нужен TON mainnet");
@@ -112,7 +112,7 @@ export function BuySellBox({ token }: { token: TokenRecord }) {
       </div>
 
       {mode === "SELL" ? (
-        <p className="text-sm text-[#8ba3c1]">Sell will be available after bonding/listing through STON.fi.</p>
+        <p className="text-sm text-[#8ba3c1]">Sell will be available after bonding/listing through DeDust.</p>
       ) : null}
 
       {error ? <p className="text-sm text-[#ff4757]">{error}</p> : null}

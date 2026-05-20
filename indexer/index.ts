@@ -19,7 +19,7 @@ const toTokenRow = (state: Awaited<ReturnType<typeof getPoolState>>, current?: T
   status: state.isListed ? "LISTED" : state.isGraduated ? "GRADUATED_READY" : "BONDING",
   is_listed: state.isListed,
   lp_lock_address: state.lpLock,
-  stonfi_pool_address: current?.stonfi_pool_address || null,
+  dedust_pool_address: current?.dedust_pool_address || null,
   created_at: current?.created_at || isoNow(),
   updated_at: isoNow()
 });

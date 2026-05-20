@@ -1,0 +1,1 @@
+Use prepare scripts, sign manually in wallet, store tx hashes, verify on-chain state, then confirm DeDust pool proof.

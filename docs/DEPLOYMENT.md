@@ -24,8 +24,8 @@
 
 ## Vercel Hobby cron note
 
-- frequent cron is disabled for investor/demo deployments
-- investor/demo indexing runs manually:
+- frequent cron is disabled for public preview deployments
+- public preview indexing runs manually:
   - `npm run index:once`
   - `npm run index:dry-run`
 - production indexing should move to VPS worker, separate worker runtime, or Vercel Pro later

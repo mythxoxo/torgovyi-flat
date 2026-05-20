@@ -63,7 +63,7 @@ export const buyToken = (
   });
 
 export const sellToken = async () => {
-  throw new Error("Sell will be available after bonding/listing through STON.fi.");
+  throw new Error("Sell will be available after bonding/listing through DeDust.");
 };
 
 export const resolveReferral = (wallet: string, code?: string) =>

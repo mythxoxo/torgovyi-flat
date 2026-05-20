@@ -17,8 +17,8 @@ const steps = [
     text: "Start in 5 TON test mode now. Return to 8888 TON production target after live proof."
   },
   {
-    title: "Graduate to STON.fi",
-    text: "Move toward STON.fi only after manual verification, live deploy proof and indexer sync."
+    title: "Graduate to DeDust",
+    text: "Move toward DeDust only after manual verification, live deploy proof and indexer sync."
   }
 ];
 
@@ -47,8 +47,8 @@ export default function HomePage() {
     <div className="space-y-8 pb-20">
       <section className="rounded-[32px] border border-white/10 bg-[linear-gradient(180deg,rgba(16,26,43,0.96),rgba(8,14,25,0.98))] p-6 shadow-[0_30px_90px_rgba(0,0,0,0.28)] sm:p-8">
         <div className="max-w-3xl">
-          <div className="inline-flex items-center rounded-full border border-[#7dd3fc]/25 bg-[#7dd3fc]/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#7dd3fc]">Investor-review MVP</div>
-          <h1 className="mt-4 max-w-2xl font-display text-4xl font-black leading-[0.95] text-white sm:text-5xl">Launch TON meme tokens.<br />Graduate to STON.fi.</h1>
+          <div className="inline-flex items-center rounded-full border border-[#7dd3fc]/25 bg-[#7dd3fc]/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#7dd3fc]">Technical MVP</div>
+          <h1 className="mt-4 max-w-2xl font-display text-4xl font-black leading-[0.95] text-white sm:text-5xl">Launch TON meme tokens.<br />Graduate to DeDust.</h1>
           <p className="mt-4 max-w-2xl text-base leading-7 text-[#d3dfef]">A no-custody TON launchpad for meme tokens with verified sandbox buy/mint flow, manual TonConnect signing, and a clean path from test mode to mainnet.</p>
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
             <Link href="/create" className="btn-primary text-center">Create token</Link>
@@ -69,7 +69,7 @@ export default function HomePage() {
       <section className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
         <div className="glass-card rounded-[28px] p-5">
           <p className="text-xs uppercase tracking-[0.2em] text-[#7dd3fc]">Current readiness</p>
-          <h2 className="mt-2 font-display text-2xl font-bold text-white">Ready for investor review and manual dust-test prep</h2>
+          <h2 className="mt-2 font-display text-2xl font-bold text-white">Ready for public preview and manual dust-test prep</h2>
           <p className="mt-3 text-sm leading-6 text-[#c6d4ea]">Core checks are green, TonConnect manual flow is ready, and the production UI is live. Mainnet proof, buyer proof and indexer DB proof are still pending.</p>
         </div>
         <div className="glass-card rounded-[28px] p-5">
@@ -78,7 +78,7 @@ export default function HomePage() {
             <li>• Factory deploy on mainnet</li>
             <li>• First live buy and buyer Jetton receipt</li>
             <li>• Indexer DB row after live sync</li>
-            <li>• STON.fi listing and LP lock evidence</li>
+            <li>• DeDust listing and LP lock evidence</li>
           </ul>
         </div>
       </section>

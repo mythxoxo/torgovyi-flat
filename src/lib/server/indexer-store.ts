@@ -53,7 +53,7 @@ export const getTradesByPool = async (poolAddress: string): Promise<TradeRow[]> 
 };
 
 export const upsertTokenRow = async (row: TokenRow) => {
-  if (!isDbConfigured()) throw new Error("DATABASE_URL is required for indexer writes");
+  if (!isDbConfigured()) throw new Error("db write mode requires DATABASE_URL");
   await ensureSchema();
   const db = getDb();
   await db.query(
@@ -61,7 +61,7 @@ export const upsertTokenRow = async (row: TokenRow) => {
       INSERT INTO tokens (
         pool_address, jetton_address, creator, name, symbol, description, image_url,
         collected_ton, target_ton, sold_tokens, status, is_listed, lp_lock_address,
-        stonfi_pool_address, created_at, updated_at
+        dedust_pool_address, created_at, updated_at
       ) VALUES (
         $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16
       )
@@ -78,7 +78,7 @@ export const upsertTokenRow = async (row: TokenRow) => {
         status = EXCLUDED.status,
         is_listed = EXCLUDED.is_listed,
         lp_lock_address = EXCLUDED.lp_lock_address,
-        stonfi_pool_address = EXCLUDED.stonfi_pool_address,
+        dedust_pool_address = EXCLUDED.dedust_pool_address,
         updated_at = EXCLUDED.updated_at
     `,
     [
@@ -95,7 +95,7 @@ export const upsertTokenRow = async (row: TokenRow) => {
       row.status,
       row.is_listed,
       row.lp_lock_address,
-      row.stonfi_pool_address,
+      row.dedust_pool_address,
       row.created_at,
       row.updated_at
     ]
@@ -103,7 +103,7 @@ export const upsertTokenRow = async (row: TokenRow) => {
 };
 
 export const upsertTradeRow = async (row: TradeRow) => {
-  if (!isDbConfigured()) throw new Error("DATABASE_URL is required for indexer writes");
+  if (!isDbConfigured()) throw new Error("db write mode requires DATABASE_URL");
   await ensureSchema();
   const db = getDb();
   await db.query(
@@ -117,16 +117,16 @@ export const upsertTradeRow = async (row: TradeRow) => {
 };
 
 export const upsertListingRow = async (row: ListingRow) => {
-  if (!isDbConfigured()) throw new Error("DATABASE_URL is required for indexer writes");
+  if (!isDbConfigured()) throw new Error("db write mode requires DATABASE_URL");
   await ensureSchema();
   const db = getDb();
   await db.query(
     `
       INSERT INTO listings (
         pool_address, jetton_address, ton_amount, jetton_amount, lp_lock_address,
-        stonfi_tx_hash, status, error, created_at, updated_at
+        dedust_tx_hash, status, error, created_at, updated_at
       ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
-      ON CONFLICT (stonfi_tx_hash) DO UPDATE SET
+      ON CONFLICT (dedust_tx_hash) DO UPDATE SET
         status = EXCLUDED.status,
         error = EXCLUDED.error,
         updated_at = EXCLUDED.updated_at
@@ -137,7 +137,7 @@ export const upsertListingRow = async (row: ListingRow) => {
       row.ton_amount,
       row.jetton_amount,
       row.lp_lock_address,
-      row.stonfi_tx_hash,
+      row.dedust_tx_hash,
       row.status,
       row.error,
       row.created_at,

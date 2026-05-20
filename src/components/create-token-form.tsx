@@ -122,7 +122,7 @@ export function CreateTokenForm() {
           <p className="text-xs uppercase tracking-[0.2em] text-[#7dd3fc]">Wallet required</p>
           <h2 className="mt-2 font-display text-2xl font-bold text-white">Connect your wallet to prepare launch transactions</h2>
           <p className="mt-3 text-sm leading-6 text-[#c6d4ea]">You will sign every transaction manually in your wallet.</p>
-          <div className="mt-5"><WalletConnectButton label="Connect Wallet" /></div>
+          <div className="mt-5"><WalletConnectButton /></div>
         </section>
       ) : (
         <section className="glass-card rounded-[28px] p-5">

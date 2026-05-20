@@ -5,7 +5,7 @@
 - live mainnet deploy
 - live buy
 - live buyer Jetton balance on chain
-- live STON.fi listing
+- live DeDust listing
 - live LP lock proof
 - live indexer DB proof
 

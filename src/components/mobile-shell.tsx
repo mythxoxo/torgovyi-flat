@@ -25,10 +25,10 @@ export function MobileShell({ children }: { children: ReactNode }) {
             <Image src="/brand/logo-icon.svg" alt="TONK.MEM" width={32} height={32} className="h-8 w-8" />
             <div className="min-w-0">
               <div className="truncate font-display text-[16px] font-bold text-white">TONK<span className="gradient-text">.MEM</span></div>
-              <div className="text-[10px] tracking-[0.16em] text-[#8ba3c1]">Investor-review MVP</div>
+              <div className="text-[10px] tracking-[0.16em] text-[#8ba3c1]">Public beta</div>
             </div>
           </Link>
-          <WalletConnectButton compact label="Connect" />
+          <WalletConnectButton compact />
         </div>
         <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-white/8 bg-white/5 px-3 py-2 text-xs text-[#c7d5e8]"><LivePill /></div>
       </header>

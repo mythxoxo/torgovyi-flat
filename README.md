@@ -18,7 +18,7 @@ Security-first TON meme token launchpad MVP.
 
 Set:
 
-- `LAUNCHPAD_TARGET_TON=5` for manual investor/test flow
+- `LAUNCHPAD_TARGET_TON=5` for manual public test flow
 - `LAUNCHPAD_TARGET_TON=8888` for production
 
 ## Safety
@@ -45,13 +45,13 @@ npm run build
 
 ## Vercel Hobby note
 
-- frequent Vercel cron is disabled for investor/demo deploys
-- indexer is run manually for investor/demo mode
+- frequent Vercel cron is disabled for public preview deploys
+- indexer is run manually for public preview mode
 - production worker/indexer should move to VPS, separate worker, or Vercel Pro later
 
 ## Docs
 
-- `docs/INVESTOR_STATUS.md`
+- `docs/PROJECT_STATUS.md`
 - `docs/MANUAL_TEST_FLOW.md`
 - `docs/DEPLOYMENT.md`
 - `docs/SECURITY_MODEL.md`

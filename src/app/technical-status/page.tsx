@@ -19,7 +19,7 @@ const pending = [
   ["Factory deployed on mainnet", "Pending live proof"],
   ["Live buy", "Pending live proof"],
   ["Buyer jetton balance", "Pending live proof"],
-  ["STON.fi listing", "Pending live proof"],
+  ["DeDust listing", "Pending live proof"],
   ["LP lock", "Pending live proof"],
   ["Indexer DB row", "Pending live proof"]
 ] as const;
@@ -47,8 +47,8 @@ export default function TechnicalStatusPage() {
     <div className="space-y-6">
       <section className="rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,rgba(14,24,39,0.94),rgba(7,13,24,0.98))] p-6 shadow-[0_20px_60px_rgba(0,0,0,0.22)]">
         <p className="text-xs uppercase tracking-[0.22em] text-[#7dd3fc]">Technical status</p>
-        <h1 className="mt-2 font-display text-3xl font-bold text-white sm:text-4xl">Investor-facing system board</h1>
-        <p className="mt-3 max-w-3xl text-sm leading-7 text-[#c6d4ea]">This page separates what is already verified, what is ready for manual mainnet testing, and what still needs live proof before any public launch claims.</p>
+        <h1 className="mt-2 font-display text-3xl font-bold text-white sm:text-4xl">Technical status</h1>
+        <p className="mt-3 max-w-3xl text-sm leading-7 text-[#c6d4ea]">Current verification state of TONK.MEM. No fake live data, no custody, no hidden wallet keys.</p>
       </section>
 
       <div className="grid gap-4 xl:grid-cols-3">

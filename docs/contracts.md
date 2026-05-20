@@ -30,7 +30,7 @@ NOT VERIFIED in this pass:
 
 - real Jetton mint/send delivery to buyers
 - real Factory deployment of Jetton + Pool child contracts
-- real LP token receive path from STON.fi into `LPLock`
+- real LP token receive path from DeDust into `LPLock`
 - end-to-end on-chain child deployment and event parsing
 
 ## Read state

@@ -79,7 +79,7 @@ export default function TokenPage() {
               <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(6,12,24,0.92),rgba(6,12,24,0.52))]" />
               <div className="relative flex min-h-[180px] flex-col justify-end p-5">
                 <div className="inline-flex w-fit items-center gap-2 rounded-full border border-[#00c896]/30 bg-[#00c896]/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#86efac]">
-                  🎓 {token.status === "LISTED" ? "Listed on STON.fi" : "Graduated ready"}
+                  🎓 {token.status === "LISTED" ? "Listed on DeDust" : "Graduated ready"}
                 </div>
                 <h2 className="mt-3 font-display text-2xl font-bold text-white">Этот токен дошёл до graduation</h2>
                 <p className="mt-2 max-w-md text-sm leading-6 text-[#c4d7ef]">Статус берётся из on-chain состояния и indexer cache, не из mock app logic.</p>
