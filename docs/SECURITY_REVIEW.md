@@ -6,7 +6,7 @@
 - no fake balances
 - no fake live stats
 - no fake addresses
-- no mnemonic-based mandatory runtime path
+- no recovery-phrase-based mandatory runtime path
 - no seed storage in app flow
 - manual signing only for future live actions
 - env files and private config files are ignored by git rules
