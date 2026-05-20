@@ -20,31 +20,31 @@ const UiContext = createContext<UiContextValue>({
 
 export const useUi = () => useContext(UiContext);
 
+const COOKIE_NAME = "tonk-locale";
+
 export function PageShell({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>(defaultLocale);
 
   useEffect(() => {
-    const saved = typeof window !== "undefined" ? window.localStorage.getItem("tonk-locale") : null;
-    if (saved === "ru" || saved === "en") {
-      setLocaleState(saved);
-    }
+    if (typeof window === "undefined") return;
+    const savedLocal = window.localStorage.getItem(COOKIE_NAME);
+    const savedCookie = document.cookie
+      .split("; ")
+      .find((part) => part.startsWith(`${COOKIE_NAME}=`))
+      ?.split("=")[1];
+    const saved = savedLocal || savedCookie;
+    if (saved === "ru" || saved === "en") setLocaleState(saved);
   }, []);
 
   const setLocale = (next: Locale) => {
     setLocaleState(next);
     if (typeof window !== "undefined") {
-      window.localStorage.setItem("tonk-locale", next);
+      window.localStorage.setItem(COOKIE_NAME, next);
+      document.cookie = `${COOKIE_NAME}=${next}; path=/; max-age=31536000; samesite=lax`;
     }
   };
 
-  const value = useMemo(
-    () => ({
-      locale,
-      setLocale,
-      t: messages[locale]
-    }),
-    [locale]
-  );
+  const value = useMemo(() => ({ locale, setLocale, t: messages[locale] }), [locale]);
 
   return (
     <UiContext.Provider value={value}>

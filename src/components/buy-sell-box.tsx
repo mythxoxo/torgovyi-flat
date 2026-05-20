@@ -1,59 +1,54 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { buildBuyDraft, isTonAddress, toMainnetAddress } from "../lib/onchain";
 import { quoteBuy } from "../lib/shared";
 import type { TokenRecord } from "../lib/shared";
 import { buyToken, resolveReferral } from "../lib/api";
 import { useWallet } from "./wallet-context";
+import { WalletConnectButton } from "./wallet-connect-button";
 import { getTelegramWebApp } from "../lib/telegram";
+import { getTonPrice, formatTonUsd } from "../lib/market/ton-price";
 
 export function BuySellBox({ token }: { token: TokenRecord }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { wallet, walletSource, isMainnet, sendTransaction } = useWallet();
-  const [mode, setMode] = useState<"BUY" | "SELL">("BUY");
   const [amount, setAmount] = useState("1");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [stage, setStage] = useState("prepared");
+  const [tonPrice, setTonPrice] = useState<number | null>(null);
   const app = getTelegramWebApp();
   const referralCode = searchParams.get("ref") || undefined;
 
+  useEffect(() => {
+    getTonPrice().then((r) => setTonPrice(r.usd)).catch(() => setTonPrice(null));
+  }, []);
+
   const numericAmount = Number(amount);
   const quote = useMemo(() => {
-    if (mode !== "BUY") return null;
     if (!(numericAmount > 0) || token.status !== "BONDING") return null;
     try {
       return quoteBuy(token.state, numericAmount, token.creatorTax);
     } catch {
       return null;
     }
-  }, [mode, numericAmount, token]);
-
-  const estimatedOutput = quote ? `${quote.tokenAmount.toFixed(2)} $${token.ticker}` : "—";
+  }, [numericAmount, token]);
 
   const submit = async () => {
     try {
-      if (mode === "SELL") {
-        throw new Error("Sell will be available after bonding/listing through DeDust.");
-      }
-      if (!wallet) throw new Error("Сначала подключи TON кошелёк");
-      if (walletSource === "tonconnect" && !isMainnet) throw new Error("Нужен TON mainnet");
-      if (!quote) throw new Error("Введи корректную сумму");
-
-      app?.HapticFeedback.impactOccurred("medium");
+      if (!wallet) throw new Error("Connect wallet to buy");
+      if (walletSource === "tonconnect" && !isMainnet) throw new Error("TON mainnet required");
+      if (!quote) throw new Error("Enter a valid amount");
+      setStage("waiting for wallet signature");
       setLoading(true);
       setError("");
 
       let resolvedReferral: Awaited<ReturnType<typeof resolveReferral>> | null = null;
-      if (referralCode) {
-        resolvedReferral = await resolveReferral(wallet, referralCode);
-      }
-
-      if (!isTonAddress(token.contractAddresses.bondingCurve)) {
-        throw new Error("Pool address is not indexed yet. Попробуй позже.");
-      }
+      if (referralCode) resolvedReferral = await resolveReferral(wallet, referralCode);
+      if (!isTonAddress(token.contractAddresses.bondingCurve)) throw new Error("Pool address is not indexed yet");
 
       const tx = await sendTransaction(
         buildBuyDraft({
@@ -64,68 +59,63 @@ export function BuySellBox({ token }: { token: TokenRecord }) {
         })
       );
 
+      setStage("pending confirmation");
       const txHash = typeof tx === "object" && tx && "boc" in tx ? String((tx as { boc?: string }).boc || "") : undefined;
       await buyToken(token.id, wallet, numericAmount, referralCode, 500, txHash);
-
-      app?.HapticFeedback.notificationOccurred("success");
-      app?.showPopup({
-        title: "Buy submitted",
-        message: "On-chain buy отправлен. Дождись indexer confirmation для обновления данных.",
-        buttons: [{ type: "ok" }]
-      });
-
+      setStage("indexed / verification pending");
       router.refresh();
     } catch (caughtError) {
-      app?.HapticFeedback.notificationOccurred("error");
-      setError(caughtError instanceof Error ? caughtError.message : "Ошибка сделки");
+      setStage("failed");
+      setError(caughtError instanceof Error ? caughtError.message : "Trade failed");
     } finally {
       setLoading(false);
     }
   };
 
-  return (
-    <div className="glass-card p-4 space-y-4">
-      <div className="grid grid-cols-2 gap-1 rounded-xl bg-[#1a2235] p-1">
-        <button className={mode === "BUY" ? "rounded-lg bg-[#00c896] py-2.5 text-sm font-bold text-black" : "rounded-lg py-2.5 text-sm text-[#8ba3c1]"} onClick={() => setMode("BUY")}>КУПИТЬ</button>
-        <button className={mode === "SELL" ? "rounded-lg bg-[#ff4757] py-2.5 text-sm font-bold text-white" : "rounded-lg py-2.5 text-sm text-[#8ba3c1]"} onClick={() => setMode("SELL")}>ПРОДАТЬ</button>
+  if (!wallet) {
+    return (
+      <div className="glass-card rounded-[24px] p-6 text-center">
+        <h3 className="text-xl font-semibold text-white">Connect wallet to buy</h3>
+        <p className="mt-2 text-sm text-[#8ba3c1]">Manual signing only. No custody, no private keys.</p>
+        <div className="mt-5 flex justify-center">
+          <WalletConnectButton />
+        </div>
       </div>
+    );
+  }
 
+  return (
+    <div className="glass-card rounded-[24px] p-4 space-y-4">
       <div>
-        <label className="mb-1.5 block text-xs text-[#8ba3c1]">{mode === "BUY" ? "Сумма в TON" : "Продажа отключена"}</label>
+        <label className="mb-1.5 block text-xs text-[#8ba3c1]">Amount in TON</label>
         <div className="relative">
-          <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0.0" className="w-full rounded-xl border border-[#1e3a5f] bg-[#1a2235] px-4 py-3 pr-16 font-mono text-lg text-white focus:border-[#0088cc] focus:outline-none" disabled={mode === "SELL"} />
-          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-[#8ba3c1]">{mode === "BUY" ? "💎" : `STO${token.ticker}`}</span>
+          <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0.0" className="w-full rounded-xl border border-[#1e3a5f] bg-[#1a2235] px-4 py-3 pr-16 font-mono text-lg text-white focus:border-[#0088cc] focus:outline-none" />
+          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-[#8ba3c1]">TON</span>
         </div>
       </div>
 
       <div className="grid grid-cols-4 gap-2">
         {["0.1", "0.5", "1", "5"].map((val) => (
-          <button key={val} onClick={() => setAmount(val)} className="rounded-lg border border-[#1e3a5f] bg-[#1a2235] py-2 text-xs text-[#8ba3c1] transition-all hover:border-[#0088cc] hover:text-white" disabled={mode === "SELL"}>
-            {val} 💎
+          <button key={val} onClick={() => setAmount(val)} className="rounded-lg border border-[#1e3a5f] bg-[#1a2235] py-2 text-xs text-[#8ba3c1] hover:border-[#0088cc] hover:text-white">
+            {val}
           </button>
         ))}
       </div>
 
-      <div className="flex items-center justify-between rounded-xl bg-[#1a2235] px-4 py-3">
-        <span className="text-sm text-[#8ba3c1]">Получишь ~</span>
-        <span className="font-mono font-bold text-white">{mode === "BUY" ? estimatedOutput : "Sell disabled"}</span>
+      <div className="rounded-xl bg-[#1a2235] px-4 py-3 text-sm text-[#c6d4ea] space-y-2">
+        <div className="flex justify-between"><span>Current price</span><span>{quote ? `${quote.newState.currentPriceTon.toFixed(8)} TON` : "—"}</span></div>
+        <div className="flex justify-between"><span>Estimated tokens</span><span>{quote ? quote.tokenAmount.toFixed(2) : "—"}</span></div>
+        <div className="flex justify-between"><span>TON in USD</span><span>{tonPrice ? `$${tonPrice.toFixed(2)}` : "TON price unavailable"}</span></div>
+        <div className="flex justify-between"><span>Estimated USD value</span><span>{tonPrice && numericAmount > 0 ? formatTonUsd(numericAmount, tonPrice) : "—"}</span></div>
       </div>
-
-      {mode === "SELL" ? (
-        <p className="text-sm text-[#8ba3c1]">Sell will be available after bonding/listing through DeDust.</p>
-      ) : null}
 
       {error ? <p className="text-sm text-[#ff4757]">{error}</p> : null}
 
-      <button
-        onClick={submit}
-        disabled={loading || !quote || token.status !== "BONDING" || mode === "SELL"}
-        className={`w-full rounded-xl py-4 text-base font-bold transition-all active:scale-[0.98] disabled:opacity-40 ${mode === "BUY" ? "bg-gradient-to-r from-[#0088cc] to-[#00c896] text-black" : "bg-[#2b2f3a] text-white"}`}
-      >
-        {loading ? "Отправка..." : mode === "BUY" ? "🚀 Купить on-chain" : "Sell disabled"}
+      <button onClick={submit} disabled={loading || !quote || token.status !== "BONDING"} className="btn-primary flex w-full items-center justify-center">
+        {loading ? "Waiting for wallet signature..." : "Buy with wallet"}
       </button>
 
-      <p className="text-center text-xs text-[#8ba3c1]">Source of truth — chain + indexer cache. Без mock balance updates.</p>
+      <div className="text-xs text-[#8ba3c1]">Status: {stage}</div>
     </div>
   );
 }

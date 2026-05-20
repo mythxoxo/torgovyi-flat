@@ -1,61 +1,10 @@
-const verified = [
-  ["Contracts build", "Verified"],
-  ["Contract verification", "Verified"],
-  ["Sandbox buy/mint loop", "Verified"],
-  ["Security check", "Verified"],
-  ["Production build", "Verified"],
-  ["TonConnect modal", "Verified"]
-] as const;
-
-const ready = [
-  ["Factory deploy payload", "Ready"],
-  ["Token-flow payload", "Ready"],
-  ["ChangeOwner payload", "Ready"],
-  ["RegisterPool payload", "Ready"],
-  ["Buy payload", "Ready"]
-] as const;
-
-const pending = [
-  ["Factory deployed on mainnet", "Pending live proof"],
-  ["Live buy", "Pending live proof"],
-  ["Buyer jetton balance", "Pending live proof"],
-  ["DeDust listing", "Pending live proof"],
-  ["LP lock", "Pending live proof"],
-  ["Indexer DB row", "Pending live proof"]
-] as const;
-
-function StatusSection({ title, text, items, tone }: { title: string; text: string; items: readonly (readonly [string, string])[]; tone: "green" | "amber" | "gray" }) {
-  const toneClass = tone === "green" ? "border-[#3df6a2]/20 bg-[#3df6a2]/8 text-[#a5fbce]" : tone === "amber" ? "border-[#ffcc80]/20 bg-[#ffcc80]/8 text-[#ffd89b]" : "border-white/10 bg-white/5 text-[#d3dfef]";
-  return (
-    <section className="glass-card rounded-[28px] p-5">
-      <p className="text-xs uppercase tracking-[0.2em] text-[#7dd3fc]">{title}</p>
-      <p className="mt-2 text-sm leading-6 text-[#c6d4ea]">{text}</p>
-      <div className="mt-5 space-y-3">
-        {items.map(([label, value]) => (
-          <div key={label} className={`flex items-center justify-between rounded-2xl border px-4 py-3 text-sm ${toneClass}`}>
-            <span>{label}</span>
-            <span className="font-semibold">{value}</span>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-export default function TechnicalStatusPage() {
-  return (
-    <div className="space-y-6">
-      <section className="rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,rgba(14,24,39,0.94),rgba(7,13,24,0.98))] p-6 shadow-[0_20px_60px_rgba(0,0,0,0.22)]">
-        <p className="text-xs uppercase tracking-[0.22em] text-[#7dd3fc]">Technical status</p>
-        <h1 className="mt-2 font-display text-3xl font-bold text-white sm:text-4xl">Technical status</h1>
-        <p className="mt-3 max-w-3xl text-sm leading-7 text-[#c6d4ea]">Current verification state of TONK.MEM. No fake live data, no custody, no hidden wallet keys.</p>
-      </section>
-
-      <div className="grid gap-4 xl:grid-cols-3">
-        <StatusSection title="Verified locally / sandbox" text="These checks are already green in the current repo state." items={verified} tone="green" />
-        <StatusSection title="Ready for manual mainnet test" text="Payload preparation is ready. Each transaction still needs manual wallet signing." items={ready} tone="gray" />
-        <StatusSection title="Pending live proof" text="These items require real mainnet execution and evidence." items={pending} tone="amber" />
-      </div>
-    </div>
-  );
-}
+"use client";
+import { useUi } from '../../components/page-shell';
+const verifiedEn = [["Contracts build", "Verified"],["Contract verification", "Verified"],["Sandbox buy/mint loop", "Verified"],["Security check", "Verified"],["Production build", "Verified"]] as const;
+const readyEn = [["TonConnect payloads", "Ready"],["DeDust liquidity draft", "Ready"],["5 TON target", "Ready"],["8888 TON return path", "Ready"]] as const;
+const pendingEn = [["Factory deploy", "Pending"],["Live buy", "Pending"],["DeDust pool proof", "Pending"],["LP proof", "Pending"],["Indexer DB proof", "Pending"]] as const;
+const verifiedRu = [["Сборка контрактов", "Проверено"],["Верификация контрактов", "Проверено"],["Sandbox buy/mint loop", "Проверено"],["Security check", "Проверено"],["Production build", "Проверено"]] as const;
+const readyRu = [["TonConnect payloads", "Готово"],["DeDust liquidity draft", "Готово"],["Цель 5 TON", "Готово"],["Возврат к 8888 TON", "Готово"]] as const;
+const pendingRu = [["Деплой factory", "В ожидании"],["Live buy", "В ожидании"],["DeDust pool proof", "В ожидании"],["LP proof", "В ожидании"],["Indexer DB proof", "В ожидании"]] as const;
+function Section({ title, items }: { title: string; items: readonly (readonly [string,string])[] }) { return <section className="glass-card rounded-[24px] p-5"><h2 className="font-display text-2xl font-bold text-white">{title}</h2><div className="mt-4 space-y-3">{items.map(([a,b]) => <div key={a} className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm"><span>{a}</span><span className="font-semibold text-[#c6d4ea]">{b}</span></div>)}</div></section>; }
+export default function TechnicalStatusPage(){ const { locale } = useUi(); const verified = locale === 'ru' ? verifiedRu : verifiedEn; const ready = locale === 'ru' ? readyRu : readyEn; const pending = locale === 'ru' ? pendingRu : pendingEn; return <div className="space-y-6"><section className="rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,rgba(14,24,39,0.94),rgba(7,13,24,0.98))] p-6 shadow-[0_20px_60px_rgba(0,0,0,0.22)]"><p className="text-xs uppercase tracking-[0.22em] text-[#7dd3fc]">{locale === 'ru' ? 'Технический статус' : 'Technical status'}</p><h1 className="mt-2 font-display text-3xl font-bold text-white sm:text-4xl">{locale === 'ru' ? 'Технический обзор' : 'Technical review'}</h1><p className="mt-3 max-w-3xl text-sm leading-7 text-[#c6d4ea]">{locale === 'ru' ? 'Текущее состояние верификации TONK.MEM. Без fake live данных, без скрытых ключей, без custody.' : 'Current verification state of TONK.MEM. No fake live data, no hidden keys, no custody.'}</p></section><div className="grid gap-4 xl:grid-cols-3"><Section title={locale === 'ru' ? 'Локально проверено' : 'Verified locally'} items={verified} /><Section title={locale === 'ru' ? 'Готово к manual mainnet test' : 'Ready for manual mainnet test'} items={ready} /><Section title={locale === 'ru' ? 'Ждёт live proof' : 'Pending live proof'} items={pending} /></div></div>; }
