@@ -9,7 +9,7 @@
 - no mnemonic-based mandatory runtime path
 - no seed storage in app flow
 - manual signing only for future live actions
-- env/secrets ignored by git rules
+- env files and private config files are ignored by git rules
 - database is cache only
 - blockchain is source of truth
 - JettonMinter admin transfer to Pool modeled and sandbox-verified
