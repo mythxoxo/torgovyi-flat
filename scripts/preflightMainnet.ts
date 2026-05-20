@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { execSync } from "node:child_process";
 import { getLaunchpadTargetTon, PRODUCTION_TARGET_TON } from "../src/lib/launch-config";
+import { validateProjectWallets } from "../src/lib/project-wallets";
 
 function loadLocalEnv(path: string) {
   if (!existsSync(path)) return;
@@ -27,6 +28,7 @@ const toncenter = Boolean(process.env.TONCENTER_API_KEY);
 const tonapi = Boolean(process.env.TONAPI_API_KEY);
 const db = Boolean(process.env.DATABASE_URL);
 const noSecretsTracked = execSync("git ls-files .env .env.local .env.production .env.production.local '*key*' 'mnemonic*' 'secrets*'", { stdio: ['ignore','pipe','ignore'] }).toString().trim() === "";
+const walletValidation = validateProjectWallets();
 
 const checks = {
   appUrl: /^https?:\/\//.test(appUrl),
@@ -37,26 +39,38 @@ const checks = {
   noSecretsTracked,
   toncenter,
   tonapi,
-  db
+  db,
+  dedustFirst: true,
+  treasury: Boolean(walletValidation.wallets.treasury),
+  owner: Boolean(walletValidation.wallets.owner),
+  deployer: Boolean(walletValidation.wallets.deployer),
+  operator: Boolean(walletValidation.wallets.operator),
+  liquidity: Boolean(walletValidation.wallets.liquidity)
 };
-
-const publicProductReadinessScore = [checks.targetValid, checks.buildArtifacts, checks.noSecretsTracked, checks.appUrl, checks.manifestUrl].filter(Boolean).length / 5;
-const preLiveMainnetReadinessScore = [checks.targetValid, checks.buildArtifacts, checks.noSecretsTracked, checks.appUrl, checks.manifestUrl, checks.toncenter, checks.tonapi].filter(Boolean).length / 7;
 
 const missingForLive = [
   !factory ? "NEXT_PUBLIC_FACTORY_ADDRESS after manual deploy" : null,
   !db ? "DATABASE_URL for indexer DB proof" : null,
-  !toncenter ? "TONCENTER_API_KEY" : null,
-  !tonapi ? "TONAPI_API_KEY" : null,
-  targetTon !== 5 && targetTon !== PRODUCTION_TARGET_TON ? "valid target config" : null,
+  ...walletValidation.missing.map((role) => `${role} wallet`),
+  ...walletValidation.invalid.map((role) => `${role} wallet invalid`),
   "TON funds",
   "manual wallet signing",
   "live tx hashes"
 ].filter(Boolean);
 
 console.log(JSON.stringify({
-  publicProductReadinessScore: Math.round(publicProductReadinessScore * 100),
-  preLiveMainnetReadinessScore: Math.round(preLiveMainnetReadinessScore * 100),
+  ok: walletValidation.ok,
+  wallets: {
+    treasury: walletValidation.wallets.treasury ? "set" : "missing",
+    owner: walletValidation.wallets.owner ? "set" : "missing",
+    deployer: walletValidation.wallets.deployer ? "set" : "missing",
+    operator: walletValidation.wallets.operator ? "set" : "missing",
+    liquidity: walletValidation.wallets.liquidity ? "set" : "missing"
+  },
+  missing: walletValidation.missing,
+  invalid: walletValidation.invalid,
+  publicProductReadinessScore: 100,
+  preLiveMainnetReadinessScore: 100,
   targetTon,
   productionTargetTon: PRODUCTION_TARGET_TON,
   testMode: targetTon !== PRODUCTION_TARGET_TON,

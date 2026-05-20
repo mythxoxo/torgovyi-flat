@@ -10,7 +10,7 @@ export function useWalletAssets(address?: string) {
     fetch(`/api/wallet/assets?address=${encodeURIComponent(address)}`, { cache: 'no-store' })
       .then((r) => r.json())
       .then(setData)
-      .catch(() => setData({ ok: false, address, jettons: [], source: 'fallback', error: 'Wallet assets unavailable right now' }))
+      .catch(() => setData({ ok: false, address, jettons: [], source: 'fallback', reason: 'wallet_assets_unavailable', message: 'Wallet assets are not available yet.' }))
       .finally(() => setLoading(false));
   }, [address]);
   return { data, loading };
