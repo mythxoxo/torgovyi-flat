@@ -4,159 +4,115 @@ export const defaultLocale: Locale = "ru";
 
 export const messages = {
   ru: {
-    nav: { market: "Токены", create: "Запуск", portfolio: "Портфель", referrals: "Рефералы", faq: "FAQ", rules: "Правила", risks: "Риски" },
+    nav: { home: "Главная", search: "Поиск", markets: "Рынки", profile: "Профиль" },
     home: {
-      badge: "Technical MVP",
-      title: "Launch TON meme tokens. Graduate to DeDust.",
-      subtitle: "Create meme tokens on TON, test the bonding flow safely, and prepare for DeDust liquidity without giving custody of your wallet.",
-      description: "Честный public preview без fake live claims и без backend custody.",
-      ctaPrimary: "Create token",
-      ctaSecondary: "View status",
-      statsA: "Sandbox verified",
-      statsB: "Manual signing",
-      statsC: "Mainnet pending",
-      search: "Search by name or ticker...",
-      trending: "Тренд",
-      newest: "Новые",
-      almost: "Почти",
-      graduated: "Вышли",
-      volume: "Объём"
+      title: "Запускай TON-мемы без лишнего шума.",
+      subtitle:
+        "TONK.MEM — launchpad для токенов на TON: старт через кошелёк, тестовый режим на 5 TON и основная модель на 8888 TON.",
+      ctaTokens: "Смотреть токены",
+      launchTest: "Запуск 5 TON",
+      launchMain: "Запуск 8888 TON",
+      modeTest: "Тестовый запуск — 5 TON",
+      modeMain: "Основной запуск — 8888 TON",
+      note: "5 TON — для проверки механики. 8888 TON — основная модель запуска.",
+      launchesTitle: "Последние запуски"
     },
     create: {
-      eyebrow: "Create / Launch",
-      title: "Create a TON meme token",
-      subtitle: "Prepare token metadata and generate manual TonConnect transactions. No backend custody, no mnemonic upload.",
-      iconTitle: "Upload token icon",
-      iconHint: "PNG, JPG or WEBP. Square image recommended.",
-      infoTitle: "Token details",
-      name: "Token name",
-      ticker: "Ticker",
-      description: "Description",
-      links: "Links",
-      launch: "Prepare launch transactions",
-      launching: "Preparing launch transactions..."
+      title: "Создать токен",
+      subtitle: "Выбери режим запуска и подготовь транзакции через свой кошелёк.",
+      modeTitle: "Выбери режим запуска",
+      modeTest: "5 TON — тестовый запуск",
+      modeMain: "8888 TON — основная модель",
+      signed: "Транзакции подписываются только через твой кошелёк."
     },
-    faq: {
-      title: "FAQ / Rules / Risks",
-      subtitle: "Коротко и по делу: как работает launchpad, что уже проверено и что ещё требует live proof.",
-      faqTitle: "FAQ",
-      rulesTitle: "Правила",
-      risksTitle: "Риски"
+    search: {
+      title: "Поиск токенов",
+      placeholder: "Название, тикер или адрес токена",
+      empty: "Начни вводить название или тикер."
     },
-    rules: [
-      "Только TON mainnet. Тестовые кошельки и кривые сети не поддерживаются.",
-      "Не выпускай токен под чужим брендом или от чужого имени.",
-      "Ticker, арт и ссылки должны соответствовать тому, что ты реально запускаешь.",
-      "После live proof можно двигаться к логике DeDust."
-    ],
-    risks: [
-      "Мем-токены — это высокий риск и возможность полной потери средств.",
-      "Mainnet proof ещё pending.",
-      "Низкая ликвидность и ранний рынок означают риск сильного проскальзывания.",
-      "Ни рост цены, ни листинг, ни рыночный интерес не гарантированы."
-    ],
-    faqItems: [
-      { q: "Как запускается токен?", a: "Подключаешь TON кошелёк, заполняешь метаданные и готовишь manual TonConnect flow." },
-      { q: "Почему сначала 5 TON?", a: "Это тестовый target для первого mainnet dust-test перед production режимом." },
-      { q: "Когда будет DeDust?", a: "После live proof и ручной проверки mainnet-флоу." },
-      { q: "Почему no-custody?", a: "Потому что проект не должен хранить сид-фразы и сам подписывать транзакции за пользователя." }
-    ],
+    markets: {
+      title: "Рынки",
+      trending: "В тренде",
+      volume: "Топ по объёму",
+      gainers: "Лидеры роста",
+      new: "Новые запуски",
+      empty: "Рейтинги появятся после первых индексированных сделок."
+    },
+    profile: {
+      title: "Профиль",
+      subtitle: "Только активы подключённого кошелька.",
+      connect: "Подключите кошелёк, чтобы увидеть профиль.",
+      assetsFallback: "Не удалось загрузить активы кошелька. Проверь mainnet API ключи и повтори позже."
+    },
+    token: {
+      chartEmpty: "График появится после первых индексированных покупок.",
+      tradesEmpty: "Сделки появятся после первой покупки."
+    },
     misc: {
-      live: "pending",
-      tonPrice: "TON",
-      connect: "Connect Wallet",
-      menu: "Menu",
-      language: "Язык",
-      russian: "Русский",
-      english: "English",
-      marketEmpty: "No live tokens yet",
-      marketEmptyText: "Mainnet proof is pending.",
-      noResults: "Nothing found",
-      noResultsText: "Try another query.",
-      noTokens: "No tokens yet",
-      noTokensText: "Connect wallet or prepare your first launch.",
-      referralsTitle: "Referral system",
-      referralsText: "Referral tracking is pending live deployment.",
-      searchMiss: "Search",
-      launchpad: "Launchpad"
+      connect: "Подключить",
+      disconnect: "Отключить",
+      mainnet: "TON mainnet",
+      noLaunches: "Пока нет запущенных токенов. Первый запуск появится здесь после индексации.",
+      nothingFound: "Ничего не найдено",
+      tryAnother: "Попробуй другой запрос.",
+      noTokensProfile: "Токены кошелька не найдены.",
+      loadingWallet: "Загружаю активы кошелька..."
     }
   },
   en: {
-    nav: { market: "Tokens", create: "Launch", portfolio: "Portfolio", referrals: "Referrals", faq: "FAQ", rules: "Rules", risks: "Risks" },
+    nav: { home: "Home", search: "Search", markets: "Markets", profile: "Profile" },
     home: {
-      badge: "Technical MVP",
-      title: "Launch TON meme tokens. Graduate to DeDust.",
-      subtitle: "Create meme tokens on TON, test the bonding flow safely, and prepare for DeDust liquidity without giving custody of your wallet.",
-      description: "An honest public preview without fake live claims or backend custody.",
-      ctaPrimary: "Create token",
-      ctaSecondary: "View status",
-      statsA: "Sandbox verified",
-      statsB: "Manual signing",
-      statsC: "Mainnet pending",
-      search: "Search by name or ticker...",
-      trending: "Trending",
-      newest: "New",
-      almost: "Almost",
-      graduated: "Graduated",
-      volume: "Volume"
+      title: "Launch TON memes without the noise.",
+      subtitle:
+        "TONK.MEM is a TON launchpad for wallet-first token launches, test runs at 5 TON and the main launch model at 8888 TON.",
+      ctaTokens: "Explore tokens",
+      launchTest: "Launch 5 TON",
+      launchMain: "Launch 8888 TON",
+      modeTest: "Test launch — 5 TON",
+      modeMain: "Main launch — 8888 TON",
+      note: "5 TON is for testing mechanics. 8888 TON is the main launch model.",
+      launchesTitle: "Latest launches"
     },
     create: {
-      eyebrow: "Create / Launch",
-      title: "Create a TON meme token",
-      subtitle: "Prepare token metadata and generate manual TonConnect transactions. No backend custody, no mnemonic upload.",
-      iconTitle: "Upload token icon",
-      iconHint: "PNG, JPG or WEBP. Square image recommended.",
-      infoTitle: "Token details",
-      name: "Token name",
-      ticker: "Ticker",
-      description: "Description",
-      links: "Links",
-      launch: "Prepare launch transactions",
-      launching: "Preparing launch transactions..."
+      title: "Create token",
+      subtitle: "Choose a launch mode and prepare transactions with your wallet.",
+      modeTitle: "Choose launch mode",
+      modeTest: "5 TON — test launch",
+      modeMain: "8888 TON — main model",
+      signed: "Transactions are signed only by your wallet."
     },
-    faq: {
-      title: "FAQ / Rules / Risks",
-      subtitle: "Short and clear: how the launchpad works, what is verified now and what still needs live proof.",
-      faqTitle: "FAQ",
-      rulesTitle: "Rules",
-      risksTitle: "Risks"
+    search: {
+      title: "Search tokens",
+      placeholder: "Name, ticker or token address",
+      empty: "Start typing a name or ticker."
     },
-    rules: [
-      "TON mainnet only.",
-      "Do not launch tokens under someone else's brand or identity.",
-      "Ticker and artwork should match the actual token you are preparing.",
-      "Move toward DeDust only after live proof is complete."
-    ],
-    risks: [
-      "Meme tokens are high-risk and can go to zero.",
-      "Mainnet proof is still pending.",
-      "Low liquidity means slippage and hard exits.",
-      "No listing, price growth or market attention is guaranteed."
-    ],
-    faqItems: [
-      { q: "How do I launch a token?", a: "Connect your TON wallet, fill metadata and prepare the manual TonConnect flow." },
-      { q: "Why start with 5 TON?", a: "It is the safer test target for the first manual mainnet dust-test." },
-      { q: "When does DeDust happen?", a: "After live proof and manual mainnet verification." },
-      { q: "Why no-custody?", a: "Because the product should not store seeds or sign transactions on behalf of users." }
-    ],
+    markets: {
+      title: "Markets",
+      trending: "Trending",
+      volume: "Top volume",
+      gainers: "Gainers",
+      new: "New launches",
+      empty: "Market rankings will appear after indexed trades."
+    },
+    profile: {
+      title: "Profile",
+      subtitle: "Only the connected wallet assets are shown here.",
+      connect: "Connect your wallet to open the profile.",
+      assetsFallback: "Wallet assets are not available yet. Check mainnet API keys and try again later."
+    },
+    token: {
+      chartEmpty: "The chart will appear after the first indexed buys.",
+      tradesEmpty: "Trades will appear after the first buy."
+    },
     misc: {
-      live: "pending",
-      tonPrice: "TON",
-      connect: "Connect Wallet",
-      menu: "Menu",
-      language: "Language",
-      russian: "Русский",
-      english: "English",
-      marketEmpty: "No live tokens yet",
-      marketEmptyText: "Mainnet proof is pending.",
-      noResults: "Nothing found",
-      noResultsText: "Try another query.",
-      noTokens: "No tokens yet",
-      noTokensText: "Connect wallet or prepare your first launch.",
-      referralsTitle: "Referral system",
-      referralsText: "Referral tracking is pending live deployment.",
-      searchMiss: "Search",
-      launchpad: "Launchpad"
+      connect: "Connect",
+      disconnect: "Disconnect",
+      mainnet: "TON mainnet",
+      noLaunches: "No launches yet. The first indexed token will appear here.",
+      nothingFound: "Nothing found",
+      tryAnother: "Try another query.",
+      noTokensProfile: "No wallet tokens found.",
+      loadingWallet: "Loading wallet assets..."
     }
   }
 } as const;

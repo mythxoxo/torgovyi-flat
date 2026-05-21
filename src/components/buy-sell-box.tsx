@@ -105,7 +105,7 @@ export function BuySellBox({ token }: { token: TokenRecord }) {
       <div className="rounded-xl bg-[#1a2235] px-4 py-3 text-sm text-[#c6d4ea] space-y-2">
         <div className="flex justify-between"><span>Current price</span><span>{quote ? `${quote.newState.currentPriceTon.toFixed(8)} TON` : "—"}</span></div>
         <div className="flex justify-between"><span>Estimated tokens</span><span>{quote ? quote.tokenAmount.toFixed(2) : "—"}</span></div>
-        <div className="flex justify-between"><span>TON in USD</span><span>{tonPrice ? `$${tonPrice.toFixed(2)}` : "TON price unavailable"}</span></div>
+        <div className="flex justify-between"><span>TON in USD</span><span>{tonPrice ? `$${tonPrice.toFixed(2)}` : "—"}</span></div>
         <div className="flex justify-between"><span>Estimated USD value</span><span>{tonPrice && numericAmount > 0 ? formatTonUsd(numericAmount, tonPrice) : "—"}</span></div>
       </div>
 

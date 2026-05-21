@@ -4,4 +4,4 @@ export async function getTonPrice(): Promise<TonPriceResponse> {
   if (!res.ok) return { usd: null };
   return res.json();
 }
-export const formatTonUsd = (ton: number, usd: number | null) => usd ? `$${(ton * usd).toFixed(2)}` : 'TON price unavailable';
+export const formatTonUsd = (ton: number, usd: number | null) => usd ? `$${(ton * usd).toFixed(2)}` : '—';

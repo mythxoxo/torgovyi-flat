@@ -16,7 +16,7 @@ export function CreateTokenForm() {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { wallet, walletSource, isMainnet, sendTransaction } = useWallet();
-  const { locale } = useUi();
+  const { locale, t } = useUi();
   const app = getTelegramWebApp();
   const [name, setName] = useState("");
   const [ticker, setTicker] = useState("");
@@ -39,8 +39,8 @@ export function CreateTokenForm() {
   }, []);
 
   const targetModes = [
-    { id: "test" as const, label: locale === "ru" ? "Тест: 5 TON" : "Test: 5 TON", targetTon: 5 },
-    { id: "production" as const, label: locale === "ru" ? "Прод: 8888 TON" : "Production: 8888 TON", targetTon: 8888 }
+    { id: "test" as const, label: t.create.modeTest, targetTon: 5 },
+    { id: "production" as const, label: t.create.modeMain, targetTon: 8888 }
   ];
 
   const activeTarget = targetModes.find((m) => m.id === targetMode) || targetModes[0];
@@ -147,7 +147,7 @@ export function CreateTokenForm() {
       </section>
 
       <section className="glass-card rounded-[28px] p-5">
-        <h2 className="font-display text-2xl font-bold text-white">{locale === "ru" ? "Режим цели" : "Target mode"}</h2>
+        <h2 className="font-display text-2xl font-bold text-white">{t.create.modeTitle}</h2>
         <div className="mt-4 grid gap-3 md:grid-cols-2">
           {targetModes.map((mode) => (
             <button key={mode.id} type="button" onClick={() => setTargetMode(mode.id)} className={`rounded-[22px] border p-4 text-left transition ${targetMode === mode.id ? "border-[#7dd3fc] bg-[#7dd3fc]/10" : "border-white/10 bg-white/5"}`}>
