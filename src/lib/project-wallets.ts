@@ -10,18 +10,21 @@ export type ProjectWalletConfig = {
   liquidity?: string;
 };
 
-function readAddress(name: string): string | undefined {
-  const value = process.env[name]?.trim();
-  return value && value.length > 0 ? value : undefined;
+function readAddress(...names: string[]): string | undefined {
+  for (const name of names) {
+    const value = process.env[name]?.trim();
+    if (value && value.length > 0) return value;
+  }
+  return undefined;
 }
 
 export function getProjectWallets(): ProjectWalletConfig {
   return {
-    treasury: readAddress("TONK_TREASURY_ADDRESS"),
-    owner: readAddress("TONK_OWNER_ADDRESS"),
-    deployer: readAddress("TONK_DEPLOYER_ADDRESS"),
-    operator: readAddress("TONK_OPERATOR_ADDRESS"),
-    liquidity: readAddress("TONK_LIQUIDITY_ADDRESS")
+    treasury: readAddress("TONK_MEM_TREASURY_ADDRESS", "TONK_TREASURY_ADDRESS"),
+    owner: readAddress("TONK_MEM_OWNER_ADDRESS", "TONK_OWNER_ADDRESS", "FACTORY_OWNER_ADDRESS"),
+    deployer: readAddress("TONK_MEM_DEPLOYER_ADDRESS", "TONK_DEPLOYER_ADDRESS"),
+    operator: readAddress("TONK_MEM_OPERATOR_ADDRESS", "TONK_OPERATOR_ADDRESS"),
+    liquidity: readAddress("TONK_MEM_LIQUIDITY_ADDRESS", "TONK_LIQUIDITY_ADDRESS")
   };
 }
 

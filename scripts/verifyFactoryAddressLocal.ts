@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { Address, beginCell, contractAddress, storeStateInit, toNano } from "@ton/core";
 import { LaunchpadFactory } from "../build/launchpad-factory/LaunchpadFactory_LaunchpadFactory";
 import { getProjectWallets } from "../src/lib/project-wallets";
-import { formatAddressVariants } from "../src/lib/ton-address";
+import { formatAddressVariants, sameTonAddress } from "../src/lib/ton-address";
 
 const FALLBACK_OWNER = "EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c";
 const DEPLOY_VALUE = toNano("0.2");
@@ -27,44 +27,35 @@ loadLocalEnv(".env.production");
 
 async function main() {
   const wallets = getProjectWallets();
-  const ownerInput = wallets.owner || process.env.FACTORY_OWNER_ADDRESS || FALLBACK_OWNER;
-  const owner = Address.parse(ownerInput);
-  const ownerVariants = formatAddressVariants(ownerInput);
+  const expectedOwnerInput = process.env.TONK_MEM_OWNER_ADDRESS || process.env.TONK_OWNER_ADDRESS || process.env.FACTORY_OWNER_ADDRESS || FALLBACK_OWNER;
+  const owner = Address.parse(wallets.owner || expectedOwnerInput);
   const factory = await LaunchpadFactory.fromInit(owner);
   const stateInit = factory.init;
-  if (!stateInit) {
-    throw new Error("Factory init is required for TonConnect deploy payload");
-  }
+  if (!stateInit) throw new Error("Factory init is required");
 
+  const expectedOwner = formatAddressVariants(expectedOwnerInput);
+  const actualOwner = formatAddressVariants(owner.toString({ bounceable: false, testOnly: false, urlSafe: true }));
   const stateInitCell = beginCell().store(storeStateInit(stateInit)).endCell();
-  const deployAddress = contractAddress(0, stateInit).toString({ bounceable: true, testOnly: false });
+  const factoryAddressFromStateInit = contractAddress(0, stateInit).toString({ bounceable: true, testOnly: false });
   const validUntil = Math.floor(Date.now() / 1000) + VALID_FOR_SECONDS;
-  const tonConnect = {
-    validUntil,
-    messages: [
-      {
-        address: deployAddress,
-        amount: DEPLOY_VALUE.toString(),
-        stateInit: stateInitCell.toBoc().toString("base64")
-      }
-    ]
-  };
+  const factoryAddressFromPrepare = factory.address.toString({ bounceable: true, testOnly: false });
 
   console.log(JSON.stringify({
     ok: true,
-    kind: "factory-tonconnect-prep",
     network: process.env.TON_NETWORK || process.env.NEXT_PUBLIC_TON_NETWORK || "mainnet",
-    owner: owner.toString({ bounceable: true, testOnly: false }),
-    ownerNonBounceable: ownerVariants.nonBounceable,
-    ownerBounceable: ownerVariants.bounceable,
-    ownerRaw: ownerVariants.raw,
-    factoryAddress: factory.address.toString({ bounceable: true, testOnly: false }),
-    destination: deployAddress,
-    value: DEPLOY_VALUE.toString(),
-    stateInit: tonConnect.messages[0].stateInit,
+    expectedOwnerNonBounceable: expectedOwner.nonBounceable,
+    actualOwnerNonBounceable: actualOwner.nonBounceable,
+    expectedOwnerBounceable: expectedOwner.bounceable,
+    actualOwnerBounceable: actualOwner.bounceable,
+    expectedOwnerRaw: expectedOwner.raw,
+    actualOwnerRaw: actualOwner.raw,
+    sameOwnerRaw: sameTonAddress(expectedOwnerInput, owner.toString({ bounceable: true, testOnly: false, urlSafe: true })),
+    factoryAddressFromPrepare,
+    factoryAddressFromStateInit,
+    sameAddress: factoryAddressFromPrepare === factoryAddressFromStateInit,
+    stateInitPresent: stateInitCell.bits.length > 0,
     validUntil,
-    tonConnect,
-    note: "Sign this deployment manually in Tonkeeper/TonConnect on TON mainnet and save the tx hash."
+    value: DEPLOY_VALUE.toString()
   }, null, 2));
 }
 

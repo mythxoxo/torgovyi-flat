@@ -24,6 +24,7 @@
     "read:pool": "tsx scripts/readPoolState.ts",
     "verify:contracts": "tsx scripts/verifyContracts.ts",
     "verify:factory": "tsx scripts/verifyFactory.ts",
+    "verify:factory-address-local": "tsx scripts/verifyFactoryAddressLocal.ts",
     "verify:token-flow": "tsx scripts/verifyTokenFlow.ts",
     "verify:buyer-jettons": "tsx scripts/verifyBuyerJettons.ts",
     "index": "tsx indexer/index.ts",
