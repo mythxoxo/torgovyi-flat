@@ -37,7 +37,7 @@ export function DesktopShell({ children }: { children: ReactNode }) {
               <div className="font-display text-xl font-bold uppercase tracking-[0.08em] text-white">
                 TONK<span className="gradient-text">.MEM</span>
               </div>
-              <div className="text-[11px] tracking-[0.18em] text-[#8ba3c1]">{t.misc.mainnet}</div>
+              {t.misc.mainnet ? <div className="text-[11px] tracking-[0.18em] text-[#8ba3c1]">{t.misc.mainnet}</div> : null}
             </div>
           </Link>
 

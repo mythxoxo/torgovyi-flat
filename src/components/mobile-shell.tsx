@@ -37,7 +37,7 @@ export function MobileShell({ children }: { children: ReactNode }) {
               <div className="truncate font-display text-[16px] font-bold text-white">
                 TONK<span className="gradient-text">.MEM</span>
               </div>
-              <div className="text-[10px] tracking-[0.16em] text-[#8ba3c1]">{t.misc.mainnet}</div>
+              {t.misc.mainnet ? <div className="text-[10px] tracking-[0.16em] text-[#8ba3c1]">{t.misc.mainnet}</div> : null}
             </div>
           </Link>
           <WalletConnectButton compact />

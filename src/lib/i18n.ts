@@ -51,7 +51,7 @@ export const messages = {
     misc: {
       connect: "Подключить",
       disconnect: "Отключить",
-      mainnet: "TON mainnet",
+      mainnet: "",
       noLaunches: "Пока нет запущенных токенов. Первый запуск появится здесь после индексации.",
       nothingFound: "Ничего не найдено",
       tryAnother: "Попробуй другой запрос.",
@@ -107,7 +107,7 @@ export const messages = {
     misc: {
       connect: "Connect",
       disconnect: "Disconnect",
-      mainnet: "TON mainnet",
+      mainnet: "",
       noLaunches: "No launches yet. The first indexed token will appear here.",
       nothingFound: "Nothing found",
       tryAnother: "Try another query.",
