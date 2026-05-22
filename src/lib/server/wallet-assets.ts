@@ -98,6 +98,8 @@ export async function getWalletAssets(inputAddress: string): Promise<WalletAsset
   const tonapiUrlBase = normalizeTonapiBase(tonapiBase);
   let tonapiReason: string | undefined;
   let toncenterReason: string | undefined;
+  let tonapiAccountStatus: number | undefined;
+  let tonapiJettonsStatus: number | undefined;
   let tonBalanceNano: string | null = null;
   let jettons: WalletAssetsResponse['jettons'] = [];
   let source: WalletAssetsResponse['source'] = 'fallback';
@@ -114,6 +116,9 @@ export async function getWalletAssets(inputAddress: string): Promise<WalletAsset
           cache: 'no-store'
         })
       ]);
+
+      tonapiAccountStatus = accountRes.status;
+      tonapiJettonsStatus = jettonsRes.status;
 
       if (accountRes.ok) {
         const account = await accountRes.json();
@@ -172,7 +177,13 @@ export async function getWalletAssets(inputAddress: string): Promise<WalletAsset
   }
 
   if (!tonBalanceNano && jettons.length === 0) {
-    return makeFailure(address, tonapiReason || toncenterReason || 'assets_unavailable');
+    const reason = tonapiReason || toncenterReason || 'assets_unavailable';
+    const details = [
+      tonapiAccountStatus ? `tonapi_account_status=${tonapiAccountStatus}` : null,
+      tonapiJettonsStatus ? `tonapi_jettons_status=${tonapiJettonsStatus}` : null,
+      toncenterReason ? `toncenter_reason=${toncenterReason}` : null
+    ].filter(Boolean).join('; ');
+    return makeFailure(address, reason, details ? `${cleanFallbackMessage} (${details})` : cleanFallbackMessage);
   }
 
   return {
