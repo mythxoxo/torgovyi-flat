@@ -1,11 +1,14 @@
-export function formatTonFromNano(value: string | number | bigint | null | undefined): string {
+export function formatTonFromNano(value: string | number | bigint | null | undefined, maxFraction = 9): string {
   if (value === null || value === undefined || value === "") return "0";
   try {
     const raw = BigInt(value);
-    const whole = raw / 1_000_000_000n;
-    const fraction = raw % 1_000_000_000n;
-    const fractionText = fraction.toString().padStart(9, "0").replace(/0+$/, "").slice(0, 4);
-    return fractionText ? `${whole}.${fractionText}` : whole.toString();
+    const negative = raw < 0n;
+    const abs = negative ? -raw : raw;
+    const whole = abs / 1_000_000_000n;
+    const fraction = abs % 1_000_000_000n;
+    const fractionText = fraction.toString().padStart(9, "0").replace(/0+$/, "").slice(0, maxFraction);
+    const formatted = fractionText ? `${whole}.${fractionText}` : whole.toString();
+    return negative ? `-${formatted}` : formatted;
   } catch {
     return "0";
   }

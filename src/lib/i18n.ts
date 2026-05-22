@@ -55,7 +55,7 @@ export const messages = {
       noLaunches: "Пока нет запущенных токенов. Первый запуск появится здесь после индексации.",
       nothingFound: "Ничего не найдено",
       tryAnother: "Попробуй другой запрос.",
-      noTokensProfile: "Токены кошелька не найдены.",
+      noTokensProfile: "В этом кошельке пока нет jetton-активов.",
       loadingWallet: "Загружаю активы кошелька..."
     }
   },
@@ -111,7 +111,7 @@ export const messages = {
       noLaunches: "No launches yet. The first indexed token will appear here.",
       nothingFound: "Nothing found",
       tryAnother: "Try another query.",
-      noTokensProfile: "No wallet tokens found.",
+      noTokensProfile: "No jettons found in this wallet yet.",
       loadingWallet: "Loading wallet assets..."
     }
   }

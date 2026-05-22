@@ -21,10 +21,16 @@ export default function MarketsPage() {
   }, [tab]);
 
   const view = useMemo(() => {
-    if (tab === "gainers") {
-      return tokens.filter((token) => token.state.progress > 0);
+    if (tab === "new") {
+      return [...tokens].sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));
     }
-    return tokens;
+    if (tab === "volume") {
+      return [...tokens].sort((a, b) => (b.state.volumeTon ?? 0) - (a.state.volumeTon ?? 0));
+    }
+    if (tab === "gainers") {
+      return [...tokens].filter((token) => (token.state.volumeTon ?? 0) > 0).sort((a, b) => (b.state.progress ?? 0) - (a.state.progress ?? 0));
+    }
+    return [...tokens].sort((a, b) => ((b.state.volumeTon ?? 0) + b.trades.length) - ((a.state.volumeTon ?? 0) + a.trades.length));
   }, [tab, tokens]);
 
   const tabs = [
