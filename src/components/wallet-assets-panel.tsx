@@ -10,7 +10,7 @@ const short = (a: string) => (a ? `${a.slice(0, 6)}...${a.slice(-6)}` : "");
 export function WalletAssetsPanel() {
   const { wallet } = useWallet();
   const { t } = useUi();
-  const { data, loading } = useWalletAssets(wallet || undefined);
+  const { data, loading, errorMessage } = useWalletAssets(wallet || undefined);
 
   if (!wallet) {
     return (
@@ -36,7 +36,7 @@ export function WalletAssetsPanel() {
       </div>
 
       {loading ? <div className="text-sm text-[#8ba3c1]">{t.misc.loadingWallet}</div> : null}
-      {data?.ok === false ? <div className="text-sm text-[#8ba3c1]">{t.profile.assetsFallback}</div> : null}
+      {data?.ok === false ? <div className="text-sm text-[#8ba3c1]">{errorMessage || t.profile.assetsFallback}</div> : null}
 
       {data?.ok && data.jettons?.length ? (
         <div className="space-y-2">

@@ -8,9 +8,12 @@ export async function GET(request: NextRequest) {
   if (!address) {
     return NextResponse.json({
       ok: false,
-      reason: 'invalid_wallet_address',
-      message: 'Connect a TON wallet to view assets.',
-      tonBalanceFormatted: '—',
+      address: '',
+      source: 'fallback',
+      reason: 'invalid_address',
+      message: 'Connect a valid TON wallet.',
+      tonBalanceNano: null,
+      tonBalanceFormatted: null,
       jettons: []
     });
   }
@@ -20,9 +23,12 @@ export async function GET(request: NextRequest) {
   } catch {
     return NextResponse.json({
       ok: false,
-      reason: 'invalid_wallet_address',
-      message: 'Connect a TON wallet to view assets.',
-      tonBalanceFormatted: '—',
+      address,
+      source: 'fallback',
+      reason: 'invalid_address',
+      message: 'Invalid wallet address.',
+      tonBalanceNano: null,
+      tonBalanceFormatted: null,
       jettons: []
     });
   }
