@@ -19,7 +19,8 @@ body {
   background-image: radial-gradient(circle at top, rgba(29, 180, 255, 0.12), transparent 28%), linear-gradient(180deg, #07111d 0%, #091321 48%, #08111c 100%);
   color: white;
   overflow-x: hidden;
-  font-family: system-ui, sans-serif;
+  font-family: var(--font-geist), system-ui, sans-serif;
+  letter-spacing: -0.01em;
 }
 
 .glass-card,
@@ -57,8 +58,9 @@ body {
   background: linear-gradient(135deg, #1db4ff, #6cf2cf);
   color: #02111d;
   border-radius: 999px;
-  font-weight: 700;
-  font-size: 0.95rem;
+  font-weight: 650;
+  font-size: 0.92rem;
+  letter-spacing: -0.015em;
   padding: 0.95rem 1.35rem;
 }
 
@@ -68,6 +70,9 @@ body {
   border-radius: 999px;
   padding: 0.95rem 1.35rem;
   background: rgba(255,255,255,0.04);
+  font-weight: 560;
+  font-size: 0.92rem;
+  letter-spacing: -0.015em;
 }
 
 .badge {
@@ -102,7 +107,13 @@ body {
 .wallet-cta__fallback-label {
   color: white;
   font-size: 0.8rem;
-  font-weight: 700;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.font-display {
+  font-family: var(--font-sora), var(--font-geist), system-ui, sans-serif;
+  letter-spacing: -0.035em;
 }
 
 [data-tc-button] {
