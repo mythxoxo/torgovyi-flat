@@ -8,7 +8,7 @@ export function ReferralPanel({ referralCode, shareUrl, earnedTon, volumeTon, pe
   const app = getTelegramWebApp();
   const user = getTelegramUser();
   const hasReferral = connected && Boolean((user?.id || referralCode) && String(user?.id || referralCode).trim());
-  const refUrl = hasReferral ? `https://t.me/Myclawxyz_bot?ref=${user?.id ?? referralCode}` : "Connect wallet to generate your referral link.";
+  const refUrl = hasReferral ? `https://t.me/tonkmembot?ref=${user?.id ?? referralCode}` : "Connect wallet to generate your referral link.";
   const copy = async () => hasReferral ? navigator.clipboard.writeText(refUrl) : undefined;
   const shareRef = () => hasReferral ? app?.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(refUrl)}&text=${encodeURIComponent("TONK.MEM referral access")}`) : undefined;
 
