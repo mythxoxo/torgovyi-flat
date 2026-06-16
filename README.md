@@ -1,5 +1,7 @@
 # TONK.MEM
 
+[![ci](https://github.com/mythxoxo/torgovyi-flat/actions/workflows/ci.yml/badge.svg)](https://github.com/mythxoxo/torgovyi-flat/actions/workflows/ci.yml)
+
 Security-first TON meme token launchpad MVP.
 
 ## Current status
@@ -56,3 +58,11 @@ npm run build
 - `docs/DEPLOYMENT.md`
 - `docs/SECURITY_MODEL.md`
 - `docs/RETURN_TO_8888_TARGET.md`
+
+## Contributing
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md).
+
+## License
+
+MIT — see [LICENSE](./LICENSE).
