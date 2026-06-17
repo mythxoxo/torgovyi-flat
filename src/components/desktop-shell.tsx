@@ -43,8 +43,8 @@ export function DesktopShell({ children }: { children: ReactNode }) {
           <Link href="/" className="flex items-center gap-3">
             <Image src="/brand/logo-icon.svg" alt="GRAM" width={36} height={36} className="h-9 w-9" />
             <div>
-              <div className="font-display text-xl font-bold tracking-[-0.04em] text-[var(--gram-text)]">
-                TONS <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[#0088cc] text-[9px] font-black text-white">of</span> <span className="gradient-text">GRAM</span>
+              <div className="font-display text-xl font-extrabold tracking-[-0.035em] text-[var(--gram-text)]">
+                TONS <span className="text-[11px] font-black tracking-[0.22em] text-[#0088cc]">OF</span> <span className="gradient-text">GRAM</span>
               </div>
               {t.misc.mainnet ? <div className="text-[11px] tracking-[0.18em] text-[var(--gram-muted)]">{t.misc.mainnet}</div> : null}
             </div>
