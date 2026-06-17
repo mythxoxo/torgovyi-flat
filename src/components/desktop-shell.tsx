@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Compass, Home, Search, User } from "lucide-react";
@@ -11,13 +10,23 @@ import { useUi } from "./page-shell";
 import { getTonPrice } from "../lib/market/ton-price";
 import { LanguageSwitcher } from "./language-switcher";
 
+function HeaderWordmark() {
+  return (
+    <span className="inline-flex items-center gap-2 leading-none">
+      <span className="text-[28px] font-black tracking-[-0.08em] text-white">TONS</span>
+      <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[#c7a86b] text-[9px] font-black lowercase text-[#0a0b0d] shadow-[0_0_20px_rgba(199,168,107,0.3)]">of</span>
+      <span className="bg-gradient-to-r from-[#f1d999] via-[#c7a86b] to-[#8f6f36] bg-clip-text text-[28px] font-black tracking-[-0.08em] text-transparent">GRAM</span>
+    </span>
+  );
+}
+
 export function DesktopShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const { locale, t } = useUi();
-  const [tonPrice, setTonPrice] = useState<number | null>(null);
+  const { t } = useUi();
+  const [gramPrice, setGramPrice] = useState<number | null>(null);
 
   useEffect(() => {
-    getTonPrice().then((r) => setTonPrice(r.usd)).catch(() => setTonPrice(null));
+    getTonPrice().then((r) => setGramPrice(r.usd)).catch(() => setGramPrice(null));
   }, []);
 
   const navItems = [
@@ -28,28 +37,22 @@ export function DesktopShell({ children }: { children: ReactNode }) {
   ];
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(0,136,204,0.12),transparent_32%),linear-gradient(180deg,#07111d,#091321_48%,#08111c)] text-white">
-      <header className="sticky top-0 z-40 border-b border-white/8 bg-[#09111d]/86 backdrop-blur-xl">
+    <div className="gram-shell min-h-screen text-white">
+      <header className="sticky top-0 z-40 border-b border-white/8 bg-[#0a0b0d]/84 backdrop-blur-2xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4">
-          <Link href="/" className="flex items-center gap-3">
-            <Image src="/brand/logo-icon.svg" alt="TONK.MEM" width={36} height={36} className="h-9 w-9" />
-            <div>
-              <div className="font-display text-xl font-bold uppercase tracking-[0.08em] text-white">
-                TONK<span className="gradient-text">.MEM</span>
-              </div>
-              {t.misc.mainnet ? <div className="text-[11px] tracking-[0.18em] text-[#8ba3c1]">{t.misc.mainnet}</div> : null}
-            </div>
+          <Link href="/" className="flex items-center">
+            <HeaderWordmark />
           </Link>
 
-          <nav className="flex items-center gap-2 rounded-full border border-white/8 bg-white/5 p-1.5">
+          <nav className="flex items-center gap-1.5 rounded-[20px] border border-white/8 bg-white/[0.035] p-1.5 shadow-[0_18px_55px_rgba(0,0,0,0.24)]">
             {navItems.map(({ href, label, icon: Icon }) => {
               const active = pathname === href;
               return (
                 <Link
                   key={href}
                   href={href}
-                  className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition ${
-                    active ? "bg-white text-black" : "text-[#c7d5e8] hover:bg-white/8 hover:text-white"
+                  className={`inline-flex items-center gap-2 rounded-[15px] px-4 py-2.5 text-sm font-semibold transition ${
+                    active ? "bg-[#c7a86b] text-[#0a0b0d] shadow-[0_12px_30px_rgba(199,168,107,0.22)]" : "text-[#9ea6b2] hover:bg-white/8 hover:text-white"
                   }`}
                 >
                   <Icon className="h-4 w-4" />
@@ -60,14 +63,12 @@ export function DesktopShell({ children }: { children: ReactNode }) {
           </nav>
 
           <div className="flex items-center gap-3">
-            {tonPrice ? (
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/8 bg-white/5 px-3 py-2 text-xs text-[#c7d5e8]">
-                TON ${tonPrice.toFixed(2)}
+            {gramPrice ? (
+              <div className="gram-chip">
+                GRAM ${gramPrice.toFixed(2)}
               </div>
             ) : (
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/8 bg-white/5 px-3 py-2 text-xs text-[#c7d5e8]">
-                {t.misc.mainnet}
-              </div>
+              <div className="gram-chip">{t.misc.mainnet}</div>
             )}
             <LanguageSwitcher />
             <WalletConnectButton />

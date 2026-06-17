@@ -6,23 +6,23 @@ export const messages = {
   ru: {
     nav: { home: "Главная", search: "Поиск", markets: "Рынки", profile: "Профиль" },
     home: {
-      title: "Запускай TON-мемы без лишнего шума.",
+      title: "Запусти токен. Пусть рынок решит.",
       subtitle:
-        "TONK.MEM — launchpad для токенов на TON: старт через кошелёк, тестовый режим на 5 TON и основная модель на 8888 TON.",
-      ctaTokens: "Смотреть токены",
-      launchTest: "Запуск 5 TON",
-      launchMain: "Запуск 8888 TON",
-      modeTest: "Тестовый запуск — 5 TON",
-      modeMain: "Основной запуск — 8888 TON",
-      note: "5 TON — для проверки механики. 8888 TON — основная модель запуска.",
-      launchesTitle: "Последние запуски"
+        "Создай запуск, подпиши транзакции кошельком и следи за прогрессом в ленте. Публичный старт — 8888 GRAM.",
+      ctaTokens: "Смотреть рынки",
+      launchTest: "Внутренний тест",
+      launchMain: "Запуск 8888 GRAM",
+      modeTest: "Внутренний тест",
+      modeMain: "Публичный запуск",
+      note: "Публичный запуск — 8888 GRAM. 5 GRAM — внутренний тестовый режим.",
+      launchesTitle: "Живая лента запусков"
     },
     create: {
       title: "Создать токен",
-      subtitle: "Выбери режим запуска и подготовь транзакции через свой кошелёк.",
-      modeTitle: "Выбери режим запуска",
-      modeTest: "5 TON — тестовый запуск",
-      modeMain: "8888 TON — основная модель",
+      subtitle: "Подготовь запуск и подпиши транзакции через свой кошелёк.",
+      modeTitle: "Режим запуска",
+      modeTest: "5 GRAM — внутренний тест",
+      modeMain: "8888 GRAM — публичный запуск",
       signed: "Транзакции подписываются только через твой кошелёк."
     },
     search: {
@@ -51,7 +51,7 @@ export const messages = {
     misc: {
       connect: "Подключить",
       disconnect: "Отключить",
-      mainnet: "",
+      mainnet: "GRAM mainnet",
       noLaunches: "Пока нет запущенных токенов. Первый запуск появится здесь после индексации.",
       nothingFound: "Ничего не найдено",
       tryAnother: "Попробуй другой запрос.",
@@ -62,23 +62,23 @@ export const messages = {
   en: {
     nav: { home: "Home", search: "Search", markets: "Markets", profile: "Profile" },
     home: {
-      title: "Launch TON memes without the noise.",
+      title: "Launch the token. Let the market decide.",
       subtitle:
-        "TONK.MEM is a TON launchpad for wallet-first token launches, test runs at 5 TON and the main launch model at 8888 TON.",
-      ctaTokens: "Explore tokens",
-      launchTest: "Launch 5 TON",
-      launchMain: "Launch 8888 TON",
-      modeTest: "Test launch — 5 TON",
-      modeMain: "Main launch — 8888 TON",
-      note: "5 TON is for testing mechanics. 8888 TON is the main launch model.",
-      launchesTitle: "Latest launches"
+        "Create the launch, sign with your wallet, and track progress in the live feed. Public launch starts at 8888 GRAM.",
+      ctaTokens: "View markets",
+      launchTest: "Internal test",
+      launchMain: "Launch 8888 GRAM",
+      modeTest: "Internal test",
+      modeMain: "Public launch",
+      note: "Public launch starts at 8888 GRAM. 5 GRAM is an internal test mode.",
+      launchesTitle: "Live launch feed"
     },
     create: {
       title: "Create token",
-      subtitle: "Choose a launch mode and prepare transactions with your wallet.",
-      modeTitle: "Choose launch mode",
-      modeTest: "5 TON — test launch",
-      modeMain: "8888 TON — main model",
+      subtitle: "Prepare the launch and sign transactions with your wallet.",
+      modeTitle: "Launch mode",
+      modeTest: "5 GRAM — internal test",
+      modeMain: "8888 GRAM — public launch",
       signed: "Transactions are signed only by your wallet."
     },
     search: {
@@ -107,7 +107,7 @@ export const messages = {
     misc: {
       connect: "Connect",
       disconnect: "Disconnect",
-      mainnet: "",
+      mainnet: "GRAM mainnet",
       noLaunches: "No launches yet. The first indexed token will appear here.",
       nothingFound: "Nothing found",
       tryAnother: "Try another query.",
