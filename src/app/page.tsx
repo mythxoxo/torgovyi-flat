@@ -34,8 +34,8 @@ export default function HomePage() {
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-7 text-[#d3dfef]">{t.home.subtitle}</p>
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-            <Link href="/create?target=8888" className="rounded-full bg-[linear-gradient(135deg,#5ac8fa,#2aabee_52%,#229ed9)] px-6 py-3 text-center text-sm font-bold text-[#06101a] shadow-[0_16px_36px_rgba(42,171,238,0.26)]">{t.home.launchMain}</Link>
-            <Link href="/markets" className="btn-secondary text-center text-white">{t.home.ctaTokens}</Link>
+            <Link href="/create?target=8888" className="rounded-full bg-[linear-gradient(135deg,#5ac8fa,#2aabee_52%,#229ed9)] px-6 py-3 text-center text-[15px] font-semibold tracking-[-0.01em] text-[#06101a] shadow-[0_16px_36px_rgba(42,171,238,0.26)]">{t.home.launchMain}</Link>
+            <Link href="/markets" className="rounded-full border border-[#5ac8fa]/25 bg-[#2aabee]/8 px-6 py-3 text-center text-[15px] font-semibold tracking-[-0.01em] text-white">{t.home.ctaTokens}</Link>
           </div>
         </div>
         <div className="mt-6 grid gap-3 md:grid-cols-2">
