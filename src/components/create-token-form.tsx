@@ -12,6 +12,8 @@ import { WalletConnectButton } from "./wallet-connect-button";
 import { getTelegramWebApp } from "../lib/telegram";
 import { useUi } from "./page-shell";
 
+const primaryButtonClass = "rounded-full bg-[linear-gradient(135deg,#5ac8fa,#2aabee_52%,#229ed9)] px-6 py-3 text-center text-[15px] font-semibold tracking-[-0.01em] text-[#06101a] shadow-[0_16px_36px_rgba(42,171,238,0.26)]";
+
 export function CreateTokenForm() {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -166,11 +168,11 @@ export function CreateTokenForm() {
       {error ? <div className="rounded-2xl border border-[#5ac8fa]/20 bg-[#5ac8fa]/10 px-4 py-3 text-sm text-[#c6e8ff]">{error}</div> : null}
 
       <div>
-        <button onClick={handleLaunch} disabled={!isValid || loading || uploadingImage || !wallet} className="btn-primary flex w-full items-center justify-center text-center disabled:cursor-not-allowed disabled:opacity-40">{loading ? (locale === "ru" ? "Подготавливаю launch транзакции..." : "Preparing launch transactions...") : (locale === "ru" ? "Подготовить launch транзакции" : "Prepare launch transactions")}</button>
+        <button onClick={handleLaunch} disabled={!isValid || loading || uploadingImage || !wallet} className={`${primaryButtonClass} flex w-full items-center justify-center disabled:cursor-not-allowed disabled:opacity-40`}>{loading ? (locale === "ru" ? "Подготавливаю launch транзакции..." : "Preparing launch transactions...") : (locale === "ru" ? "Подготовить launch транзакции" : "Prepare launch transactions")}</button>
         <p className="mt-3 text-center text-sm text-[#8ba3c1]">{locale === "ru" ? "Ты подпишешь каждую транзакцию вручную в TonConnect / Tonkeeper. Без backend custody." : "You will sign every transaction manually in TonConnect / Tonkeeper. No backend custody."}</p>
       </div>
 
-      {successUrl ? <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 px-4"><div className="glass-card w-full max-w-md p-6 text-center"><h2 className="font-display text-2xl font-bold text-white">{locale === "ru" ? "Launch транзакции подготовлены" : "Launch transactions prepared"}</h2><p className="mt-3 text-sm text-[#8ba3c1]">{locale === "ru" ? "Теперь дождись подтверждения индексера после подписанных транзакций. Fake deploy status не показывается." : "Now wait for indexer confirmation after signed transactions. No fake deploy state is shown before that."}</p><div className="mt-5 flex gap-3"><Link href={successUrl} className="btn-primary flex-1 text-center">{locale === "ru" ? "Мои токены" : "My tokens"}</Link></div></div></div> : null}
+      {successUrl ? <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 px-4"><div className="glass-card w-full max-w-md p-6 text-center"><h2 className="font-display text-2xl font-bold text-white">{locale === "ru" ? "Launch транзакции подготовлены" : "Launch transactions prepared"}</h2><p className="mt-3 text-sm text-[#8ba3c1]">{locale === "ru" ? "Теперь дождись подтверждения индексера после подписанных транзакций. Fake deploy status не показывается." : "Now wait for indexer confirmation after signed transactions. No fake deploy state is shown before that."}</p><div className="mt-5 flex gap-3"><Link href={successUrl} className={`${primaryButtonClass} flex-1`}>{locale === "ru" ? "Мои токены" : "My tokens"}</Link></div></div></div> : null}
     </div>
   );
 }
