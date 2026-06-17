@@ -6,23 +6,23 @@ export const messages = {
   ru: {
     nav: { home: "Главная", search: "Поиск", markets: "Рынки", profile: "Профиль" },
     home: {
-      title: "Запускай TON-мемы без лишнего шума.",
+      title: "Запускай GRAM-мемы без шума.",
       subtitle:
-        "TONK.MEM — launchpad для токенов на TON: старт через кошелёк, тестовый режим на 5 TON и основная модель на 8888 TON.",
+        "TONS of GRAM — wallet-first launchpad для мем-токенов: тестовый запуск на 5 GRAM и основная модель на 8888 GRAM.",
       ctaTokens: "Смотреть токены",
-      launchTest: "Запуск 5 TON",
-      launchMain: "Запуск 8888 TON",
-      modeTest: "Тестовый запуск — 5 TON",
-      modeMain: "Основной запуск — 8888 TON",
-      note: "5 TON — для проверки механики. 8888 TON — основная модель запуска.",
-      launchesTitle: "Последние запуски"
+      launchTest: "Запуск 5 GRAM",
+      launchMain: "Запуск 8888 GRAM",
+      modeTest: "Тестовый запуск",
+      modeMain: "Основной запуск",
+      note: "5 GRAM — быстрый публичный тест механики. 8888 GRAM — основная модель запуска.",
+      launchesTitle: "Launchpad feed"
     },
     create: {
       title: "Создать токен",
       subtitle: "Выбери режим запуска и подготовь транзакции через свой кошелёк.",
       modeTitle: "Выбери режим запуска",
-      modeTest: "5 TON — тестовый запуск",
-      modeMain: "8888 TON — основная модель",
+      modeTest: "5 GRAM — тестовый запуск",
+      modeMain: "8888 GRAM — основная модель",
       signed: "Транзакции подписываются только через твой кошелёк."
     },
     search: {
@@ -51,7 +51,7 @@ export const messages = {
     misc: {
       connect: "Подключить",
       disconnect: "Отключить",
-      mainnet: "",
+      mainnet: "GRAM mainnet",
       noLaunches: "Пока нет запущенных токенов. Первый запуск появится здесь после индексации.",
       nothingFound: "Ничего не найдено",
       tryAnother: "Попробуй другой запрос.",
@@ -62,23 +62,23 @@ export const messages = {
   en: {
     nav: { home: "Home", search: "Search", markets: "Markets", profile: "Profile" },
     home: {
-      title: "Launch TON memes without the noise.",
+      title: "Launch GRAM memes without the noise.",
       subtitle:
-        "TONK.MEM is a TON launchpad for wallet-first token launches, test runs at 5 TON and the main launch model at 8888 TON.",
+        "TONS of GRAM is a wallet-first launchpad for meme tokens: test launches at 5 GRAM and the main launch model at 8888 GRAM.",
       ctaTokens: "Explore tokens",
-      launchTest: "Launch 5 TON",
-      launchMain: "Launch 8888 TON",
-      modeTest: "Test launch — 5 TON",
-      modeMain: "Main launch — 8888 TON",
-      note: "5 TON is for testing mechanics. 8888 TON is the main launch model.",
-      launchesTitle: "Latest launches"
+      launchTest: "Launch 5 GRAM",
+      launchMain: "Launch 8888 GRAM",
+      modeTest: "Test launch",
+      modeMain: "Main launch",
+      note: "5 GRAM is a fast public mechanics test. 8888 GRAM is the main launch model.",
+      launchesTitle: "Launchpad feed"
     },
     create: {
       title: "Create token",
       subtitle: "Choose a launch mode and prepare transactions with your wallet.",
       modeTitle: "Choose launch mode",
-      modeTest: "5 TON — test launch",
-      modeMain: "8888 TON — main model",
+      modeTest: "5 GRAM — test launch",
+      modeMain: "8888 GRAM — main model",
       signed: "Transactions are signed only by your wallet."
     },
     search: {
@@ -107,7 +107,7 @@ export const messages = {
     misc: {
       connect: "Connect",
       disconnect: "Disconnect",
-      mainnet: "",
+      mainnet: "GRAM mainnet",
       noLaunches: "No launches yet. The first indexed token will appear here.",
       nothingFound: "Nothing found",
       tryAnother: "Try another query.",
