@@ -6,9 +6,9 @@ export const messages = {
   ru: {
     nav: { home: "Главная", search: "Поиск", markets: "Рынки", profile: "Профиль" },
     home: {
-      title: "Запускай GRAM-мемы без шума.",
+      title: "Старт токена за пару кликов.",
       subtitle:
-        "TONS of GRAM — wallet-first launchpad для мем-токенов: тестовый запуск на 5 GRAM и основная модель на 8888 GRAM.",
+        "Выбери режим запуска: 5 GRAM для проверки механики или 8888 GRAM для полного старта. Подпись только через кошелёк.",
       ctaTokens: "Смотреть токены",
       launchTest: "Запуск 5 GRAM",
       launchMain: "Запуск 8888 GRAM",
@@ -62,9 +62,9 @@ export const messages = {
   en: {
     nav: { home: "Home", search: "Search", markets: "Markets", profile: "Profile" },
     home: {
-      title: "Launch GRAM memes without the noise.",
+      title: "Launch a token in a few taps.",
       subtitle:
-        "TONS of GRAM is a wallet-first launchpad for meme tokens: test launches at 5 GRAM and the main launch model at 8888 GRAM.",
+        "Choose a launch mode: 5 GRAM to test the mechanics or 8888 GRAM for the full start. Wallet signature only.",
       ctaTokens: "Explore tokens",
       launchTest: "Launch 5 GRAM",
       launchMain: "Launch 8888 GRAM",
