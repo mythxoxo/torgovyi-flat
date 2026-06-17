@@ -2,8 +2,16 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: dark;
-  --grad-primary: linear-gradient(135deg, #1db4ff, #6cf2cf);
+  color-scheme: light dark;
+  --gram-blue: #0088cc;
+  --gram-blue-2: #229ed9;
+  --gram-blue-3: #2aabee;
+  --gram-bg: #07111d;
+  --gram-surface: #0f1724;
+  --gram-card: #111b2c;
+  --gram-text: #ffffff;
+  --gram-muted: #8ba3c1;
+  --grad-primary: linear-gradient(135deg, #0088cc, #229ed9);
   --grad-card: linear-gradient(180deg, #101a2b 0%, #0a111d 100%);
 }
 
@@ -15,31 +23,60 @@ body {
 
 body {
   min-height: 100vh;
-  background-color: #07111d;
-  background-image: radial-gradient(circle at top, rgba(29, 180, 255, 0.12), transparent 28%), linear-gradient(180deg, #07111d 0%, #091321 48%, #08111c 100%);
-  color: white;
+  background-color: var(--gram-bg);
+  color: var(--gram-text);
   overflow-x: hidden;
   font-family: var(--font-geist), system-ui, sans-serif;
   letter-spacing: -0.01em;
 }
 
+.theme-dark {
+  --gram-bg: #07111d;
+  --gram-surface: #0f1724;
+  --gram-card: #111b2c;
+  --gram-text: #ffffff;
+  --gram-muted: #8ba3c1;
+  --gram-border: rgba(125, 211, 252, 0.14);
+  --gram-soft: rgba(0, 136, 204, 0.12);
+}
+
+.theme-light {
+  --gram-bg: #f4f7fb;
+  --gram-surface: #ffffff;
+  --gram-card: #ffffff;
+  --gram-text: #111827;
+  --gram-muted: #64748b;
+  --gram-border: rgba(0, 136, 204, 0.14);
+  --gram-soft: rgba(0, 136, 204, 0.08);
+}
+
+.theme-light,
+.theme-light body {
+  color: #111827;
+}
+
 .glass-card,
 .card,
 .card-surface {
-  background: rgba(15, 24, 39, 0.82);
+  background: var(--gram-card);
   backdrop-filter: blur(14px);
-  border: 1px solid rgba(125, 211, 252, 0.14);
+  border: 1px solid var(--gram-border);
   border-radius: 24px;
 }
 
 .input-field {
-  @apply w-full rounded-2xl border px-4 py-3.5 text-sm text-white transition-colors placeholder:text-[#8ba3c1] focus:outline-none;
-  background: #111b2c;
-  border-color: rgba(125, 211, 252, 0.16);
+  @apply w-full rounded-2xl border px-4 py-3.5 text-sm transition-colors focus:outline-none;
+  background: var(--gram-card);
+  border-color: var(--gram-border);
+  color: var(--gram-text);
+}
+
+.input-field::placeholder {
+  color: var(--gram-muted);
 }
 
 .input-field:focus {
-  border-color: #1db4ff;
+  border-color: var(--gram-blue-2);
 }
 
 .scrollbar-none {
@@ -49,14 +86,14 @@ body {
 .scrollbar-none::-webkit-scrollbar { display: none; }
 
 .gradient-text {
-  @apply bg-gradient-to-r from-[#1db4ff] to-[#6cf2cf] bg-clip-text text-transparent;
+  @apply bg-gradient-to-r from-[#0088cc] to-[#229ed9] bg-clip-text text-transparent;
 }
 
 .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
 
 .btn-primary {
-  background: linear-gradient(135deg, #1db4ff, #6cf2cf);
-  color: #02111d;
+  background: var(--grad-primary);
+  color: white;
   border-radius: 999px;
   font-weight: 650;
   font-size: 0.92rem;
@@ -65,11 +102,11 @@ body {
 }
 
 .btn-secondary {
-  border: 1px solid rgba(125, 211, 252, 0.2);
-  color: #e7f5ff;
+  border: 1px solid var(--gram-border);
+  color: var(--gram-text);
   border-radius: 999px;
   padding: 0.95rem 1.35rem;
-  background: rgba(255,255,255,0.04);
+  background: var(--gram-soft);
   font-weight: 560;
   font-size: 0.92rem;
   letter-spacing: -0.015em;
@@ -88,10 +125,10 @@ body {
   align-items: center;
   gap: 0.65rem;
   border-radius: 999px;
-  border: 1px solid rgba(125, 211, 252, 0.18);
-  background: linear-gradient(135deg, rgba(29,180,255,0.18), rgba(108,242,207,0.18));
+  border: 1px solid var(--gram-border);
+  background: var(--gram-soft);
   padding: 0.35rem 0.8rem 0.35rem 0.7rem;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.22);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
 }
 
 .wallet-cta--compact {
@@ -101,11 +138,11 @@ body {
 .wallet-cta__icon {
   height: 0.95rem;
   width: 0.95rem;
-  color: #dff8ff;
+  color: var(--gram-blue-2);
 }
 
 .wallet-cta__fallback-label {
-  color: white;
+  color: var(--gram-text);
   font-size: 0.8rem;
   font-weight: 650;
   letter-spacing: -0.01em;
@@ -120,7 +157,7 @@ body {
   background: transparent !important;
   border: 0 !important;
   border-radius: 999px !important;
-  color: white !important;
+  color: var(--gram-text) !important;
   font-size: 0.85rem !important;
   height: 36px !important;
   min-width: auto !important;
