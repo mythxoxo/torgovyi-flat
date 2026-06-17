@@ -1,0 +1,24 @@
+<svg width="1024" height="180" viewBox="0 0 1024 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gram" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#20D8FF"/>
+      <stop offset="0.48" stop-color="#0098EA"/>
+      <stop offset="1" stop-color="#006BFF"/>
+    </linearGradient>
+    <filter id="dotGlow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <style>
+      .word { font-family: Inter, Montserrat, Arial Black, Arial, sans-serif; font-weight: 950; letter-spacing: -5px; }
+      .of { font-family: Inter, Montserrat, Arial, sans-serif; font-weight: 900; letter-spacing: -0.8px; }
+    </style>
+  </defs>
+  <text class="word" x="20" y="118" font-size="92" fill="#F8FBFF">TONS</text>
+  <circle cx="392" cy="88" r="22" fill="url(#gram)" filter="url(#dotGlow)"/>
+  <text class="of" x="392" y="95" font-size="16" text-anchor="middle" fill="#FFFFFF">of</text>
+  <text class="word" x="430" y="118" font-size="92" fill="url(#gram)">GRAM</text>
+</svg>
