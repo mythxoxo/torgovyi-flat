@@ -14,8 +14,8 @@ function HeaderWordmark() {
   return (
     <span className="inline-flex items-center gap-2 leading-none">
       <span className="text-[28px] font-black tracking-[-0.08em] text-white">TONS</span>
-      <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[#0098ea] text-[9px] font-black lowercase text-white shadow-[0_0_20px_rgba(0,152,234,0.58)]">of</span>
-      <span className="bg-gradient-to-r from-[#20d8ff] via-[#0098ea] to-[#006bff] bg-clip-text text-[28px] font-black tracking-[-0.08em] text-transparent">GRAM</span>
+      <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[#c7a86b] text-[9px] font-black lowercase text-[#0a0b0d] shadow-[0_0_20px_rgba(199,168,107,0.3)]">of</span>
+      <span className="bg-gradient-to-r from-[#f1d999] via-[#c7a86b] to-[#8f6f36] bg-clip-text text-[28px] font-black tracking-[-0.08em] text-transparent">GRAM</span>
     </span>
   );
 }
@@ -38,7 +38,7 @@ export function DesktopShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="gram-shell min-h-screen text-white">
-      <header className="sticky top-0 z-40 border-b border-white/8 bg-[#050b16]/82 backdrop-blur-2xl">
+      <header className="sticky top-0 z-40 border-b border-white/8 bg-[#0a0b0d]/84 backdrop-blur-2xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4">
           <Link href="/" className="flex items-center">
             <HeaderWordmark />
@@ -52,7 +52,7 @@ export function DesktopShell({ children }: { children: ReactNode }) {
                   key={href}
                   href={href}
                   className={`inline-flex items-center gap-2 rounded-[15px] px-4 py-2.5 text-sm font-semibold transition ${
-                    active ? "bg-[#0098ea] text-white shadow-[0_12px_30px_rgba(0,152,234,0.28)]" : "text-[#aebdd0] hover:bg-white/8 hover:text-white"
+                    active ? "bg-[#c7a86b] text-[#0a0b0d] shadow-[0_12px_30px_rgba(199,168,107,0.22)]" : "text-[#9ea6b2] hover:bg-white/8 hover:text-white"
                   }`}
                 >
                   <Icon className="h-4 w-4" />
