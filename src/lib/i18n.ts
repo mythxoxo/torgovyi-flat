@@ -1,4 +1,4 @@
-export type Locale = "ru" | "en";
+export type Locale = "ru";
 
 export const defaultLocale: Locale = "ru";
 
@@ -6,23 +6,23 @@ export const messages = {
   ru: {
     nav: { home: "Главная", search: "Поиск", markets: "Рынки", profile: "Профиль" },
     home: {
-      title: "Старт токена за пару кликов.",
+      title: "Запусти токен. Пусть рынок решит.",
       subtitle:
-        "Выбери режим запуска: 5 GRAM для проверки механики или 8888 GRAM для полного старта. Подпись только через кошелёк.",
-      ctaTokens: "Смотреть токены",
-      launchTest: "Запуск 5 GRAM",
+        "Создай запуск, подпиши транзакции кошельком и следи за прогрессом в ленте. Публичный старт — 8888 GRAM.",
+      ctaTokens: "Смотреть рынки",
+      launchTest: "Внутренний тест",
       launchMain: "Запуск 8888 GRAM",
-      modeTest: "Тестовый запуск",
-      modeMain: "Основной запуск",
-      note: "5 GRAM — быстрый публичный тест механики. 8888 GRAM — основная модель запуска.",
-      launchesTitle: "Launchpad feed"
+      modeTest: "Внутренний тест",
+      modeMain: "Публичный запуск",
+      note: "Публичный запуск — 8888 GRAM. 5 GRAM — внутренний тестовый режим.",
+      launchesTitle: "Живая лента запусков"
     },
     create: {
       title: "Создать токен",
-      subtitle: "Выбери режим запуска и подготовь транзакции через свой кошелёк.",
-      modeTitle: "Выбери режим запуска",
-      modeTest: "5 GRAM — тестовый запуск",
-      modeMain: "8888 GRAM — основная модель",
+      subtitle: "Подготовь запуск и подпиши транзакции через свой кошелёк.",
+      modeTitle: "Режим запуска",
+      modeTest: "5 GRAM — внутренний тест",
+      modeMain: "8888 GRAM — публичный запуск",
       signed: "Транзакции подписываются только через твой кошелёк."
     },
     search: {
@@ -62,23 +62,23 @@ export const messages = {
   en: {
     nav: { home: "Home", search: "Search", markets: "Markets", profile: "Profile" },
     home: {
-      title: "Launch a token in a few taps.",
+      title: "Launch the token. Let the market decide.",
       subtitle:
-        "Choose a launch mode: 5 GRAM to test the mechanics or 8888 GRAM for the full start. Wallet signature only.",
-      ctaTokens: "Explore tokens",
-      launchTest: "Launch 5 GRAM",
+        "Create the launch, sign with your wallet, and track progress in the live feed. Public launch starts at 8888 GRAM.",
+      ctaTokens: "View markets",
+      launchTest: "Internal test",
       launchMain: "Launch 8888 GRAM",
-      modeTest: "Test launch",
-      modeMain: "Main launch",
-      note: "5 GRAM is a fast public mechanics test. 8888 GRAM is the main launch model.",
-      launchesTitle: "Launchpad feed"
+      modeTest: "Internal test",
+      modeMain: "Public launch",
+      note: "Public launch starts at 8888 GRAM. 5 GRAM is an internal test mode.",
+      launchesTitle: "Live launch feed"
     },
     create: {
       title: "Create token",
-      subtitle: "Choose a launch mode and prepare transactions with your wallet.",
-      modeTitle: "Choose launch mode",
-      modeTest: "5 GRAM — test launch",
-      modeMain: "8888 GRAM — main model",
+      subtitle: "Prepare the launch and sign transactions with your wallet.",
+      modeTitle: "Launch mode",
+      modeTest: "5 GRAM — internal test",
+      modeMain: "8888 GRAM — public launch",
       signed: "Transactions are signed only by your wallet."
     },
     search: {
