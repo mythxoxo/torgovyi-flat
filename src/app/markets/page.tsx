@@ -42,12 +42,12 @@ export default function MarketsPage() {
 
   return (
     <div className="space-y-6 pb-24">
-      <section className="rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,rgba(12,20,34,0.96),rgba(8,14,24,0.98))] p-6 shadow-[0_20px_60px_rgba(0,0,0,0.22)]">
-        <p className="text-xs uppercase tracking-[0.22em] text-[#7dd3fc]">
+      <section className="rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,rgba(23,33,43,0.96),rgba(14,22,33,0.98))] p-6 shadow-[0_20px_60px_rgba(0,0,0,0.22)]">
+        <p className="text-xs uppercase tracking-[0.22em] text-[#5ac8fa]">
           {locale === "ru" ? "Рынки" : "Markets"}
         </p>
         <h1 className="mt-2 font-display text-3xl font-bold text-white sm:text-4xl">
-          {locale === "ru" ? "Рынки TONK.MEM" : "TONK.MEM markets"}
+          {locale === "ru" ? "Рынки TONS of GRAM" : "TONS of GRAM markets"}
         </h1>
         <p className="mt-3 max-w-2xl text-sm leading-7 text-[#c6d4ea]">
           {locale === "ru"
@@ -62,8 +62,8 @@ export default function MarketsPage() {
               onClick={() => setTab(item.id)}
               className={`rounded-full px-4 py-2 text-sm transition ${
                 tab === item.id
-                  ? "bg-white text-black"
-                  : "border border-white/10 bg-white/5 text-[#c6d4ea] hover:bg-white/10"
+                  ? "bg-[#2aabee] text-[#06101a]"
+                  : "border border-white/10 bg-white/5 text-[#c6d4ea] hover:bg-[#2aabee]/10"
               }`}
             >
               {locale === "ru" ? item.ru : item.en}
