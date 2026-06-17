@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
@@ -10,6 +9,16 @@ import { WalletConnectButton } from "./wallet-connect-button";
 import { getTonPrice } from "../lib/market/ton-price";
 import { useUi } from "./page-shell";
 import { LanguageSwitcher } from "./language-switcher";
+
+function HeaderWordmark({ compact = false }: { compact?: boolean }) {
+  return (
+    <span className="inline-flex items-center gap-1.5 leading-none">
+      <span className={`${compact ? "text-[19px]" : "text-[22px]"} font-black tracking-[-0.08em] text-white`}>TONS</span>
+      <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[#0098ea] text-[8px] font-black lowercase text-white shadow-[0_0_18px_rgba(0,152,234,0.55)]">of</span>
+      <span className={`${compact ? "text-[19px]" : "text-[22px]"} bg-gradient-to-r from-[#20d8ff] via-[#0098ea] to-[#006bff] bg-clip-text font-black tracking-[-0.08em] text-transparent`}>GRAM</span>
+    </span>
+  );
+}
 
 export function MobileShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -32,14 +41,7 @@ export function MobileShell({ children }: { children: ReactNode }) {
       <header className="sticky top-0 z-40 border-b border-white/8 bg-[#050b16]/90 px-4 py-3 backdrop-blur-2xl">
         <div className="flex items-center justify-between gap-3">
           <Link href="/" className="flex min-w-0 items-center">
-            <Image
-              src="/brand/tons-of-gram-header.svg"
-              alt="TONS of GRAM"
-              width={210}
-              height={38}
-              priority
-              className="h-[34px] w-auto max-w-[188px] object-contain"
-            />
+            <HeaderWordmark compact />
           </Link>
           <WalletConnectButton compact />
         </div>
