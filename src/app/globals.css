@@ -55,6 +55,31 @@ body {
   color: #111827;
 }
 
+.theme-light .text-white {
+  color: #111827 !important;
+}
+
+.theme-light [class*="text-[#c6d4ea]"],
+.theme-light [class*="text-[#8ba3c1]"],
+.theme-light [class*="text-[#c7d5e8]"] {
+  color: #64748b !important;
+}
+
+.theme-light [class*="border-white/10"],
+.theme-light [class*="border-white/8"] {
+  border-color: #dbe8f4 !important;
+}
+
+.theme-light [class*="bg-white/5"] {
+  background-color: rgba(255, 255, 255, 0.72) !important;
+}
+
+.theme-light [class*="bg-[#1a2235]"],
+.theme-light [class*="bg-[#111b2c]"],
+.theme-light [class*="bg-[#0b1325]"] {
+  background-color: #ffffff !important;
+}
+
 .glass-card,
 .card,
 .card-surface {
