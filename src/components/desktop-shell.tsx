@@ -13,11 +13,11 @@ import { LanguageSwitcher } from "./language-switcher";
 
 export function DesktopShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const { locale, t } = useUi();
-  const [tonPrice, setTonPrice] = useState<number | null>(null);
+  const { t } = useUi();
+  const [gramPrice, setGramPrice] = useState<number | null>(null);
 
   useEffect(() => {
-    getTonPrice().then((r) => setTonPrice(r.usd)).catch(() => setTonPrice(null));
+    getTonPrice().then((r) => setGramPrice(r.usd)).catch(() => setGramPrice(null));
   }, []);
 
   const navItems = [
@@ -28,14 +28,14 @@ export function DesktopShell({ children }: { children: ReactNode }) {
   ];
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(0,136,204,0.12),transparent_32%),linear-gradient(180deg,#07111d,#091321_48%,#08111c)] text-white">
-      <header className="sticky top-0 z-40 border-b border-white/8 bg-[#09111d]/86 backdrop-blur-xl">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(42,171,238,0.16),transparent_32%),linear-gradient(180deg,#0e1621,#101923_48%,#0b111a)] text-white">
+      <header className="sticky top-0 z-40 border-b border-white/8 bg-[#0e1621]/86 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4">
           <Link href="/" className="flex items-center gap-3">
-            <Image src="/brand/logo-icon.svg" alt="TONK.MEM" width={36} height={36} className="h-9 w-9" />
+            <Image src="/brand/logo-icon.svg" alt="GRAM" width={36} height={36} className="h-9 w-9" />
             <div>
-              <div className="font-display text-xl font-bold uppercase tracking-[0.08em] text-white">
-                TONK<span className="gradient-text">.MEM</span>
+              <div className="font-display text-xl font-bold tracking-[-0.04em] text-white">
+                TONS <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[#2aabee] text-[9px] font-black text-white">of</span> <span className="gradient-text">GRAM</span>
               </div>
               {t.misc.mainnet ? <div className="text-[11px] tracking-[0.18em] text-[#8ba3c1]">{t.misc.mainnet}</div> : null}
             </div>
@@ -49,7 +49,7 @@ export function DesktopShell({ children }: { children: ReactNode }) {
                   key={href}
                   href={href}
                   className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition ${
-                    active ? "bg-white text-black" : "text-[#c7d5e8] hover:bg-white/8 hover:text-white"
+                    active ? "bg-[#2aabee] text-[#06101a]" : "text-[#c7d5e8] hover:bg-white/8 hover:text-white"
                   }`}
                 >
                   <Icon className="h-4 w-4" />
@@ -60,9 +60,9 @@ export function DesktopShell({ children }: { children: ReactNode }) {
           </nav>
 
           <div className="flex items-center gap-3">
-            {tonPrice ? (
+            {gramPrice ? (
               <div className="inline-flex items-center gap-2 rounded-full border border-white/8 bg-white/5 px-3 py-2 text-xs text-[#c7d5e8]">
-                TON ${tonPrice.toFixed(2)}
+                GRAM ${gramPrice.toFixed(2)}
               </div>
             ) : (
               <div className="inline-flex items-center gap-2 rounded-full border border-white/8 bg-white/5 px-3 py-2 text-xs text-[#c7d5e8]">
