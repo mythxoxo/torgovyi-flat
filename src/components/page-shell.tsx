@@ -20,7 +20,7 @@ const UiContext = createContext<UiContextValue>({
 
 export const useUi = () => useContext(UiContext);
 
-const COOKIE_NAME = "tonk-locale";
+const COOKIE_NAME = "gram-locale";
 
 export function PageShell({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>(defaultLocale);
