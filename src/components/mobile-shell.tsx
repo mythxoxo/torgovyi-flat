@@ -43,8 +43,8 @@ export function MobileShell({ children }: { children: ReactNode }) {
           <Link href="/" className="flex min-w-0 items-center gap-3">
             <Image src="/brand/logo-icon.svg" alt="GRAM" width={32} height={32} className="h-8 w-8" />
             <div className="min-w-0">
-              <div className="truncate font-display text-[16px] font-bold text-[var(--gram-text)]">
-                TONS <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-[#0088cc] text-[8px] font-black text-white">of</span> <span className="gradient-text">GRAM</span>
+              <div className="truncate font-display text-[16px] font-extrabold tracking-[-0.03em] text-[var(--gram-text)]">
+                TONS <span className="text-[8px] font-black tracking-[0.2em] text-[#0088cc]">OF</span> <span className="gradient-text">GRAM</span>
               </div>
               {t.misc.mainnet ? <div className="text-[10px] tracking-[0.16em] text-[var(--gram-muted)]">{t.misc.mainnet}</div> : null}
             </div>
