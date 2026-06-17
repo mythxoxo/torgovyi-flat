@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Compass, Home, Search, User } from "lucide-react";
@@ -10,6 +9,16 @@ import { WalletConnectButton } from "./wallet-connect-button";
 import { useUi } from "./page-shell";
 import { getTonPrice } from "../lib/market/ton-price";
 import { LanguageSwitcher } from "./language-switcher";
+
+function HeaderWordmark() {
+  return (
+    <span className="inline-flex items-center gap-2 leading-none">
+      <span className="text-[28px] font-black tracking-[-0.08em] text-white">TONS</span>
+      <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[#0098ea] text-[9px] font-black lowercase text-white shadow-[0_0_20px_rgba(0,152,234,0.58)]">of</span>
+      <span className="bg-gradient-to-r from-[#20d8ff] via-[#0098ea] to-[#006bff] bg-clip-text text-[28px] font-black tracking-[-0.08em] text-transparent">GRAM</span>
+    </span>
+  );
+}
 
 export function DesktopShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -32,14 +41,7 @@ export function DesktopShell({ children }: { children: ReactNode }) {
       <header className="sticky top-0 z-40 border-b border-white/8 bg-[#050b16]/82 backdrop-blur-2xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4">
           <Link href="/" className="flex items-center">
-            <Image
-              src="/brand/tons-of-gram-header.svg"
-              alt="TONS of GRAM"
-              width={260}
-              height={46}
-              priority
-              className="h-[42px] w-auto object-contain"
-            />
+            <HeaderWordmark />
           </Link>
 
           <nav className="flex items-center gap-1.5 rounded-[20px] border border-white/8 bg-white/[0.035] p-1.5 shadow-[0_18px_55px_rgba(0,0,0,0.24)]">
