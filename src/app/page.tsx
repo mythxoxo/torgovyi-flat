@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, BadgeCheck, Flame, Gauge, Layers3, Rocket, ShieldCheck, Sparkles, Wallet } from "lucide-react";
+import { ArrowRight, BadgeCheck, Flame, Gauge, Layers3, Rocket, Search, ShieldCheck, Sparkles, Wallet } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import type { TokenRecord } from "../lib/shared";
 import { TokenList } from "../components/token-list";
@@ -53,46 +53,46 @@ export default function HomePage() {
               <div className="rounded-[28px] border border-[#c7a86b]/14 bg-[#0a0b0d]/62 p-4 backdrop-blur-xl">
                 <div className="flex items-center justify-between gap-3">
                   <div>
-                    <div className="text-xs uppercase tracking-[0.16em] text-[#8e929a]">{locale === "ru" ? "модель" : "model"}</div>
-                    <div className="mt-1 text-2xl font-black text-white">5 / 8888</div>
+                    <div className="text-xs uppercase tracking-[0.16em] text-[#8e929a]">{locale === "ru" ? "публичный старт" : "public start"}</div>
+                    <div className="mt-1 text-2xl font-black text-white">8888 GRAM</div>
                   </div>
                   <div className="rounded-2xl bg-[#c7a86b]/14 p-3 text-[#f1d999]">
                     <Gauge className="h-5 w-5" />
                   </div>
                 </div>
                 <div className="mt-4 h-2 overflow-hidden rounded-full bg-[#232830]">
-                  <div className="h-full w-[64%] rounded-full bg-gradient-to-r from-[#f1d999] via-[#c7a86b] to-[#8f6f36]" />
+                  <div className="h-full w-[88%] rounded-full bg-gradient-to-r from-[#f1d999] via-[#c7a86b] to-[#8f6f36]" />
                 </div>
-                <div className="mt-3 flex items-center justify-between text-xs text-[#8e929a]"><span>test</span><span>main</span></div>
+                <div className="mt-3 text-xs text-[#8e929a]">{locale === "ru" ? "5 GRAM — внутренний тестовый режим" : "5 GRAM is an internal test mode"}</div>
               </div>
             </div>
 
             <div className="mt-7 grid gap-3 sm:grid-cols-3">
-              <Link href="/create?target=5" className="group rounded-[26px] border border-[#c7a86b]/18 bg-[#c7a86b]/10 p-4 transition hover:-translate-y-0.5 hover:border-[#c7a86b]/38 hover:bg-[#c7a86b]/14">
+              <Link href="/create?target=8888" className="group rounded-[26px] border border-[#c7a86b]/18 bg-[#c7a86b]/10 p-4 transition hover:-translate-y-0.5 hover:border-[#c7a86b]/38 hover:bg-[#c7a86b]/14">
                 <div className="flex items-center justify-between gap-3">
                   <div className="rounded-2xl bg-[#c7a86b] p-3 text-[#0a0b0d] shadow-[0_14px_34px_rgba(199,168,107,0.22)]"><Rocket className="h-5 w-5" /></div>
                   <ArrowRight className="h-4 w-4 text-[#f1d999] opacity-70 transition group-hover:translate-x-0.5" />
                 </div>
-                <div className="mt-4 text-lg font-black text-white">{t.home.launchTest}</div>
-                <div className="mt-1 text-sm leading-5 text-[#9ea6b2]">{locale === "ru" ? "проверка механики" : "mechanics check"}</div>
-              </Link>
-
-              <Link href="/create?target=8888" className="group rounded-[26px] border border-white/10 bg-white/[0.045] p-4 transition hover:-translate-y-0.5 hover:border-[#c7a86b]/30 hover:bg-[#c7a86b]/8">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="rounded-2xl bg-white/8 p-3 text-[#f1d999]"><Layers3 className="h-5 w-5" /></div>
-                  <ArrowRight className="h-4 w-4 text-[#f1d999] opacity-70 transition group-hover:translate-x-0.5" />
-                </div>
                 <div className="mt-4 text-lg font-black text-white">{t.home.launchMain}</div>
-                <div className="mt-1 text-sm leading-5 text-[#9ea6b2]">{locale === "ru" ? "основной запуск" : "main launch"}</div>
+                <div className="mt-1 text-sm leading-5 text-[#9ea6b2]">{locale === "ru" ? "публичный запуск" : "public launch"}</div>
               </Link>
 
-              <Link href="/markets" className="group rounded-[26px] border border-white/10 bg-white/[0.035] p-4 transition hover:-translate-y-0.5 hover:border-[#c7a86b]/30 hover:bg-[#c7a86b]/8">
+              <Link href="/markets" className="group rounded-[26px] border border-white/10 bg-white/[0.045] p-4 transition hover:-translate-y-0.5 hover:border-[#c7a86b]/30 hover:bg-[#c7a86b]/8">
                 <div className="flex items-center justify-between gap-3">
                   <div className="rounded-2xl bg-white/8 p-3 text-[#f1d999]"><Flame className="h-5 w-5" /></div>
                   <ArrowRight className="h-4 w-4 text-[#f1d999] opacity-70 transition group-hover:translate-x-0.5" />
                 </div>
                 <div className="mt-4 text-lg font-black text-white">{t.home.ctaTokens}</div>
-                <div className="mt-1 text-sm leading-5 text-[#9ea6b2]">{locale === "ru" ? "рынки и лента" : "markets and feed"}</div>
+                <div className="mt-1 text-sm leading-5 text-[#9ea6b2]">{locale === "ru" ? "объём и прогресс" : "volume and progress"}</div>
+              </Link>
+
+              <Link href="/search" className="group rounded-[26px] border border-white/10 bg-white/[0.035] p-4 transition hover:-translate-y-0.5 hover:border-[#c7a86b]/30 hover:bg-[#c7a86b]/8">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="rounded-2xl bg-white/8 p-3 text-[#f1d999]"><Search className="h-5 w-5" /></div>
+                  <ArrowRight className="h-4 w-4 text-[#f1d999] opacity-70 transition group-hover:translate-x-0.5" />
+                </div>
+                <div className="mt-4 text-lg font-black text-white">{locale === "ru" ? "Найти токен" : "Find token"}</div>
+                <div className="mt-1 text-sm leading-5 text-[#9ea6b2]">{locale === "ru" ? "тикер или адрес" : "ticker or address"}</div>
               </Link>
             </div>
           </div>
@@ -107,7 +107,7 @@ export default function HomePage() {
               </div>
               <div className="rounded-2xl bg-[#c7a86b]/10 p-3 text-[#f1d999]"><ShieldCheck className="h-6 w-6" /></div>
             </div>
-            <p className="mt-4 text-sm leading-6 text-[#9ea6b2]">{locale === "ru" ? "Запуск и покупка идут через кошелёк. Backend не держит TON/GRAM пользователя." : "Launch and buy flows stay wallet-signed. Backend does not custody user funds."}</p>
+            <p className="mt-4 text-sm leading-6 text-[#9ea6b2]">{locale === "ru" ? "Запуск и покупка идут через кошелёк. Backend не держит средства пользователя." : "Launch and buy flows stay wallet-signed. Backend does not custody user funds."}</p>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
