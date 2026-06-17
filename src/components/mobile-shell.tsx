@@ -14,10 +14,10 @@ import { LanguageSwitcher } from "./language-switcher";
 export function MobileShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const { t } = useUi();
-  const [tonPrice, setTonPrice] = useState<number | null>(null);
+  const [gramPrice, setGramPrice] = useState<number | null>(null);
 
   useEffect(() => {
-    getTonPrice().then((r) => setTonPrice(r.usd)).catch(() => setTonPrice(null));
+    getTonPrice().then((r) => setGramPrice(r.usd)).catch(() => setGramPrice(null));
   }, []);
 
   const navItems = [
@@ -28,14 +28,14 @@ export function MobileShell({ children }: { children: ReactNode }) {
   ];
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(0,136,204,0.14),transparent_34%),linear-gradient(180deg,#07111d,#091321_48%,#08111c)] pb-[calc(84px+env(safe-area-inset-bottom))] text-white">
-      <header className="sticky top-0 z-40 border-b border-white/8 bg-[#09111d]/92 px-4 py-3 backdrop-blur-xl">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(42,171,238,0.18),transparent_34%),linear-gradient(180deg,#0e1621,#101923_48%,#0b111a)] pb-[calc(84px+env(safe-area-inset-bottom))] text-white">
+      <header className="sticky top-0 z-40 border-b border-white/8 bg-[#0e1621]/92 px-4 py-3 backdrop-blur-xl">
         <div className="flex items-center justify-between gap-3">
           <Link href="/" className="flex min-w-0 items-center gap-3">
-            <Image src="/brand/logo-icon.svg" alt="TONK.MEM" width={32} height={32} className="h-8 w-8" />
+            <Image src="/brand/logo-icon.svg" alt="GRAM" width={32} height={32} className="h-8 w-8" />
             <div className="min-w-0">
               <div className="truncate font-display text-[16px] font-bold text-white">
-                TONK<span className="gradient-text">.MEM</span>
+                TONS <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-[#2aabee] text-[8px] font-black text-white">of</span> <span className="gradient-text">GRAM</span>
               </div>
               {t.misc.mainnet ? <div className="text-[10px] tracking-[0.16em] text-[#8ba3c1]">{t.misc.mainnet}</div> : null}
             </div>
@@ -43,9 +43,9 @@ export function MobileShell({ children }: { children: ReactNode }) {
           <WalletConnectButton compact />
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
-          {tonPrice ? (
+          {gramPrice ? (
             <div className="inline-flex items-center gap-2 rounded-full border border-white/8 bg-white/5 px-3 py-2 text-xs text-[#c7d5e8]">
-              TON ${tonPrice.toFixed(2)}
+              GRAM ${gramPrice.toFixed(2)}
             </div>
           ) : null}
           <LanguageSwitcher />
@@ -53,7 +53,7 @@ export function MobileShell({ children }: { children: ReactNode }) {
       </header>
       <main className="px-4 py-5">{children}</main>
       <nav
-        className="fixed bottom-0 left-0 right-0 z-50 mx-auto flex max-w-md items-center justify-around border-t border-white/8 bg-[#09111d]/96 backdrop-blur-xl"
+        className="fixed bottom-0 left-0 right-0 z-50 mx-auto flex max-w-md items-center justify-around border-t border-white/8 bg-[#0e1621]/96 backdrop-blur-xl"
         style={{ height: "calc(72px + env(safe-area-inset-bottom))", paddingBottom: "env(safe-area-inset-bottom)" }}
       >
         {navItems.map(({ href, label, icon: Icon }) => {
@@ -63,7 +63,7 @@ export function MobileShell({ children }: { children: ReactNode }) {
               key={href}
               href={href}
               className={`flex h-full min-w-0 flex-1 flex-col items-center justify-center gap-1 px-2 text-[10px] ${
-                active ? "text-[#7dd3fc]" : "text-[#8ba3c1]"
+                active ? "text-[#5ac8fa]" : "text-[#8ba3c1]"
               }`}
             >
               <Icon className="h-4 w-4" />
