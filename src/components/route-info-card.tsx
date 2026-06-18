@@ -1,3 +1,5 @@
+"use client";
+
 import type { ExternalTokenRecord } from "../lib/external-tokens/types";
 import { useUi } from "./page-shell";
 
