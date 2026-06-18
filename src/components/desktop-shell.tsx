@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Compass, Home, Search, User } from "lucide-react";
@@ -11,6 +10,7 @@ import { useUi } from "./page-shell";
 import { getTonPrice } from "../lib/market/ton-price";
 import { LanguageSwitcher } from "./language-switcher";
 import { ThemeSwitcher } from "./theme-switcher";
+import { BrandLogo } from "./brand-logo";
 
 export function DesktopShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -40,14 +40,8 @@ export function DesktopShell({ children }: { children: ReactNode }) {
     <div className={`min-h-screen ${shellBg}`}>
       <header className={`sticky top-0 z-40 border-b backdrop-blur-xl ${headerBg}`}>
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4">
-          <Link href="/" className="flex items-center gap-3">
-            <Image src="/brand/logo-icon.svg" alt="GRAM" width={36} height={36} className="h-9 w-9" />
-            <div>
-              <div className="font-display text-xl font-extrabold tracking-[-0.035em] text-[var(--gram-text)]">
-                TONS <span className="text-[11px] font-black tracking-[0.22em] text-[#0088cc]">OF</span> <span className="gradient-text">GRAM</span>
-              </div>
-              {t.misc.mainnet ? <div className="text-[11px] tracking-[0.18em] text-[var(--gram-muted)]">{t.misc.mainnet}</div> : null}
-            </div>
+          <Link href="/" className="flex items-center">
+            <BrandLogo subtitle={t.misc.mainnet} />
           </Link>
 
           <nav className={`flex items-center gap-2 rounded-full border p-1.5 ${navBg}`}>
