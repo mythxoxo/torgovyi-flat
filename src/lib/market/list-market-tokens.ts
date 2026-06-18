@@ -1,11 +1,15 @@
 import { getTokenList } from "../api";
 import { listExternalTokens } from "../external-tokens/search";
+import type { ExternalTokenRecord } from "../external-tokens/types";
 import { getWatchlist } from "../watchlist";
 import type { TokenRecord } from "../shared";
 import type { MarketFilter, MarketToken } from "./types";
 
-const launchpadToken = (token: TokenRecord): MarketToken => ({ source: "LAUNCHPAD", token });
-const externalToken = (token: ReturnType<typeof listExternalTokens>[number]): MarketToken => ({ source: "EXTERNAL", token });
+type LaunchpadMarketToken = Extract<MarketToken, { source: "LAUNCHPAD" }>;
+type ExternalMarketToken = Extract<MarketToken, { source: "EXTERNAL" }>;
+
+const launchpadToken = (token: TokenRecord): LaunchpadMarketToken => ({ source: "LAUNCHPAD", token });
+const externalToken = (token: ExternalTokenRecord): ExternalMarketToken => ({ source: "EXTERNAL", token });
 
 const launchpadFilterForApi = (filter: MarketFilter) => {
   if (filter === "new") return "new";
@@ -18,10 +22,10 @@ export async function listMarketTokens(filter: MarketFilter = "all"): Promise<Ma
   const external = listExternalTokens();
   const watchlist = filter === "watchlist" ? new Set(getWatchlist()) : null;
 
-  const launchpadItems = launchpad.map(launchpadToken);
-  const externalItems = external.map(externalToken);
+  const launchpadItems: LaunchpadMarketToken[] = launchpad.map(launchpadToken);
+  const externalItems: ExternalMarketToken[] = external.map(externalToken);
 
-  const all = [...launchpadItems, ...externalItems];
+  const all: MarketToken[] = [...launchpadItems, ...externalItems];
 
   if (filter === "launchpad") return launchpadItems;
   if (filter === "external") return externalItems;
