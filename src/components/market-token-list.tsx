@@ -1,3 +1,5 @@
+"use client";
+
 import type { MarketToken } from "../lib/market/types";
 import { MarketTokenCard } from "./market-token-card";
 import { useUi } from "./page-shell";
