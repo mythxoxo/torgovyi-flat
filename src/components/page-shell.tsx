@@ -19,7 +19,7 @@ type UiContextValue = {
 const UiContext = createContext<UiContextValue>({
   locale: defaultLocale,
   setLocale: () => {},
-  theme: "light",
+  theme: "dark",
   setTheme: () => {},
   t: messages[defaultLocale]
 });
@@ -31,7 +31,7 @@ const THEME_KEY = "gram-theme";
 
 export function PageShell({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>(defaultLocale);
-  const [theme, setThemeState] = useState<ThemeMode>("light");
+  const [theme, setThemeState] = useState<ThemeMode>("dark");
 
   useEffect(() => {
     if (typeof window === "undefined") return;
