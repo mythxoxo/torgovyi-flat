@@ -17,21 +17,26 @@ const launchpadFilterForApi = (filter: MarketFilter) => {
   return "trending";
 };
 
+const topExternalByVolume = () =>
+  [...listExternalTokens()].sort((a, b) => (b.volume24hGram ?? 0) - (a.volume24hGram ?? 0));
+
 export async function listMarketTokens(filter: MarketFilter = "all"): Promise<MarketToken[]> {
   const launchpad = await getTokenList(launchpadFilterForApi(filter)).catch(() => [] as TokenRecord[]);
-  const external = listExternalTokens();
   const watchlist = filter === "watchlist" ? new Set(getWatchlist()) : null;
 
   const launchpadItems: LaunchpadMarketToken[] = launchpad.map(launchpadToken);
-  const externalItems: ExternalMarketToken[] = external.map(externalToken);
+  const externalItems: ExternalMarketToken[] = topExternalByVolume().map(externalToken);
 
-  const all: MarketToken[] = [...launchpadItems, ...externalItems];
-
-  if (filter === "launchpad") return launchpadItems;
   if (filter === "external") return externalItems;
+  if (filter === "all") return [...launchpadItems, ...externalItems];
+  if (filter === "launchpad") return launchpadItems;
   if (filter === "listed") return launchpadItems.filter(({ token }) => token.status === "LISTED" || token.status === "GRADUATED_READY");
   if (filter === "graduated") return launchpadItems.filter(({ token }) => token.status === "GRADUATED_READY" || token.status === "LISTED");
-  if (filter === "watchlist" && watchlist) return all.filter((item) => watchlist.has(item.source === "LAUNCHPAD" ? item.token.id : item.token.address));
+  if (filter === "watchlist" && watchlist) {
+    const all: MarketToken[] = [...launchpadItems, ...externalItems];
+    return all.filter((item) => watchlist.has(item.source === "LAUNCHPAD" ? item.token.id : item.token.address));
+  }
 
-  return all;
+  // Launchpad-first rule: launch tabs never mix already listed external STON.fi tokens into launches.
+  return launchpadItems;
 }
