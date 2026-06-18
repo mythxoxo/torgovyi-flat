@@ -1,4 +1,5 @@
-import Image from "next/image";
+"use client";
+
 import Link from "next/link";
 import type { ExternalTokenRecord } from "../lib/external-tokens/types";
 import { RiskBadges } from "./risk-badges";
@@ -13,15 +14,10 @@ export function ExternalTokenCard({ token }: { token: ExternalTokenRecord }) {
   return (
     <Link href={`/token/${encodeURIComponent(token.address)}`} className="glass-card block rounded-[24px] border border-white/10 bg-[linear-gradient(180deg,rgba(15,24,39,0.9),rgba(9,15,26,0.98))] p-5 transition hover:border-[#2aabee]/30">
       <div className="flex items-start justify-between gap-3">
-        <div className="flex min-w-0 items-center gap-3">
-          <div className="h-12 w-12 overflow-hidden rounded-2xl border border-white/10 bg-white/5">
-            <Image src={token.image || "/brand/img_04.jpg"} alt={token.name} width={48} height={48} className="h-full w-full object-cover" />
-          </div>
-          <div className="min-w-0">
-            <div className="text-xs uppercase tracking-[0.16em] text-[#8ba3c1]">External</div>
-            <h3 className="mt-1 truncate font-display text-xl font-bold text-white">{token.name}</h3>
-            <div className="font-mono text-sm text-[#5ac8fa]">{token.symbol}</div>
-          </div>
+        <div className="min-w-0">
+          <div className="text-xs uppercase tracking-[0.16em] text-[#8ba3c1]">External</div>
+          <h3 className="mt-1 truncate font-display text-xl font-bold text-white">{token.name}</h3>
+          <div className="font-mono text-sm text-[#5ac8fa]">{token.symbol}</div>
         </div>
         <WatchlistButton id={token.address} />
       </div>
