@@ -29,9 +29,9 @@ export default function MarketsPage() {
 
   const tabs = [
     { id: "trending" as const, ru: "В тренде", en: "Trending" },
-    { id: "volume" as const, ru: "Топ по объёму", en: "Top volume" },
-    { id: "gainers" as const, ru: "Лидеры роста", en: "Gainers" },
-    { id: "new" as const, ru: "Новые запуски", en: "New launches" }
+    { id: "volume" as const, ru: "Топ объёма", en: "Top volume" },
+    { id: "gainers" as const, ru: "Рост", en: "Gainers" },
+    { id: "new" as const, ru: "Новые", en: "New" }
   ];
 
   const panel = theme === "light" ? "border-[#dbe8f4] bg-white text-[#111827]" : "border-white/10 bg-[#0f1724] text-white";
@@ -42,8 +42,8 @@ export default function MarketsPage() {
     <div className="space-y-6 pb-24">
       <section className={`rounded-[32px] border p-7 shadow-[0_24px_70px_rgba(15,23,42,0.08)] ${panel}`}>
         <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#0088cc]">{locale === "ru" ? "Рынки" : "Markets"}</p>
-        <h1 className="mt-2 font-display text-4xl font-black tracking-[-0.05em] sm:text-5xl">{locale === "ru" ? "Рынки TONS of GRAM" : "TONS of GRAM markets"}</h1>
-        <p className={`mt-3 max-w-2xl text-sm leading-7 ${muted}`}>{locale === "ru" ? "Следи за новыми запусками, объёмом и токенами, которые готовы двигаться дальше." : "Track new launches, volume and tokens ready to move further."}</p>
+        <h1 className="mt-2 font-display text-4xl font-black tracking-[-0.05em] sm:text-5xl">{locale === "ru" ? "Рынки" : "Markets"}</h1>
+        <p className={`mt-3 max-w-2xl text-sm leading-7 ${muted}`}>{locale === "ru" ? "Отслеживай активность запусков, объём и токены, которые набирают движение." : "Track launch activity, volume, and tokens gaining momentum."}</p>
         <div className="mt-5 flex flex-wrap gap-2">
           {tabs.map((item) => (
             <button key={item.id} type="button" onClick={() => setTab(item.id)} className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${tab === item.id ? "border-[#0088cc] bg-[#0088cc] text-white" : inactive}`}>{locale === "ru" ? item.ru : item.en}</button>
