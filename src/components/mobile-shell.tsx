@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
@@ -11,6 +10,7 @@ import { getTonPrice } from "../lib/market/ton-price";
 import { useUi } from "./page-shell";
 import { LanguageSwitcher } from "./language-switcher";
 import { ThemeSwitcher } from "./theme-switcher";
+import { BrandLogo } from "./brand-logo";
 
 export function MobileShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -40,14 +40,8 @@ export function MobileShell({ children }: { children: ReactNode }) {
     <div className={`min-h-screen pb-[calc(84px+env(safe-area-inset-bottom))] ${shellBg}`}>
       <header className={`sticky top-0 z-40 border-b px-4 py-3 backdrop-blur-xl ${headerBg}`}>
         <div className="flex items-center justify-between gap-3">
-          <Link href="/" className="flex min-w-0 items-center gap-3">
-            <Image src="/brand/logo-icon.svg" alt="GRAM" width={32} height={32} className="h-8 w-8" />
-            <div className="min-w-0">
-              <div className="truncate font-display text-[16px] font-extrabold tracking-[-0.03em] text-[var(--gram-text)]">
-                TONS <span className="text-[8px] font-black tracking-[0.2em] text-[#0088cc]">OF</span> <span className="gradient-text">GRAM</span>
-              </div>
-              {t.misc.mainnet ? <div className="text-[10px] tracking-[0.16em] text-[var(--gram-muted)]">{t.misc.mainnet}</div> : null}
-            </div>
+          <Link href="/" className="min-w-0">
+            <BrandLogo subtitle={t.misc.mainnet} compact />
           </Link>
           <WalletConnectButton compact />
         </div>
