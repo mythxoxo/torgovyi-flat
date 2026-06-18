@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { GainersPanel } from "../../components/gainers-panel";
 import { listMarketTokens } from "../../lib/market/list-market-tokens";
 import type { MarketFilter, MarketToken } from "../../lib/market/types";
 import { MarketTokenList } from "../../components/market-token-list";
@@ -19,15 +20,16 @@ export default function MarketsPage() {
 
   const view = useMemo(() => {
     if (tab === "external" || tab === "watchlist" || tab === "listed" || tab === "graduated") return tokens;
-    const launchpadFirst = [...tokens].sort((a, b) => (a.source === b.source ? 0 : a.source === "LAUNCHPAD" ? -1 : 1));
-    if (tab === "new") return launchpadFirst.sort((a, b) => a.source === "LAUNCHPAD" && b.source === "LAUNCHPAD" ? +new Date(b.token.createdAt) - +new Date(a.token.createdAt) : 0);
-    if (tab === "volume") return launchpadFirst.sort((a, b) => a.source === "LAUNCHPAD" && b.source === "LAUNCHPAD" ? (b.token.state.volumeTon ?? 0) - (a.token.state.volumeTon ?? 0) : 0);
-    return launchpadFirst;
+    const launchpadOnly = tokens.filter((item) => item.source === "LAUNCHPAD");
+    if (tab === "new") return launchpadOnly.sort((a, b) => +new Date(b.token.createdAt) - +new Date(a.token.createdAt));
+    if (tab === "volume") return launchpadOnly.sort((a, b) => (b.token.state.volumeTon ?? 0) - (a.token.state.volumeTon ?? 0));
+    return launchpadOnly;
   }, [tab, tokens]);
 
   const tabs: Array<{ id: MarketFilter; ru: string; en: string }> = [
     { id: "trending", ru: "Запуски", en: "Launches" },
     { id: "volume", ru: "Топ объёма", en: "Top volume" },
+    { id: "gainers", ru: "Gainers", en: "Gainers" },
     { id: "new", ru: "Новые", en: "New" },
     { id: "graduated", ru: "Graduated", en: "Graduated" },
     { id: "listed", ru: "Listed", en: "Listed" },
@@ -43,14 +45,14 @@ export default function MarketsPage() {
       <section className={`rounded-[32px] border p-7 shadow-[0_24px_70px_rgba(15,23,42,0.08)] ${panel}`}>
         <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#0088cc]">{locale === "ru" ? "Launchpad рынки" : "Launchpad markets"}</p>
         <h1 className="mt-2 font-display text-4xl font-black tracking-[-0.05em] sm:text-5xl">{locale === "ru" ? "Рынки запусков" : "Launch markets"}</h1>
-        <p className={`mt-3 max-w-2xl text-sm leading-7 ${muted}`}>{locale === "ru" ? "Сначала запуски TONS of GRAM. External — дополнительная вкладка." : "TONS of GRAM launches first. External is a secondary tab."}</p>
+        <p className={`mt-3 max-w-2xl text-sm leading-7 ${muted}`}>{locale === "ru" ? "Запуски TONS of GRAM отдельно. External — отдельная вкладка с STON.fi/DEX токенами." : "TONS of GRAM launches stay separate. External is a separate tab for STON.fi/DEX tokens."}</p>
         <div className="mt-5 flex flex-wrap gap-2">
           {tabs.map((item) => (
             <button key={item.id} type="button" onClick={() => setTab(item.id)} className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${tab === item.id ? "border-[#0088cc] bg-[#0088cc] text-white" : inactive}`}>{locale === "ru" ? item.ru : item.en}</button>
           ))}
         </div>
       </section>
-      <MarketTokenList tokens={view} loading={loading} />
+      {tab === "gainers" ? <GainersPanel /> : <MarketTokenList tokens={view} loading={loading && tab !== "gainers"} />}
     </div>
   );
 }
