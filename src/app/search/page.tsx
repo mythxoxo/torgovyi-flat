@@ -6,17 +6,20 @@ import { getTokenList } from "../../lib/api";
 import type { TokenRecord } from "../../lib/shared";
 import { useUi } from "../../components/page-shell";
 
+type SearchFilter = "all" | "trending" | "new" | "verified";
+
 export default function SearchPage() {
   const { locale, theme } = useUi();
   const [tokens, setTokens] = useState<TokenRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
+  const [filter, setFilter] = useState<SearchFilter>("all");
   const [error, setError] = useState("");
 
   useEffect(() => {
     setLoading(true);
     setError("");
-    getTokenList("new")
+    getTokenList(filter === "new" ? "new" : "trending")
       .then(setTokens)
       .catch(() =>
         setError(
@@ -26,20 +29,32 @@ export default function SearchPage() {
         )
       )
       .finally(() => setLoading(false));
-  }, [locale]);
+  }, [filter, locale]);
 
-  const filtered = useMemo(() => {
+  const visibleTokens = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return [];
-    return tokens.filter((token) => {
+    const base = tokens.filter((token) => {
+      if (filter === "verified") return token.status === "LISTED" || token.status === "GRADUATED_READY";
+      return true;
+    });
+    if (!q) return base.slice(0, 8);
+    return base.filter((token) => {
       const hay = [token.name, token.ticker, token.id].join(" ").toLowerCase();
       return hay.includes(q);
     });
-  }, [tokens, query]);
+  }, [tokens, query, filter]);
 
   const panel = theme === "light" ? "border-[#dbe8f4] bg-white text-[#111827] shadow-[0_24px_70px_rgba(15,23,42,0.08)]" : "border-white/10 bg-[#0f1724] text-white shadow-[0_24px_70px_rgba(0,0,0,0.26)]";
   const muted = theme === "light" ? "text-[#64748b]" : "text-[#8ba3c1]";
   const input = theme === "light" ? "border-[#dbe8f4] bg-[#f8fbff] text-[#111827] placeholder:text-[#94a3b8]" : "border-white/10 bg-white/5 text-white placeholder:text-[#8ba3c1]";
+  const idleChip = theme === "light" ? "border-[#dbe8f4] bg-white text-[#475569]" : "border-white/10 bg-white/5 text-[#c6d4ea]";
+
+  const filters: Array<{ id: SearchFilter; ru: string; en: string }> = [
+    { id: "all", ru: "Все", en: "All" },
+    { id: "trending", ru: "В тренде", en: "Trending" },
+    { id: "new", ru: "Новые", en: "New" },
+    { id: "verified", ru: "Проверенные", en: "Verified" }
+  ];
 
   return (
     <div className="space-y-6 pb-24">
@@ -67,6 +82,18 @@ export default function SearchPage() {
             className="w-full bg-transparent px-4 py-4 text-sm outline-none"
           />
         </div>
+        <div className="mt-4 flex flex-wrap gap-2">
+          {filters.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => setFilter(item.id)}
+              className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${filter === item.id ? "border-[#0088cc] bg-[#0088cc] text-white" : idleChip}`}
+            >
+              {locale === "ru" ? item.ru : item.en}
+            </button>
+          ))}
+        </div>
       </section>
 
       {error ? (
@@ -75,19 +102,19 @@ export default function SearchPage() {
         </div>
       ) : null}
 
-      {!query.trim() ? (
+      {!loading && visibleTokens.length === 0 ? (
         <div className={`rounded-[24px] border p-8 text-center ${panel}`}>
           <h3 className="font-display text-2xl font-bold tracking-[-0.04em]">
-            {locale === "ru" ? "Начни поиск" : "Start searching"}
+            {locale === "ru" ? "Ничего не найдено" : "Nothing found"}
           </h3>
           <p className={`mt-3 text-sm leading-6 ${muted}`}>
             {locale === "ru"
-              ? "Начни вводить название или тикер."
-              : "Start typing a name or ticker."}
+              ? "Попробуй другой тикер, имя или адрес."
+              : "Try another ticker, name or address."}
           </p>
         </div>
       ) : (
-        <TokenList tokens={filtered} loading={loading} searchQuery={query} />
+        <TokenList tokens={visibleTokens} loading={loading} searchQuery={query} />
       )}
     </div>
   );
