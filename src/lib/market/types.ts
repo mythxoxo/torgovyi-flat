@@ -11,4 +11,4 @@ export type MarketToken =
       token: ExternalTokenRecord;
     };
 
-export type MarketFilter = "all" | "launchpad" | "listed" | "external" | "watchlist" | "trending" | "volume" | "new" | "graduated";
+export type MarketFilter = "all" | "launchpad" | "listed" | "external" | "watchlist" | "trending" | "volume" | "new" | "graduated" | "gainers";
