@@ -7,7 +7,7 @@ import type { TokenRecord } from "../../lib/shared";
 import { useUi } from "../../components/page-shell";
 
 export default function SearchPage() {
-  const { locale } = useUi();
+  const { locale, theme } = useUi();
   const [tokens, setTokens] = useState<TokenRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
@@ -37,21 +37,25 @@ export default function SearchPage() {
     });
   }, [tokens, query]);
 
+  const panel = theme === "light" ? "border-[#dbe8f4] bg-white text-[#111827] shadow-[0_24px_70px_rgba(15,23,42,0.08)]" : "border-white/10 bg-[#0f1724] text-white shadow-[0_24px_70px_rgba(0,0,0,0.26)]";
+  const muted = theme === "light" ? "text-[#64748b]" : "text-[#8ba3c1]";
+  const input = theme === "light" ? "border-[#dbe8f4] bg-[#f8fbff] text-[#111827] placeholder:text-[#94a3b8]" : "border-white/10 bg-white/5 text-white placeholder:text-[#8ba3c1]";
+
   return (
     <div className="space-y-6 pb-24">
-      <section className="rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,rgba(12,20,34,0.96),rgba(8,14,24,0.98))] p-6 shadow-[0_20px_60px_rgba(0,0,0,0.22)]">
-        <p className="text-xs uppercase tracking-[0.22em] text-[#7dd3fc]">
+      <section className={`rounded-[32px] border p-7 ${panel}`}>
+        <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#0088cc]">
           {locale === "ru" ? "Поиск" : "Search"}
         </p>
-        <h1 className="mt-2 font-display text-3xl font-bold text-white sm:text-4xl">
+        <h1 className="mt-2 font-display text-4xl font-black tracking-[-0.05em] sm:text-5xl">
           {locale === "ru" ? "Поиск токенов" : "Search tokens"}
         </h1>
-        <p className="mt-3 max-w-2xl text-sm leading-7 text-[#c6d4ea]">
+        <p className={`mt-3 max-w-2xl text-sm leading-7 ${muted}`}>
           {locale === "ru"
             ? "Ищи токены по имени, тикеру или адресу."
             : "Search launches by name, ticker or token address."}
         </p>
-        <div className="mt-5 overflow-hidden rounded-[22px] border border-white/10 bg-white/5">
+        <div className={`mt-6 overflow-hidden rounded-2xl border ${input}`}>
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -60,23 +64,23 @@ export default function SearchPage() {
                 ? "Название, тикер или адрес токена"
                 : "Name, ticker or token address"
             }
-            className="w-full bg-transparent px-4 py-4 text-sm text-white outline-none placeholder:text-[#8ba3c1]"
+            className="w-full bg-transparent px-4 py-4 text-sm outline-none"
           />
         </div>
       </section>
 
       {error ? (
-        <div className="rounded-[24px] border border-white/10 bg-white/5 p-6 text-sm text-[#c6d4ea]">
+        <div className={`rounded-[24px] border p-6 text-sm ${panel}`}>
           {error}
         </div>
       ) : null}
 
       {!query.trim() ? (
-        <div className="rounded-[24px] border border-white/10 bg-white/5 p-8 text-center">
-          <h3 className="font-display text-2xl font-bold text-white">
+        <div className={`rounded-[24px] border p-8 text-center ${panel}`}>
+          <h3 className="font-display text-2xl font-bold tracking-[-0.04em]">
             {locale === "ru" ? "Начни поиск" : "Start searching"}
           </h3>
-          <p className="mt-3 text-sm leading-6 text-[#c6d4ea]">
+          <p className={`mt-3 text-sm leading-6 ${muted}`}>
             {locale === "ru"
               ? "Начни вводить название или тикер."
               : "Start typing a name or ticker."}
