@@ -20,12 +20,17 @@ export function DexBuyBox({ token }: { token: ExternalTokenRecord }) {
     setError("");
     setQuote(null);
     try {
-      const offerUnits = String(Math.floor(Number(amount || "0") * 1_000_000_000));
+      const parsedAmount = Number(amount.replace(",", "."));
+      if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) {
+        throw new Error(locale === "ru" ? "Введи сумму больше нуля" : "Enter an amount above zero");
+      }
+
+      const offerUnits = String(Math.floor(parsedAmount * 1_000_000_000));
       const res = await fetch("/api/dex/quote", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userWalletAddress: wallet || "preview-wallet",
+          userWalletAddress: wallet,
           offerAddress: "ton",
           askAddress: token.address,
           offerUnits,
@@ -57,7 +62,7 @@ export function DexBuyBox({ token }: { token: ExternalTokenRecord }) {
 
       <div className="rounded-2xl border border-white/10 bg-white/5 p-3">
         <label className="text-xs text-[#8ba3c1]">{locale === "ru" ? "Сумма" : "Amount"}</label>
-        <input value={amount} onChange={(event) => setAmount(event.target.value)} className="mt-2 w-full bg-transparent font-mono text-lg text-white outline-none" />
+        <input value={amount} onChange={(event) => setAmount(event.target.value)} inputMode="decimal" className="mt-2 w-full bg-transparent font-mono text-lg text-white outline-none" />
       </div>
 
       <button type="button" disabled={disabled} onClick={fetchQuote} className={`btn-primary flex w-full items-center justify-center ${disabled ? "cursor-not-allowed opacity-50" : ""}`}>
