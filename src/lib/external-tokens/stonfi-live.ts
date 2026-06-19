@@ -28,6 +28,20 @@ const num = (value: unknown, fallback = 0) => {
   return fallback;
 };
 
+const safeMarketMetric = (values: unknown[], fallback = 0) => {
+  for (const value of values) {
+    let parsed = num(value, Number.NaN);
+    if (!Number.isFinite(parsed) || parsed <= 0) continue;
+
+    for (let i = 0; i < 3 && parsed > 1_000_000_000_000; i += 1) {
+      parsed = parsed / 1_000_000_000;
+    }
+
+    if (parsed > 0 && parsed <= 1_000_000_000_000) return parsed;
+  }
+  return fallback;
+};
+
 const first = (values: unknown[], fallback = "") => {
   for (const value of values) {
     const normalized = str(value);
@@ -41,6 +55,7 @@ const toExternalToken = (asset: Asset): ExternalTokenRecord | null => {
   const symbol = first([asset.symbol, get(asset, ["meta", "symbol"])], "UNKNOWN");
   if (!address || !symbol || symbol === "UNKNOWN") return null;
 
+  const popularity = num(asset.popularityIndex, 0);
   const record: ExternalTokenRecord = {
     source: "EXTERNAL",
     address,
@@ -48,11 +63,11 @@ const toExternalToken = (asset: Asset): ExternalTokenRecord | null => {
     symbol,
     image: first([asset.imageUrl, asset.image, get(asset, ["meta", "imageUrl"]), get(asset, ["meta", "image"])]),
     decimals: num(asset.decimals ?? get(asset, ["meta", "decimals"]), 9),
-    priceGram: num(asset.dexPrice, 0) || undefined,
-    priceUsd: num(asset.dexPriceUsd ?? asset.priceUsd ?? get(asset, ["market", "priceUsd"]), 0) || undefined,
+    priceGram: safeMarketMetric([asset.dexPrice, asset.priceGram, get(asset, ["market", "priceGram"])]) || undefined,
+    priceUsd: safeMarketMetric([asset.dexPriceUsd, asset.priceUsd, get(asset, ["market", "priceUsd"])]) || undefined,
     change24h: num(asset.priceChange24h ?? asset.change24h ?? get(asset, ["market", "change24h"]), 0),
-    volume24hGram: num(asset.volume24h ?? asset.volume24hUsd ?? get(asset, ["stats", "volume24h"]), num(asset.popularityIndex, 0)),
-    liquidityGram: num(asset.liquidity ?? asset.tvl ?? get(asset, ["stats", "liquidity"]), num(asset.popularityIndex, 0)),
+    volume24hGram: safeMarketMetric([asset.volume24h, asset.volume24hUsd, get(asset, ["stats", "volume24h"]), get(asset, ["market", "volume24h"])], popularity),
+    liquidityGram: safeMarketMetric([asset.liquidityGram, asset.liquidityUsd, asset.tvlUsd, get(asset, ["stats", "liquidityGram"]), get(asset, ["stats", "liquidityUsd"]), get(asset, ["market", "liquidityUsd"])], popularity),
     holders: num(asset.holders ?? get(asset, ["stats", "holders"]), 0) || undefined,
     dexes: ["STONFI"],
     primaryDex: "STONFI",
