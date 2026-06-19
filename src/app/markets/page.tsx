@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { GainersPanel } from "../../components/gainers-panel";
 import { MarketTokenList } from "../../components/market-token-list";
 import { useUi } from "../../components/page-shell";
+import type { ExternalTokenRecord } from "../../lib/external-tokens/types";
 import { listMarketTokens } from "../../lib/market/list-market-tokens";
 import type { MarketFilter, MarketToken } from "../../lib/market/types";
 
@@ -12,13 +13,40 @@ export default function MarketsPage() {
   const [tokens, setTokens] = useState<MarketToken[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<MarketFilter>("trending");
+  const [externalSource, setExternalSource] = useState<"stonfi-live" | "fallback" | "">("");
 
   useEffect(() => {
+    let cancelled = false;
     setLoading(true);
-    listMarketTokens(tab)
-      .then(setTokens)
-      .catch(() => setTokens([]))
-      .finally(() => setLoading(false));
+    setExternalSource("");
+
+    const load = async () => {
+      if (tab === "external") {
+        const res = await fetch("/api/external-tokens", { cache: "no-store" });
+        const data = await res.json() as { ok: boolean; source?: "stonfi-live" | "fallback"; tokens?: ExternalTokenRecord[] };
+        if (!data.ok || !data.tokens) throw new Error("External source failed");
+        if (!cancelled) {
+          setExternalSource(data.source ?? "fallback");
+          setTokens(data.tokens.map((token) => ({ source: "EXTERNAL", token })));
+        }
+        return;
+      }
+
+      const marketTokens = await listMarketTokens(tab);
+      if (!cancelled) setTokens(marketTokens);
+    };
+
+    load()
+      .catch(() => {
+        if (!cancelled) setTokens([]);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [tab]);
 
   const tabs: Array<{ id: MarketFilter; ru: string; en: string }> = [
@@ -46,6 +74,7 @@ export default function MarketsPage() {
             <button key={item.id} type="button" onClick={() => setTab(item.id)} className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${tab === item.id ? "border-[#0088cc] bg-[#0088cc] text-white" : inactive}`}>{locale === "ru" ? item.ru : item.en}</button>
           ))}
         </div>
+        {tab === "external" && externalSource ? <p className={`mt-3 text-xs ${muted}`}>{externalSource === "stonfi-live" ? (locale === "ru" ? "Источник: live STON.fi assets" : "Source: live STON.fi assets") : (locale === "ru" ? "Источник: fallback список" : "Source: fallback list")}</p> : null}
       </section>
       {tab === "gainers" ? <GainersPanel /> : <MarketTokenList tokens={tokens} loading={loading} />}
     </div>
