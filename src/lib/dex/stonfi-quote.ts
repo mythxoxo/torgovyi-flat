@@ -21,15 +21,27 @@ const readPath = (source: unknown, path: string[]) => {
   return current;
 };
 
-const normalizeSimulation = (input: DexQuoteInput, simulation: unknown): DexQuote => {
-  const expectedAskUnits =
-    pickString(readPath(simulation, ["askUnits"])) ||
-    pickString(readPath(simulation, ["expectedAskUnits"])) ||
-    pickString(readPath(simulation, ["estimatedAskUnits"]));
+const firstString = (values: unknown[], fallback = "0") => {
+  for (const value of values) {
+    const normalized = pickString(value, "");
+    if (normalized) return normalized;
+  }
+  return fallback;
+};
 
-  const minAskUnits =
-    pickString(readPath(simulation, ["minAskUnits"]), expectedAskUnits) ||
-    pickString(readPath(simulation, ["minimumAskUnits"]), expectedAskUnits);
+const normalizeSimulation = (input: DexQuoteInput, simulation: unknown): DexQuote => {
+  const expectedAskUnits = firstString([
+    readPath(simulation, ["askUnits"]),
+    readPath(simulation, ["expectedAskUnits"]),
+    readPath(simulation, ["estimatedAskUnits"]),
+    readPath(simulation, ["ask_units"])
+  ]);
+
+  const minAskUnits = firstString([
+    readPath(simulation, ["minAskUnits"]),
+    readPath(simulation, ["minimumAskUnits"]),
+    readPath(simulation, ["min_ask_units"])
+  ], expectedAskUnits);
 
   return {
     dex: "STONFI",
@@ -47,7 +59,7 @@ const normalizeSimulation = (input: DexQuoteInput, simulation: unknown): DexQuot
 };
 
 export async function quoteStonfiTonToJetton(input: DexQuoteInput): Promise<DexQuote> {
-  const module = (await import("@ston-fi/api")) as StonfiApiModule;
+  const module = (await import("@ston-fi/api")) as unknown as StonfiApiModule;
   const Client = module.StonApiClient;
 
   if (!Client) {
