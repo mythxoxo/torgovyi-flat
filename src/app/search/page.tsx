@@ -1,42 +1,78 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { TokenList } from "../../components/token-list";
+import { MarketTokenList } from "../../components/market-token-list";
 import { getTokenList } from "../../lib/api";
+import type { ExternalTokenRecord } from "../../lib/external-tokens/types";
+import type { MarketToken } from "../../lib/market/types";
 import type { TokenRecord } from "../../lib/shared";
 import { useUi } from "../../components/page-shell";
 
-type SearchFilter = "all" | "trending" | "new" | "verified";
+type SearchFilter = "all" | "launchpad" | "external" | "listed";
+
+const toLaunchpadItems = (tokens: TokenRecord[]): MarketToken[] => tokens.map((token) => ({ source: "LAUNCHPAD", token }));
+const toExternalItems = (tokens: ExternalTokenRecord[]): MarketToken[] => tokens.map((token) => ({ source: "EXTERNAL", token }));
 
 export default function SearchPage() {
   const { locale, theme } = useUi();
-  const [tokens, setTokens] = useState<TokenRecord[]>([]);
+  const [items, setItems] = useState<MarketToken[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<SearchFilter>("all");
   const [error, setError] = useState("");
+  const [externalSource, setExternalSource] = useState<"stonfi-live" | "fallback" | "">("");
 
   useEffect(() => {
+    let cancelled = false;
     setLoading(true);
     setError("");
-    getTokenList(filter === "new" ? "new" : "trending")
-      .then(setTokens)
+    setExternalSource("");
+
+    const load = async () => {
+      const [launchpad, externalResponse] = await Promise.all([
+        filter === "external" ? Promise.resolve([] as TokenRecord[]) : getTokenList("trending"),
+        filter === "launchpad" || filter === "listed" ? Promise.resolve(null) : fetch("/api/external-tokens", { cache: "no-store" }).then((res) => res.json())
+      ]);
+
+      const externalData = externalResponse as { ok?: boolean; source?: "stonfi-live" | "fallback"; tokens?: ExternalTokenRecord[] } | null;
+      const external = externalData?.ok && externalData.tokens ? externalData.tokens : [];
+      if (!cancelled) {
+        setExternalSource(externalData?.source ?? "");
+        setItems([...toLaunchpadItems(launchpad), ...toExternalItems(external)]);
+      }
+    };
+
+    load()
       .catch(() => setError(locale === "ru" ? "Поиск временно недоступен. Повтори позже." : "Search is temporarily unavailable. Try again later."))
-      .finally(() => setLoading(false));
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [filter, locale]);
 
-  const visibleTokens = useMemo(() => {
+  const visibleItems = useMemo(() => {
     const q = query.trim().toLowerCase();
-    const base = tokens.filter((token) => {
-      if (filter === "verified") return token.status === "LISTED" || token.status === "GRADUATED_READY";
+    const base = items.filter((item) => {
+      if (filter === "launchpad") return item.source === "LAUNCHPAD";
+      if (filter === "external") return item.source === "EXTERNAL";
+      if (filter === "listed") return item.source === "LAUNCHPAD" && (item.token.status === "LISTED" || item.token.status === "GRADUATED_READY");
       return true;
     });
-    if (!q) return base.slice(0, 8);
-    return base.filter((token) => {
-      const hay = [token.name, token.ticker, token.id].join(" ").toLowerCase();
-      return hay.includes(q);
-    });
-  }, [tokens, query, filter]);
+
+    const filtered = q
+      ? base.filter((item) => {
+          const hay = item.source === "LAUNCHPAD"
+            ? [item.token.name, item.token.ticker, item.token.id].join(" ").toLowerCase()
+            : [item.token.name, item.token.symbol, item.token.address].join(" ").toLowerCase();
+          return hay.includes(q);
+        })
+      : base;
+
+    return filtered.slice(0, 16);
+  }, [items, query, filter]);
 
   const panel = theme === "light" ? "border-[#dbe8f4] bg-white text-[#111827] shadow-[0_24px_70px_rgba(15,23,42,0.08)]" : "border-white/10 bg-[#0f1724] text-white shadow-[0_24px_70px_rgba(0,0,0,0.26)]";
   const muted = theme === "light" ? "text-[#64748b]" : "text-[#8ba3c1]";
@@ -45,17 +81,17 @@ export default function SearchPage() {
 
   const filters: Array<{ id: SearchFilter; ru: string; en: string }> = [
     { id: "all", ru: "Все", en: "All" },
-    { id: "trending", ru: "В тренде", en: "Trending" },
-    { id: "new", ru: "Новые", en: "New" },
-    { id: "verified", ru: "Listed", en: "Listed" }
+    { id: "launchpad", ru: "Запуски", en: "Launchpad" },
+    { id: "external", ru: "External", en: "External" },
+    { id: "listed", ru: "Listed", en: "Listed" }
   ];
 
   return (
     <div className="space-y-6 pb-24">
       <section className={`rounded-[32px] border p-7 ${panel}`}>
-        <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#0088cc]">{locale === "ru" ? "Launchpad поиск" : "Launchpad search"}</p>
-        <h1 className="mt-2 font-display text-4xl font-black tracking-[-0.05em] sm:text-5xl">{locale === "ru" ? "Поиск запусков" : "Search launches"}</h1>
-        <p className={`mt-3 max-w-2xl text-sm leading-7 ${muted}`}>{locale === "ru" ? "Основной поиск остаётся по токенам, запущенным через TONS of GRAM." : "Core search remains focused on tokens launched through TONS of GRAM."}</p>
+        <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#0088cc]">{locale === "ru" ? "Поиск рынков" : "Market search"}</p>
+        <h1 className="mt-2 font-display text-4xl font-black tracking-[-0.05em] sm:text-5xl">{locale === "ru" ? "Поиск токенов" : "Search tokens"}</h1>
+        <p className={`mt-3 max-w-2xl text-sm leading-7 ${muted}`}>{locale === "ru" ? "Ищи запуски TONS of GRAM отдельно от live External DEX токенов." : "Search TONS of GRAM launches separately from live External DEX tokens."}</p>
         <div className={`mt-6 overflow-hidden rounded-2xl border ${input}`}>
           <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={locale === "ru" ? "Название, тикер или адрес токена" : "Name, ticker or token address"} className="w-full bg-transparent px-4 py-4 text-sm outline-none" />
         </div>
@@ -64,15 +100,16 @@ export default function SearchPage() {
             <button key={item.id} type="button" onClick={() => setFilter(item.id)} className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${filter === item.id ? "border-[#0088cc] bg-[#0088cc] text-white" : idleChip}`}>{locale === "ru" ? item.ru : item.en}</button>
           ))}
         </div>
+        {(filter === "all" || filter === "external") && externalSource ? <p className={`mt-3 text-xs ${muted}`}>{externalSource === "stonfi-live" ? (locale === "ru" ? "External источник: live STON.fi assets" : "External source: live STON.fi assets") : (locale === "ru" ? "External источник: fallback список" : "External source: fallback list")}</p> : null}
       </section>
 
       {error ? <div className={`rounded-[24px] border p-6 text-sm ${panel}`}>{error}</div> : null}
-      {!loading && visibleTokens.length === 0 ? (
+      {!loading && visibleItems.length === 0 ? (
         <div className={`rounded-[24px] border p-8 text-center ${panel}`}>
           <h3 className="font-display text-2xl font-bold tracking-[-0.04em]">{locale === "ru" ? "Ничего не найдено" : "Nothing found"}</h3>
           <p className={`mt-3 text-sm leading-6 ${muted}`}>{locale === "ru" ? "Попробуй другой тикер, имя или адрес." : "Try another ticker, name or address."}</p>
         </div>
-      ) : <TokenList tokens={visibleTokens} loading={loading} searchQuery={query} />}
+      ) : <MarketTokenList tokens={visibleItems} loading={loading} />}
     </div>
   );
 }
