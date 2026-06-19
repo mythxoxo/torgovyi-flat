@@ -5,7 +5,7 @@ const run = (cmd: string) => {
   execSync(cmd, { stdio: "inherit" });
 };
 
-run("npm run check:security");
+run("npm run security:check");
 run("npm run check:manifest");
 run("npm run build");
 

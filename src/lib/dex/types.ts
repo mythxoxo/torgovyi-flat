@@ -81,7 +81,7 @@ export interface DexSwapDraft {
   validUntil: number;
   messages: PreparedDexMessage[];
   warnings: string[];
-  liveExecutionVerified: false;
+  liveExecutionVerified: boolean;
 }
 
 export interface DexSwapDraftResponse {

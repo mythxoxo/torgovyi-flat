@@ -18,7 +18,7 @@ export function RouteInfoCard({ token }: { token: ExternalTokenRecord }) {
         <span className="font-semibold text-white">{token.liquidityGram ? `${token.liquidityGram.toLocaleString("en-US")} GRAM` : "—"}</span>
       </div>
       <p className="mt-3 text-xs leading-5 text-[#8ba3c1]">
-        {locale === "ru" ? "Покупка через DEX будет включена только после отдельного SDK-аудита и проверки маршрута." : "DEX buying will be enabled only after SDK audit and route validation."}
+        {locale === "ru" ? "Покупка идёт через TonConnect: сначала считаем маршрут, потом собираем draft транзакции для кошелька." : "Buying uses TonConnect: first we quote the route, then build a wallet transaction draft."}
       </p>
     </div>
   );

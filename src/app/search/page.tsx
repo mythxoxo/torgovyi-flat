@@ -2,16 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { MarketTokenList } from "../../components/market-token-list";
-import { getTokenList } from "../../lib/api";
-import type { ExternalTokenRecord } from "../../lib/external-tokens/types";
 import type { MarketToken } from "../../lib/market/types";
-import type { TokenRecord } from "../../lib/shared";
+import { searchMarketTokens } from "../../lib/market/search-market-tokens";
 import { useUi } from "../../components/page-shell";
 
 type SearchFilter = "all" | "launchpad" | "external" | "listed";
-
-const toLaunchpadItems = (tokens: TokenRecord[]): MarketToken[] => tokens.map((token) => ({ source: "LAUNCHPAD", token }));
-const toExternalItems = (tokens: ExternalTokenRecord[]): MarketToken[] => tokens.map((token) => ({ source: "EXTERNAL", token }));
 
 export default function SearchPage() {
   const { locale, theme } = useUi();
@@ -20,30 +15,19 @@ export default function SearchPage() {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<SearchFilter>("all");
   const [error, setError] = useState("");
-  const [externalSource, setExternalSource] = useState<"stonfi-live" | "fallback" | "">("");
 
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
     setError("");
-    setExternalSource("");
 
-    const load = async () => {
-      const [launchpad, externalResponse] = await Promise.all([
-        filter === "external" ? Promise.resolve([] as TokenRecord[]) : getTokenList("trending"),
-        filter === "launchpad" || filter === "listed" ? Promise.resolve(null) : fetch("/api/external-tokens", { cache: "no-store" }).then((res) => res.json())
-      ]);
-
-      const externalData = externalResponse as { ok?: boolean; source?: "stonfi-live" | "fallback"; tokens?: ExternalTokenRecord[] } | null;
-      const external = externalData?.ok && externalData.tokens ? externalData.tokens : [];
-      if (!cancelled) {
-        setExternalSource(externalData?.source ?? "");
-        setItems([...toLaunchpadItems(launchpad), ...toExternalItems(external)]);
-      }
-    };
-
-    load()
-      .catch(() => setError(locale === "ru" ? "Поиск временно недоступен. Повтори позже." : "Search is temporarily unavailable. Try again later."))
+    searchMarketTokens(query, filter)
+      .then((tokens) => {
+        if (!cancelled) setItems(tokens.slice(0, 16));
+      })
+      .catch(() => {
+        if (!cancelled) setError(locale === "ru" ? "Поиск временно недоступен. Повтори позже." : "Search is temporarily unavailable. Try again later.");
+      })
       .finally(() => {
         if (!cancelled) setLoading(false);
       });
@@ -51,28 +35,9 @@ export default function SearchPage() {
     return () => {
       cancelled = true;
     };
-  }, [filter, locale]);
+  }, [filter, locale, query]);
 
-  const visibleItems = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    const base = items.filter((item) => {
-      if (filter === "launchpad") return item.source === "LAUNCHPAD";
-      if (filter === "external") return item.source === "EXTERNAL";
-      if (filter === "listed") return item.source === "LAUNCHPAD" && (item.token.status === "LISTED" || item.token.status === "GRADUATED_READY");
-      return true;
-    });
-
-    const filtered = q
-      ? base.filter((item) => {
-          const hay = item.source === "LAUNCHPAD"
-            ? [item.token.name, item.token.ticker, item.token.id].join(" ").toLowerCase()
-            : [item.token.name, item.token.symbol, item.token.address].join(" ").toLowerCase();
-          return hay.includes(q);
-        })
-      : base;
-
-    return filtered.slice(0, 16);
-  }, [items, query, filter]);
+  const visibleItems = useMemo(() => items, [items]);
 
   const panel = theme === "light" ? "border-[#dbe8f4] bg-white text-[#111827] shadow-[0_24px_70px_rgba(15,23,42,0.08)]" : "border-white/10 bg-[#0f1724] text-white shadow-[0_24px_70px_rgba(0,0,0,0.26)]";
   const muted = theme === "light" ? "text-[#64748b]" : "text-[#8ba3c1]";
@@ -100,7 +65,6 @@ export default function SearchPage() {
             <button key={item.id} type="button" onClick={() => setFilter(item.id)} className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${filter === item.id ? "border-[#0088cc] bg-[#0088cc] text-white" : idleChip}`}>{locale === "ru" ? item.ru : item.en}</button>
           ))}
         </div>
-        {(filter === "all" || filter === "external") && externalSource ? <p className={`mt-3 text-xs ${muted}`}>{externalSource === "stonfi-live" ? (locale === "ru" ? "External источник: live STON.fi assets" : "External source: live STON.fi assets") : (locale === "ru" ? "External источник: fallback список" : "External source: fallback list")}</p> : null}
       </section>
 
       {error ? <div className={`rounded-[24px] border p-6 text-sm ${panel}`}>{error}</div> : null}

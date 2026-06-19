@@ -1,5 +1,5 @@
 import { getTokenList } from "../api";
-import { listExternalTokens } from "../external-tokens/search";
+import { listExternalTokensLive } from "../external-tokens/live";
 import type { ExternalTokenRecord } from "../external-tokens/types";
 import { getWatchlist } from "../watchlist";
 import type { TokenRecord } from "../shared";
@@ -17,15 +17,15 @@ const launchpadFilterForApi = (filter: MarketFilter) => {
   return "trending";
 };
 
-const topExternalByVolume = () =>
-  [...listExternalTokens()].sort((a, b) => (b.volume24hGram ?? 0) - (a.volume24hGram ?? 0));
+const topExternalByVolume = async () =>
+  [...await listExternalTokensLive()].sort((a, b) => (b.volume24hGram ?? 0) - (a.volume24hGram ?? 0));
 
 export async function listMarketTokens(filter: MarketFilter = "all"): Promise<MarketToken[]> {
   const launchpad = await getTokenList(launchpadFilterForApi(filter)).catch(() => [] as TokenRecord[]);
   const watchlist = filter === "watchlist" ? new Set(getWatchlist()) : null;
 
   const launchpadItems: LaunchpadMarketToken[] = launchpad.map(launchpadToken);
-  const externalItems: ExternalMarketToken[] = topExternalByVolume().map(externalToken);
+  const externalItems: ExternalMarketToken[] = (await topExternalByVolume()).map(externalToken);
 
   if (filter === "external") return externalItems;
   if (filter === "all") return [...launchpadItems, ...externalItems];

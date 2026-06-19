@@ -1,9 +1,9 @@
 import { getToken } from "../api";
-import { resolveExternalToken } from "../external-tokens/search";
+import { resolveExternalTokenLive } from "../external-tokens/live";
 import type { MarketToken } from "./types";
 
 export async function resolveMarketToken(idOrAddress: string): Promise<MarketToken | null> {
-  const external = resolveExternalToken(idOrAddress);
+  const external = await resolveExternalTokenLive(idOrAddress);
   if (external) return { source: "EXTERNAL", token: external };
 
   try {
