@@ -23,16 +23,18 @@ export function WalletAssetsPanel() {
     );
   }
 
+  const gramBalance = data?.tonBalanceFormatted ? `${data.tonBalanceFormatted} GRAM` : "—";
+
   return (
     <div className="glass-card rounded-[24px] p-5 space-y-4">
       <div>
-        <div className="text-xs uppercase tracking-[0.2em] text-[#7dd3fc]">{t.nav.profile}</div>
+        <div className="text-xs uppercase tracking-[0.2em] text-[#5ac8fa]">{t.nav.profile}</div>
         <div className="mt-1 font-mono text-white">{short(wallet)}</div>
         <div className="mt-2 text-sm text-[#c6d4ea]">{t.profile.subtitle}</div>
       </div>
 
       <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-[#c6d4ea]">
-        TON: {data?.tonBalanceFormatted ? `${data.tonBalanceFormatted} TON` : "—"}
+        GRAM: {gramBalance}
       </div>
 
       {loading ? <div className="text-sm text-[#8ba3c1]">{t.misc.loadingWallet}</div> : null}
