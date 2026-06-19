@@ -71,3 +71,25 @@ export interface DexQuoteError {
   ok: false;
   error: string;
 }
+
+export interface DexSwapDraftInput extends DexQuoteInput {
+  minAskUnits: string;
+}
+
+export interface DexSwapDraft {
+  dex: "STONFI";
+  validUntil: number;
+  messages: PreparedDexMessage[];
+  warnings: string[];
+  liveExecutionVerified: false;
+}
+
+export interface DexSwapDraftResponse {
+  ok: true;
+  draft: DexSwapDraft;
+}
+
+export interface DexSwapDraftError {
+  ok: false;
+  error: string;
+}
