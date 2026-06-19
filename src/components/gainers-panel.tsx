@@ -9,7 +9,6 @@ type GainersResponse = {
   ok: boolean;
   source?: GainerSource;
   records?: GainerRecord[];
-  note?: string;
 };
 
 const formatGram = (value: number) => `${value.toLocaleString("en-US")} GRAM`;
@@ -18,7 +17,6 @@ export function GainersPanel() {
   const { locale } = useUi();
   const [records, setRecords] = useState<GainerRecord[]>([]);
   const [source, setSource] = useState<GainerSource>("fallback");
-  const [note, setNote] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -31,7 +29,6 @@ export function GainersPanel() {
         if (cancelled) return;
         setRecords(data.records ?? []);
         setSource(data.source ?? "fallback");
-        setNote(data.note ?? "");
       })
       .catch(() => {
         if (!cancelled) setRecords([]);
@@ -52,8 +49,8 @@ export function GainersPanel() {
   return (
     <div className="space-y-4">
       <div className="glass-card rounded-[24px] p-4 text-xs leading-5 text-[#8ba3c1]">
-        {source === "live" ? (locale === "ru" ? "Источник: live launchpad trader multiples" : "Source: live launchpad trader multiples") : (locale === "ru" ? "Источник: fallback, пока нет live PnL индекса." : "Source: fallback until live PnL indexing is available.")}
-        {note ? <span className="block mt-1">{note}</span> : null}
+        {source === "live" ? (locale === "ru" ? "Источник: live иксы launchpad-трейдеров" : "Source: live launchpad trader multiples") : (locale === "ru" ? "Источник: fallback, пока нет live PnL индекса." : "Source: fallback until live PnL indexing is available.")}
+        <span className="block mt-1">{locale === "ru" ? "Live иксы появятся после реальных запусков и индексации сделок." : "Live multiples require real launches and trade indexing."}</span>
       </div>
       <div className="grid gap-4 md:grid-cols-3">
         {records.map((item) => (
