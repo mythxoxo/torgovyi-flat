@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ExternalTokenRecord } from "../../lib/external-tokens/types";
 import { useUi } from "../page-shell";
 import { useWallet } from "../wallet-context";
@@ -30,34 +30,34 @@ export function ExternalTokenWalletPanel({ token }: { token: ExternalTokenRecord
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [assets, setAssets] = useState<WalletAssetsResponse | null>(null);
+  const [updatedAt, setUpdatedAt] = useState<string>("");
 
-  useEffect(() => {
-    let cancelled = false;
+  const loadAssets = useCallback(async () => {
     if (!wallet || !isConnected) {
       setAssets(null);
       setError("");
+      setUpdatedAt("");
       return;
     }
 
     setLoading(true);
     setError("");
 
-    fetch(`/api/wallet/assets?address=${encodeURIComponent(wallet)}`, { cache: "no-store" })
-      .then((res) => res.json() as Promise<WalletAssetsResponse>)
-      .then((data) => {
-        if (!cancelled) setAssets(data);
-      })
-      .catch(() => {
-        if (!cancelled) setError(locale === "ru" ? "Не удалось загрузить активы кошелька." : "Failed to load wallet assets.");
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-
-    return () => {
-      cancelled = true;
-    };
+    try {
+      const res = await fetch(`/api/wallet/assets?address=${encodeURIComponent(wallet)}`, { cache: "no-store" });
+      const data = (await res.json()) as WalletAssetsResponse;
+      setAssets(data);
+      setUpdatedAt(new Date().toLocaleTimeString(locale === "ru" ? "ru-RU" : "en-US", { hour: "2-digit", minute: "2-digit" }));
+    } catch {
+      setError(locale === "ru" ? "Не удалось загрузить активы кошелька." : "Failed to load wallet assets.");
+    } finally {
+      setLoading(false);
+    }
   }, [wallet, isConnected, locale]);
+
+  useEffect(() => {
+    void loadAssets();
+  }, [loadAssets]);
 
   const holding = useMemo(() => {
     const needle = token.address.toLowerCase();
@@ -68,7 +68,23 @@ export function ExternalTokenWalletPanel({ token }: { token: ExternalTokenRecord
 
   return (
     <div className="glass-card rounded-[24px] p-5">
-      <h2 className="font-display text-2xl font-bold text-white">{locale === "ru" ? "Твой кошелёк" : "Your wallet"}</h2>
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h2 className="font-display text-2xl font-bold text-white">{locale === "ru" ? "Твой кошелёк" : "Your wallet"}</h2>
+          {updatedAt ? <p className="mt-1 text-xs text-[#8ba3c1]">{locale === "ru" ? `Обновлено: ${updatedAt}` : `Updated: ${updatedAt}`}</p> : null}
+        </div>
+        {isConnected ? (
+          <button
+            type="button"
+            onClick={() => void loadAssets()}
+            disabled={loading}
+            className={`rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs text-[#c7d5e8] hover:bg-white/10 ${loading ? "cursor-not-allowed opacity-50" : ""}`}
+          >
+            {locale === "ru" ? "Обновить" : "Refresh"}
+          </button>
+        ) : null}
+      </div>
+
       <div className="mt-4 space-y-3 text-sm">
         {!isConnected ? (
           <div className="rounded-2xl border border-white/8 bg-white/5 p-4 text-[#8ba3c1]">
@@ -95,7 +111,7 @@ export function ExternalTokenWalletPanel({ token }: { token: ExternalTokenRecord
 
             <div className={`rounded-2xl border p-4 ${hasHolding ? "border-[#22c55e]/30 bg-[#22c55e]/10 text-[#d9ffe5]" : "border-[#ffb84d]/30 bg-[#ffb84d]/10 text-[#ffd79a]"}`}>
               {hasHolding
-                ? (locale === "ru" ? "Токен уже есть в кошельке. Это хороший базис для будущего sell flow." : "This token is already in your wallet. Good baseline for a future sell flow.")
+                ? (locale === "ru" ? "Токен уже есть в кошельке. Можно отслеживать позицию, а sell flow логично добивать следующим шагом." : "This token is already in your wallet. You can track the position here, and sell flow is the logical next step.")
                 : (locale === "ru" ? "Токен в кошельке пока не найден. Сначала купи его через DEX flow справа." : "This token was not found in your wallet yet. Buy it first using the DEX flow on the right.")}
             </div>
 
