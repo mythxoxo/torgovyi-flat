@@ -32,7 +32,7 @@ export function ExternalTokenView({ token }: { token: ExternalTokenRecord }) {
         </div>
 
         <p className="text-sm leading-6 text-[#8ba3c1]">
-          {locale === "ru" ? "Этот токен не был запущен через TONS of GRAM. Покупка через DEX — дополнительная фича, launchpad остаётся основой продукта." : "This token was not launched through TONS of GRAM. DEX buying is a secondary utility; the launchpad remains the core product."}
+          {locale === "ru" ? "Этот токен не был запущен через TONS of GRAM. Но купить его можно прямо здесь через DEX-маршрут и подпись в кошельке." : "This token was not launched through TONS of GRAM, but you can still buy it here through a DEX route and wallet signature."}
         </p>
 
         <div className="flex items-center gap-2 rounded-lg bg-[#1a2235] px-3 py-2">

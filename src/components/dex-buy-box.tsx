@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { ExternalTokenRecord } from "../lib/external-tokens/types";
 import type { DexQuote, DexQuoteResponse, DexSwapDraftResponse } from "../lib/dex/types";
 import type { TonTransactionDraft } from "../lib/onchain";
+import { getTelegramWebApp } from "../lib/telegram";
 import { useUi } from "./page-shell";
 import { RouteInfoCard } from "./route-info-card";
 import { useWallet } from "./wallet-context";
@@ -19,19 +20,24 @@ const formatUnits = (value: string, decimals: number) => {
   return `${whole.toString()}.${fractionText}`;
 };
 
+const explorerUrl = (boc?: string) => boc ? `https://tonviewer.com/transaction/${encodeURIComponent(boc)}` : null;
+
 export function DexBuyBox({ token }: { token: ExternalTokenRecord }) {
   const { locale } = useUi();
   const { wallet, isConnected, isMainnet, sendTransaction } = useWallet();
+  const app = getTelegramWebApp();
   const [amount, setAmount] = useState("1");
   const [loading, setLoading] = useState(false);
   const [quote, setQuote] = useState<DexQuote | null>(null);
   const [error, setError] = useState("");
+  const [warning, setWarning] = useState("");
   const [stage, setStage] = useState<"idle" | "quoting" | "quoted" | "building" | "signing" | "submitted" | "failed">("idle");
   const [txInfo, setTxInfo] = useState<{ hash?: string } | null>(null);
 
   const requestQuote = async () => {
     setLoading(true);
     setError("");
+    setWarning("");
     setQuote(null);
     setTxInfo(null);
     setStage("quoting");
@@ -64,8 +70,10 @@ export function DexBuyBox({ token }: { token: ExternalTokenRecord }) {
       setQuote(data.quote);
       setStage("quoted");
     } catch (err) {
+      const message = err instanceof Error ? err.message : "Quote failed";
       setStage("failed");
-      setError(err instanceof Error ? err.message : "Quote failed");
+      setError(message);
+      app?.HapticFeedback?.notificationOccurred("error");
     } finally {
       setLoading(false);
     }
@@ -74,6 +82,7 @@ export function DexBuyBox({ token }: { token: ExternalTokenRecord }) {
   const executeBuy = async () => {
     setLoading(true);
     setError("");
+    setWarning("");
     setTxInfo(null);
     setStage("building");
     try {
@@ -106,17 +115,35 @@ export function DexBuyBox({ token }: { token: ExternalTokenRecord }) {
         throw new Error(message);
       }
 
+      if (draftData.draft.warnings.length > 0) {
+        setWarning(draftData.draft.warnings[0]);
+      }
+
       setStage("signing");
       const tx = (await sendTransaction({
         validUntil: draftData.draft.validUntil,
         messages: draftData.draft.messages
       } as TonTransactionDraft)) as { boc?: string } | unknown;
 
-      setTxInfo(typeof tx === "object" && tx ? { hash: "boc" in tx && typeof tx.boc === "string" ? tx.boc : undefined } : null);
+      const nextTxInfo = typeof tx === "object" && tx ? { hash: "boc" in tx && typeof tx.boc === "string" ? tx.boc : undefined } : null;
+      setTxInfo(nextTxInfo);
       setStage("submitted");
+      app?.HapticFeedback?.notificationOccurred("success");
+      app?.showPopup?.({
+        title: locale === "ru" ? "Транзакция отправлена" : "Transaction submitted",
+        message: locale === "ru" ? "Проверь подтверждение в кошельке и статус в обозревателе." : "Check your wallet confirmation and explorer status.",
+        buttons: [{ type: "ok", text: "OK" }]
+      });
     } catch (err) {
+      const message = err instanceof Error ? err.message : "Buy failed";
       setStage("failed");
-      setError(err instanceof Error ? err.message : "Buy failed");
+      setError(message);
+      app?.HapticFeedback?.notificationOccurred("error");
+      app?.showPopup?.({
+        title: locale === "ru" ? "Покупка не прошла" : "Buy failed",
+        message,
+        buttons: [{ type: "close", text: "OK" }]
+      });
     } finally {
       setLoading(false);
     }
@@ -138,6 +165,7 @@ export function DexBuyBox({ token }: { token: ExternalTokenRecord }) {
 
   const disabledQuote = loading || !wallet || !isMainnet;
   const disabledBuy = loading || !quote || !wallet || !isMainnet;
+  const txExplorer = explorerUrl(txInfo?.hash);
 
   return (
     <div className="glass-card rounded-[24px] p-4 space-y-4">
@@ -198,7 +226,9 @@ export function DexBuyBox({ token }: { token: ExternalTokenRecord }) {
           ? (locale === "ru" ? "Собираю транзакцию..." : "Building transaction...")
           : loading && stage === "signing"
             ? (locale === "ru" ? "Подтверди в кошельке..." : "Confirm in wallet...")
-            : (locale === "ru" ? "Купить через кошелёк" : "Buy with wallet")}
+            : stage === "submitted"
+              ? (locale === "ru" ? "Отправлено" : "Submitted")
+              : (locale === "ru" ? "Купить через кошелёк" : "Buy with wallet")}
       </button>
 
       {!isMainnet ? (
@@ -207,9 +237,12 @@ export function DexBuyBox({ token }: { token: ExternalTokenRecord }) {
         </div>
       ) : null}
 
+      {warning ? <div className="rounded-2xl border border-[#ffb84d]/30 bg-[#ffb84d]/10 p-3 text-sm text-[#ffd79a]">{warning}</div> : null}
+
       {txInfo?.hash ? (
-        <div className="rounded-2xl border border-[#2aabee]/30 bg-[#2aabee]/10 p-3 text-xs text-[#bfe9ff] break-all">
-          BOC: {txInfo.hash}
+        <div className="rounded-2xl border border-[#2aabee]/30 bg-[#2aabee]/10 p-3 text-xs text-[#bfe9ff] break-all space-y-2">
+          <div>BOC: {txInfo.hash}</div>
+          {txExplorer ? <a href={txExplorer} target="_blank" rel="noreferrer" className="inline-flex text-[#8fd6ff] underline underline-offset-2">{locale === "ru" ? "Открыть в Tonviewer" : "Open in Tonviewer"}</a> : null}
         </div>
       ) : null}
 
