@@ -7,6 +7,7 @@ import { DexBuyBox } from "../dex-buy-box";
 import { RiskBadges } from "../risk-badges";
 import { WatchlistButton } from "../watchlist-button";
 import { useUi } from "../page-shell";
+import { ExternalTokenWalletPanel } from "./external-token-wallet-panel";
 
 export function ExternalTokenView({ token }: { token: ExternalTokenRecord }) {
   const { locale } = useUi();
@@ -43,15 +44,18 @@ export function ExternalTokenView({ token }: { token: ExternalTokenRecord }) {
         <RiskBadges token={token} />
       </div>
 
-      <div className="grid gap-4 px-4 xl:grid-cols-[1.4fr_0.8fr]">
-        <div className="glass-card rounded-[24px] p-5">
-          <h2 className="font-display text-2xl font-bold text-white">{locale === "ru" ? "Рынок" : "Market"}</h2>
-          <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            <div className="rounded-2xl border border-white/8 bg-white/5 p-4"><div className="text-xs text-[#8ba3c1]">{locale === "ru" ? "Цена" : "Price"}</div><div className="mt-1 font-semibold text-white">{token.priceGram ? `${token.priceGram.toLocaleString("en-US")} GRAM` : "—"}</div></div>
-            <div className="rounded-2xl border border-white/8 bg-white/5 p-4"><div className="text-xs text-[#8ba3c1]">24h</div><div className={`mt-1 font-semibold ${changeClass}`}>{change > 0 ? "+" : ""}{change.toFixed(1)}%</div></div>
-            <div className="rounded-2xl border border-white/8 bg-white/5 p-4"><div className="text-xs text-[#8ba3c1]">{locale === "ru" ? "Ликвидность" : "Liquidity"}</div><div className="mt-1 font-semibold text-white">{token.liquidityGram ? `${token.liquidityGram.toLocaleString("en-US")} GRAM` : "—"}</div></div>
-            <div className="rounded-2xl border border-white/8 bg-white/5 p-4"><div className="text-xs text-[#8ba3c1]">DEX</div><div className="mt-1 font-semibold text-white">{token.primaryDex ?? "No route"}</div></div>
+      <div className="grid gap-4 px-4 xl:grid-cols-[1.2fr_0.8fr]">
+        <div className="space-y-4">
+          <div className="glass-card rounded-[24px] p-5">
+            <h2 className="font-display text-2xl font-bold text-white">{locale === "ru" ? "Рынок" : "Market"}</h2>
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              <div className="rounded-2xl border border-white/8 bg-white/5 p-4"><div className="text-xs text-[#8ba3c1]">{locale === "ru" ? "Цена" : "Price"}</div><div className="mt-1 font-semibold text-white">{token.priceGram ? `${token.priceGram.toLocaleString("en-US")} GRAM` : "—"}</div></div>
+              <div className="rounded-2xl border border-white/8 bg-white/5 p-4"><div className="text-xs text-[#8ba3c1]">24h</div><div className={`mt-1 font-semibold ${changeClass}`}>{change > 0 ? "+" : ""}{change.toFixed(1)}%</div></div>
+              <div className="rounded-2xl border border-white/8 bg-white/5 p-4"><div className="text-xs text-[#8ba3c1]">{locale === "ru" ? "Ликвидность" : "Liquidity"}</div><div className="mt-1 font-semibold text-white">{token.liquidityGram ? `${token.liquidityGram.toLocaleString("en-US")} GRAM` : "—"}</div></div>
+              <div className="rounded-2xl border border-white/8 bg-white/5 p-4"><div className="text-xs text-[#8ba3c1]">DEX</div><div className="mt-1 font-semibold text-white">{token.primaryDex ?? "No route"}</div></div>
+            </div>
           </div>
+          <ExternalTokenWalletPanel token={token} />
         </div>
         <DexBuyBox token={token} />
       </div>
