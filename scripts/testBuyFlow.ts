@@ -14,9 +14,9 @@ async function main() {
   const buyer = await blockchain.treasury("buyer");
 
   const lpLock = blockchain.openContract(await LPLock.fromInit(creator.address, 0n, true));
-  const tempMinter = await JettonMinter.fromInit(0n, creator.address, beginCell().endCell());
+  const tempMinter = await JettonMinter.fromInit(0n, creator.address, beginCell().endCell(), creator.address, false);
   const pool = blockchain.openContract(await LaunchpadPool.fromInit(creator.address, tempMinter.address, lpLock.address, toNano(String(DEFAULT_TEST_TARGET_TON))));
-  const minter = blockchain.openContract(await JettonMinter.fromInit(0n, creator.address, beginCell().endCell()));
+  const minter = blockchain.openContract(await JettonMinter.fromInit(0n, creator.address, beginCell().endCell(), creator.address, false));
 
   const deployMinter = await minter.send(
     creator.getSender(),

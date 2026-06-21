@@ -15,7 +15,7 @@ async function main() {
   const creator = Address.parse(process.env.EXAMPLE_CREATOR_ADDRESS || process.env.FACTORY_OWNER_ADDRESS || FALLBACK_CREATOR);
   const targetTon = Number(arg("--target") || process.env.LAUNCHPAD_TARGET_TON || DEFAULT_TEST_TARGET_TON);
   const lpLock = await LPLock.fromInit(creator, 0n, true);
-  const minter = await JettonMinter.fromInit(0n, creator, beginCell().endCell());
+  const minter = await JettonMinter.fromInit(0n, creator, beginCell().endCell(), creator, false);
   const pool = await LaunchpadPool.fromInit(creator, minter.address, lpLock.address, toNano(String(targetTon)));
 
   console.log(JSON.stringify({

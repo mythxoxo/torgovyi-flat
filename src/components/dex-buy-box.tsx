@@ -173,8 +173,8 @@ export function DexBuyBox({ token }: { token: ExternalTokenRecord }) {
         <h3 className="font-display text-xl font-bold text-white">{locale === "ru" ? "Покупка через DEX" : "DEX buy"}</h3>
         <p className="mt-2 text-sm leading-6 text-[#8ba3c1]">
           {locale === "ru"
-            ? "TON → token через STON.fi маршрут. Транзакция подписывается прямо в кошельке."
-            : "TON → token via STON.fi route. The transaction is signed directly in the wallet."}
+            ? "TON → token через внешний liquidity route. Транзакция подписывается прямо в кошельке."
+            : "TON → token via an external liquidity route. The transaction is signed directly in the wallet."}
         </p>
       </div>
 

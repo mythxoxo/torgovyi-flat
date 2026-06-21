@@ -62,9 +62,17 @@ export const buyToken = (
     body: JSON.stringify({ wallet, tonAmount, referralCode, slippageBps, txHash })
   });
 
-export const sellToken = async () => {
-  throw new Error("Sell will be available after bonding/listing through DeDust.");
-};
+export const sellToken = (
+  id: string,
+  wallet: string,
+  tokenAmount: number,
+  slippageBps = 500,
+  txHash?: string
+) =>
+  requestJson<{ ok: true; pending: true; message: string }>(`/api/tokens/${id}/sell`, {
+    method: "POST",
+    body: JSON.stringify({ wallet, tokenAmount, slippageBps, txHash })
+  });
 
 export const resolveReferral = (wallet: string, code?: string) =>
   requestJson<{ code: string | null; valid: boolean; wallet: string | null; fallbackToTreasury: boolean }>(

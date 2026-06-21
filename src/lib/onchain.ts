@@ -2,6 +2,7 @@ import { Address, beginCell, toNano } from "@ton/core";
 import type { CreatorTaxConfig } from "./shared";
 import { storeCreateToken } from "../../build/launchpad-factory/LaunchpadFactory_LaunchpadFactory";
 import { storeBuy } from "../../build/launchpad-pool/LaunchpadPool_LaunchpadPool";
+import { storeJettonTransfer } from "../../build/jetton-minter/JettonMinter_JettonMinter";
 import { getLaunchpadTargetTon } from "./launch-config";
 
 export const BONDING_TARGET_TON = getLaunchpadTargetTon();
@@ -41,6 +42,13 @@ export interface BuyDraftInput {
   tonAmount: number;
   minTokensOut?: bigint;
   referralAddress?: string;
+}
+
+export interface SellDraftInput {
+  userJettonWalletAddress: string;
+  poolAddress: string;
+  tokenAmount: bigint;
+  minTonOutNano?: bigint;
 }
 
 export interface ListingConfigView {
@@ -119,3 +127,38 @@ export const buildBuyDraft = ({
     }
   ]
 });
+
+export const buildSellDraft = ({
+  userJettonWalletAddress,
+  poolAddress,
+  tokenAmount,
+  minTonOutNano = 1n
+}: SellDraftInput): TonTransactionDraft => {
+  const forwardPayload = beginCell()
+    .storeUint(0x7362d09c, 32)
+    .storeUint(0, 64)
+    .storeCoins(minTonOutNano)
+    .endCell();
+
+  const payload = beginCell().store(storeJettonTransfer({
+    $$type: "JettonTransfer",
+    queryId: 0n,
+    amount: tokenAmount,
+    destination: Address.parse(poolAddress),
+    responseDestination: Address.parse(poolAddress),
+    customPayload: null,
+    forwardTonAmount: toNano("0.05"),
+    forwardPayload: forwardPayload.beginParse()
+  })).endCell().toBoc().toString("base64");
+
+  return {
+    validUntil: Math.floor(Date.now() / 1000) + DEFAULT_QUERY_TTL,
+    messages: [
+      {
+        address: toMainnetAddress(userJettonWalletAddress),
+        amount: toNano("0.12").toString(),
+        payload
+      }
+    ]
+  };
+};

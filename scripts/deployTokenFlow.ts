@@ -26,9 +26,9 @@ async function main() {
   const targetTon = Number(arg("--target") || process.env.LAUNCHPAD_TARGET_TON || DEFAULT_TEST_TARGET_TON);
 
   const lpLock = await LPLock.fromInit(creator, 0n, true);
-  const tempMinter = await JettonMinter.fromInit(0n, creator, beginCell().endCell());
+  const tempMinter = await JettonMinter.fromInit(0n, creator, beginCell().endCell(), creator, false);
   const pool = await LaunchpadPool.fromInit(creator, tempMinter.address, lpLock.address, toNano(String(targetTon)));
-  const minter = await JettonMinter.fromInit(0n, creator, beginCell().endCell());
+  const minter = await JettonMinter.fromInit(0n, creator, beginCell().endCell(), creator, false);
 
   console.log(JSON.stringify({
     mode: dryRun ? "dry-run" : "execute",

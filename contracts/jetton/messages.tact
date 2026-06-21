@@ -85,3 +85,18 @@ message(3) ChangeOwner {
     queryId: Int as uint64;
     newOwner: Address;
 }
+
+message(22) ConfigureLaunchPhase {
+    queryId: Int as uint64;
+    pool: Address;
+    transfersEnabled: Bool;
+}
+
+message(23) EnableTransfers {
+    queryId: Int as uint64;
+}
+
+message(24) WalletSetTransfersEnabled {
+    queryId: Int as uint64;
+    transfersEnabled: Bool;
+}

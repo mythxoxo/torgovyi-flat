@@ -6,7 +6,7 @@ export async function GET() {
   try {
     const tokens = await listLiveStonfiExternalTokens(40);
     if (tokens.length > 0) {
-      return NextResponse.json({ ok: true, source: "stonfi-live", tokens });
+      return NextResponse.json({ ok: true, source: "live-external", tokens });
     }
   } catch (error) {
     console.warn("STON.fi live external source failed", error);

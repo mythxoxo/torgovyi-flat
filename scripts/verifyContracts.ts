@@ -1,5 +1,13 @@
 import { readFileSync, existsSync } from "node:fs";
 
+const waitForArtifacts = async (paths: string[], timeoutMs = 15000) => {
+  const started = Date.now();
+  while (Date.now() - started < timeoutMs) {
+    if (paths.every((file) => existsSync(file))) return;
+    await new Promise((resolve) => setTimeout(resolve, 250));
+  }
+};
+
 const required = [
   "build/launchpad-factory/LaunchpadFactory_LaunchpadFactory.abi",
   "build/launchpad-factory/LaunchpadFactory_LaunchpadFactory.code.boc",
@@ -13,7 +21,10 @@ const required = [
   "build/lp-lock/LPLock_LPLock.code.boc"
 ];
 
-for (const file of required) {
+const main = async () => {
+  await waitForArtifacts(required);
+
+  for (const file of required) {
   if (!existsSync(file)) {
     throw new Error(`Missing build artifact: ${file}`);
   }
@@ -59,3 +70,9 @@ for (const getter of ["get_jetton_data", "get_wallet_address"]) {
 }
 
 console.log(JSON.stringify({ ok: true }, null, 2));
+};
+
+main().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});

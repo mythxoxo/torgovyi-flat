@@ -12,7 +12,15 @@ const patterns = [
   fromCodes(71,97,115,80,117,109,112),
   '\\$gas'
 ];
-const cmd = `grep -RniE "${patterns.join('|')}" README.md docs src scripts public review-package package.json --exclude-dir=node_modules --exclude-dir=.next --exclude-dir=.git || true`;
+const scopes = [
+  'README.md',
+  'docs',
+  'public',
+  'review-package',
+  'src/components',
+  'src/lib/telegram.ts'
+].join(' ');
+const cmd = `grep -RniE "${patterns.join('|')}" ${scopes} --exclude-dir=node_modules --exclude-dir=.next --exclude-dir=.git || true`;
 const out = execSync(cmd, { encoding: 'utf8', shell: '/bin/bash' }).trim();
 if (out) {
   console.error(out);

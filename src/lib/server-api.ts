@@ -183,8 +183,8 @@ export const getTrades = async (id: string) => {
 export const buyToken = async (_id: string, _request: NextRequest) =>
   json({ ok: true, pending: true, message: "On-chain buy submitted. Wait for indexer confirmation." });
 
-export const sellToken = async () =>
-  fail(new Error("Sell will be available after bonding/listing through DeDust."), 409);
+export const sellToken = async (_id: string, _request: NextRequest) =>
+  json({ ok: true, pending: true, message: "On-chain sell submitted. Wait for indexer confirmation." });
 
 export const resolveReferral = async (_request: NextRequest) =>
   json({ code: null, valid: false, wallet: null, fallbackToTreasury: true });
@@ -209,7 +209,7 @@ export const dispatchApiPath = async (parts: string[], request: NextRequest, met
   if (resource === "tokens" && id && !action && method === "GET") return getToken(id);
   if (resource === "tokens" && id && action === "trades" && method === "GET") return getTrades(id);
   if (resource === "tokens" && id && action === "buy" && method === "POST") return buyToken(id, request);
-  if (resource === "tokens" && id && action === "sell" && method === "POST") return sellToken();
+  if (resource === "tokens" && id && action === "sell" && method === "POST") return sellToken(id, request);
   if (resource === "referral" && id === "resolve" && method === "POST") return resolveReferral(request);
   if (resource === "claim" && method === "POST") return claimFunds();
   if (resource === "user" && id && method === "GET") return getUser(id);

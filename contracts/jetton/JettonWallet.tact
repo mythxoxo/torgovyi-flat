@@ -4,6 +4,8 @@ contract JettonWallet(
     owner: Address,
     master: Address,
     balance: Int as coins,
+    launchPool: Address,
+    transfersEnabled: Bool,
 ) {
     const minTonsForStorage: Int = ton("0.01");
     const gasConsumption: Int = ton("0.015");
@@ -11,6 +13,10 @@ contract JettonWallet(
     receive(msg: JettonTransfer) {
         forceBasechain(msg.destination);
         throwUnless(705, sender() == self.owner);
+
+        if (!self.transfersEnabled) {
+            throwUnless(710, msg.destination == self.launchPool || self.owner == self.launchPool);
+        }
 
         self.balance -= msg.amount;
         throwUnless(706, self.balance >= 0);
@@ -36,14 +42,14 @@ contract JettonWallet(
                 forwardTonAmount: msg.forwardTonAmount,
                 forwardPayload: msg.forwardPayload,
             }.toCell(),
-            init: initOf JettonWallet(msg.destination, self.master, 0),
+            init: initOf JettonWallet(msg.destination, self.master, 0, self.launchPool, self.transfersEnabled),
         });
     }
 
     receive(msg: JettonTransferInternal) {
         self.balance += msg.amount;
 
-        let wallet: StateInit = initOf JettonWallet(msg.sender, self.master, 0);
+        let wallet: StateInit = initOf JettonWallet(msg.sender, self.master, 0, self.launchPool, self.transfersEnabled);
         if (!wallet.hasSameBasechainAddress(sender())) {
             throwUnless(707, self.master == sender());
         }
@@ -80,6 +86,11 @@ contract JettonWallet(
                 body: JettonExcesses { queryId: msg.queryId }.toCell(),
             });
         }
+    }
+
+    receive(msg: WalletSetTransfersEnabled) {
+        throwUnless(711, sender() == self.master);
+        self.transfersEnabled = msg.transfersEnabled;
     }
 
     receive(msg: JettonBurn) {
@@ -123,5 +134,13 @@ contract JettonWallet(
             master: self.master,
             code: myCode(),
         };
+    }
+
+    get fun get_transfers_enabled(): Bool {
+        return self.transfersEnabled;
+    }
+
+    get fun get_launch_pool(): Address {
+        return self.launchPool;
     }
 }

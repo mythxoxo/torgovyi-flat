@@ -6,12 +6,11 @@ export async function POST(request: NextRequest) {
   const body = (await request.json()) as { poolAddress?: string; tonAmount?: string; jettonAmount?: string };
   return NextResponse.json({
     ok: true,
-    dex: 'dedust',
     mode: 'dry-run',
-    status: 'payload scaffold',
+    status: 'migration scaffold',
     poolAddress: body.poolAddress || null,
     tonAmount: body.tonAmount || null,
     jettonAmount: body.jettonAmount || null,
-    warning: 'manual signing required; live DeDust listing not verified in this build'
+    warning: 'Post-migration unlock and live migration proof are still pending in this build.'
   });
 }

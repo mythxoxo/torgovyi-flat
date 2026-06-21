@@ -40,6 +40,7 @@ const checks = {
   toncenter,
   tonapi,
   db,
+  factory: Boolean(factory),
   dedustFirst: true,
   treasury: Boolean(walletValidation.wallets.treasury),
   owner: Boolean(walletValidation.wallets.owner),
@@ -58,6 +59,37 @@ const missingForLive = [
   "live tx hashes"
 ].filter(Boolean);
 
+const publicProductReadinessScore = Math.round(([
+  checks.appUrl,
+  checks.manifestUrl,
+  checks.targetValid,
+  checks.testModeAllowed,
+  checks.buildArtifacts,
+  checks.noSecretsTracked,
+  checks.treasury,
+  checks.owner,
+  checks.deployer,
+  checks.operator,
+  checks.liquidity
+].filter(Boolean).length / 11) * 100);
+
+const preLiveMainnetReadinessScore = Math.round(([
+  checks.appUrl,
+  checks.manifestUrl,
+  checks.targetValid,
+  checks.buildArtifacts,
+  checks.noSecretsTracked,
+  checks.toncenter,
+  checks.tonapi,
+  checks.db,
+  checks.factory,
+  checks.treasury,
+  checks.owner,
+  checks.deployer,
+  checks.operator,
+  checks.liquidity
+].filter(Boolean).length / 14) * 100);
+
 console.log(JSON.stringify({
   ok: walletValidation.ok,
   wallets: {
@@ -69,8 +101,8 @@ console.log(JSON.stringify({
   },
   missing: walletValidation.missing,
   invalid: walletValidation.invalid,
-  publicProductReadinessScore: 100,
-  preLiveMainnetReadinessScore: 100,
+  publicProductReadinessScore,
+  preLiveMainnetReadinessScore,
   targetTon,
   productionTargetTon: PRODUCTION_TARGET_TON,
   testMode: targetTon !== PRODUCTION_TARGET_TON,
