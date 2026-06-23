@@ -70,7 +70,14 @@ contract JettonMinter(
             value: 0,
             bounce: true,
             mode: SendRemainingValue,
-            body: msg.mintMessage.toCell(),
+            body: JettonTransferInternal {
+                queryId: msg.mintMessage.queryId,
+                amount: msg.mintMessage.amount,
+                sender: myAddress(),
+                responseDestination: msg.mintMessage.responseDestination,
+                forwardTonAmount: msg.mintMessage.forwardTonAmount,
+                forwardPayload: msg.mintMessage.forwardPayload,
+            }.toCell(),
             init: getJettonWalletInit(msg.receiver, self.launchPool, self.transfersEnabled),
         });
     }

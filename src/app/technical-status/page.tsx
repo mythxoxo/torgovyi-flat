@@ -1,10 +1,8 @@
-"use client";
-import { useUi } from '../../components/page-shell';
-const verifiedEn = [["Contracts build", "Verified"],["Contract verification", "Verified"],["Sandbox buy/mint loop", "Verified"],["Security check", "Verified"],["Production build", "Verified"],["Pre-migration transfer lock", "Verified"]] as const;
-const readyEn = [["TonConnect payloads", "Ready"],["Factory address derivation", "Ready"],["5 TON target", "Ready"],["Platform-only trading before migration", "Ready"]] as const;
-const pendingEn = [["Factory live deploy", "Pending"],["Live buy", "Pending"],["Live sell", "Pending"],["Migration unlock proof", "Pending"],["Indexer DB proof", "Pending"]] as const;
-const verifiedRu = [["Сборка контрактов", "Проверено"],["Верификация контрактов", "Проверено"],["Sandbox buy/mint loop", "Проверено"],["Security check", "Проверено"],["Production build", "Проверено"],["Блокировка трансферов до миграции", "Проверено"]] as const;
-const readyRu = [["TonConnect payloads", "Готово"],["Детерминирование factory address", "Готово"],["Цель 5 TON", "Готово"],["Торговля только через платформу до миграции", "Готово"]] as const;
-const pendingRu = [["Живой деплой factory", "В ожидании"],["Live buy", "В ожидании"],["Live sell", "В ожидании"],["Proof unlock после миграции", "В ожидании"],["Indexer DB proof", "В ожидании"]] as const;
-function Section({ title, items }: { title: string; items: readonly (readonly [string,string])[] }) { return <section className="glass-card rounded-[24px] p-5"><h2 className="font-display text-2xl font-bold text-white">{title}</h2><div className="mt-4 space-y-3">{items.map(([a,b]) => <div key={a} className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm"><span>{a}</span><span className="font-semibold text-[#c6d4ea]">{b}</span></div>)}</div></section>; }
-export default function TechnicalStatusPage(){ const { locale } = useUi(); const verified = locale === 'ru' ? verifiedRu : verifiedEn; const ready = locale === 'ru' ? readyRu : readyEn; const pending = locale === 'ru' ? pendingRu : pendingEn; return <div className="space-y-6"><section className="rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,rgba(14,24,39,0.94),rgba(7,13,24,0.98))] p-6 shadow-[0_20px_60px_rgba(0,0,0,0.22)]"><p className="text-xs uppercase tracking-[0.22em] text-[#7dd3fc]">{locale === 'ru' ? 'Технический статус' : 'Technical status'}</p><h1 className="mt-2 font-display text-3xl font-bold text-white sm:text-4xl">{locale === 'ru' ? 'Технический обзор' : 'Technical review'}</h1><p className="mt-3 max-w-3xl text-sm leading-7 text-[#c6d4ea]">{locale === 'ru' ? 'Текущее состояние TONK.MEM: до миграции торговля идёт только через платформу, после миграции открывается полноценный unlock lifecycle.' : 'Current TONK.MEM state: before migration, trading stays platform-only; after migration, the unlock lifecycle opens full transfers.'}</p></section><div className="grid gap-4 xl:grid-cols-3"><Section title={locale === 'ru' ? 'Локально проверено' : 'Verified locally'} items={verified} /><Section title={locale === 'ru' ? 'Готово к mainnet-подготовке' : 'Ready for mainnet preparation'} items={ready} /><Section title={locale === 'ru' ? 'Ждёт live proof' : 'Pending live proof'} items={pending} /></div></div>; }
+import { TechnicalStatusView } from '../../components/technical-status-view';
+import { getTechnicalStatusView } from '../../lib/server/technical-status';
+
+export default async function TechnicalStatusPage() {
+  const locale = (process.env.NEXT_PUBLIC_DEFAULT_LOCALE === 'ru' ? 'ru' : 'en') as 'ru' | 'en';
+  const data = await getTechnicalStatusView(locale);
+  return <TechnicalStatusView locale={locale} data={data} />;
+}

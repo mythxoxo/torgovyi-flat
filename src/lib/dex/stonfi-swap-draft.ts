@@ -58,7 +58,7 @@ export async function buildStonfiSwapDraft(input: DexSwapDraftInput): Promise<De
   const routerAddress = (simulation.router as { address?: unknown } | undefined)?.address;
   const ptonMasterAddress = (simulation.router as { ptonMasterAddress?: unknown } | undefined)?.ptonMasterAddress;
   if (!client.open || !dexContracts.Router?.create || !dexContracts.pTON?.create || !routerAddress || !ptonMasterAddress) {
-    throw new Error("STON.fi router simulation is incomplete");
+    throw new Error("STON.fi router simulation is unavailable for this asset pair");
   }
 
   const router = client.open(dexContracts.Router.create(routerAddress)) as {
@@ -107,7 +107,7 @@ export async function buildStonfiSwapDraft(input: DexSwapDraftInput): Promise<De
   const payload = toBase64Payload(tx.body ?? tx.payload);
 
   if (!address || !amount || !payload) {
-    throw new Error("STON.fi swap draft is incomplete");
+    throw new Error("STON.fi returned unusable wallet transaction params for this route");
   }
 
   return {

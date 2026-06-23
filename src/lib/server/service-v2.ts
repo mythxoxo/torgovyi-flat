@@ -1,11 +1,9 @@
 import type { CreateTokenInput, TokenRecord, UserSummary } from "../shared";
 import { listIndexedTokens } from "./indexer-store";
+import { executeCreateToken } from "./launch-executor";
+import { findReferralBindingByWallet, getReferralAccounting } from "./referral-store";
 
-export const createToken = async (_input: CreateTokenInput) => ({
-  ok: true,
-  pending: true,
-  message: "Create token transaction must be sent to factory via TonConnect. Wait for indexer confirmation."
-});
+export const createToken = async (input: CreateTokenInput) => executeCreateToken(input);
 
 const mapCreatedToken = (row: Awaited<ReturnType<typeof listIndexedTokens>>[number]): TokenRecord => ({
   id: row.pool_address,
@@ -15,7 +13,7 @@ const mapCreatedToken = (row: Awaited<ReturnType<typeof listIndexedTokens>>[numb
   description: row.description || "",
   creatorWallet: row.creator,
   links: {},
-  status: row.is_listed ? "LISTED" : row.status === "GRADUATED_READY" ? "GRADUATED_READY" : "BONDING",
+  status: row.status === "PENDING" ? "PENDING" : row.is_listed ? "LISTED" : row.status === "GRADUATED_READY" ? "GRADUATED_READY" : "BONDING",
   metadataStatus: "READY",
   createdAt: row.created_at,
   updatedAt: row.updated_at,
@@ -83,6 +81,8 @@ const mapCreatedToken = (row: Awaited<ReturnType<typeof listIndexedTokens>>[numb
 export const getUserSummary = async (wallet: string): Promise<UserSummary> => {
   const tokens = await listIndexedTokens("new");
   const createdTokens = tokens.filter((token) => token.creator === wallet).map(mapCreatedToken);
+  const binding = await findReferralBindingByWallet(wallet);
+  const accounting = await getReferralAccounting(wallet);
 
   return {
     wallet,
@@ -90,11 +90,11 @@ export const getUserSummary = async (wallet: string): Promise<UserSummary> => {
     creatorFeeEarnedTon: 0,
     creatorClaimableTon: 0,
     creatorClaimedTon: 0,
-    referralCode: "",
+    referralCode: binding?.code || "",
     referredVolumeTon: 0,
-    referralEarnedTon: 0,
-    referralClaimableTon: 0,
-    referralClaimedTon: 0,
+    referralEarnedTon: accounting?.earnedTon ?? 0,
+    referralClaimableTon: accounting?.claimableTon ?? 0,
+    referralClaimedTon: accounting?.claimedTon ?? 0,
     refunds: []
   };
 };

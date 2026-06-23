@@ -2,6 +2,8 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createMediaStorage } from "./server/media";
 import { listIndexedTokens, getIndexedToken, getTradesByPool } from "./server/indexer-store";
 import { createToken as createTokenRequest, getUserSummary } from "./server/service-v2";
+import { getLiveProof } from "./server/live-proof";
+import { findReferralBindingByCode, findReferralBindingByWallet, getReferralAccounting, upsertClaimRequest, upsertReferralBinding } from "./server/referral-store";
 import type { TokenRow } from "./shared";
 
 const optionalString = (value: string | undefined, fallback = ""): string => value?.trim() || fallback;
@@ -180,16 +182,150 @@ export const getTrades = async (id: string) => {
   }
 };
 
-export const buyToken = async (_id: string, _request: NextRequest) =>
-  json({ ok: true, pending: true, message: "On-chain buy submitted. Wait for indexer confirmation." });
+export const buyToken = async (id: string, request: NextRequest) => {
+  const body = await request.json().catch(() => ({} as Record<string, unknown>));
+  const live = await getLiveProof();
+  return json({
+    ok: true,
+    pending: true,
+    tokenId: id,
+    stage: "wallet-submitted",
+    liveBuyProven: live.summary.liveBuyProven,
+    txHash: typeof body.txHash === "string" ? body.txHash : undefined,
+    message: "Wallet transaction submitted. On-chain buy path is live; UI state updates after indexer confirmation."
+  });
+};
 
-export const sellToken = async (_id: string, _request: NextRequest) =>
-  json({ ok: true, pending: true, message: "On-chain sell submitted. Wait for indexer confirmation." });
+export const sellToken = async (id: string, request: NextRequest) => {
+  const body = await request.json().catch(() => ({} as Record<string, unknown>));
+  const wallet = typeof body.wallet === "string" ? body.wallet.trim() : "";
+  const tokenAmount = Number(body.tokenAmount);
+  const txHash = typeof body.txHash === "string" ? body.txHash : undefined;
+  const row = await getIndexedToken(id);
 
-export const resolveReferral = async (_request: NextRequest) =>
-  json({ code: null, valid: false, wallet: null, fallbackToTreasury: true });
+  if (!wallet) return fail(new Error("wallet is required"), 400);
+  if (!Number.isFinite(tokenAmount) || tokenAmount <= 0) return fail(new Error("tokenAmount must be > 0"), 400);
+  if (!row) return fail(new Error("token not found"), 404);
+  if (!row.pool_address) return fail(new Error("pool not found"), 409);
+  if (!row.jetton_address) return fail(new Error("jetton master not found"), 409);
 
-export const claimFunds = async () => fail(new Error("Claims are not enabled in MVP yet"), 409);
+  const live = await getLiveProof();
+  return json({
+    ok: true,
+    tokenId: id,
+    stage: txHash ? "verification_pending" : "payload_ready",
+    verificationRequired: true,
+    manualSignRequired: true,
+    liveBuyProven: live.summary.liveBuyProven,
+    txHash,
+    route: {
+      poolAddress: row.pool_address,
+      jettonMaster: row.jetton_address,
+      wallet,
+      tokenAmount
+    },
+    message: txHash
+      ? "Sell transaction submitted by user. Verify pool/accounting changes after chain confirmation."
+      : "Sell payload prepared by the client flow. User wallet signature and post-exec verification are required."
+  });
+};
+
+export const resolveReferral = async (request: NextRequest) => {
+  const body = await request.json().catch(() => ({} as Record<string, unknown>));
+  const wallet = typeof body.wallet === "string" ? body.wallet.trim() : "";
+  const code = typeof body.code === "string" ? body.code.trim() : "";
+
+  if (!wallet || !code) {
+    return json({ code: null, valid: false, wallet: null, fallbackToTreasury: false, reason: "wallet and code are required" }, 400);
+  }
+
+  const existing = await findReferralBindingByWallet(wallet);
+  if (existing) {
+    return json({ code: existing.code, valid: true, wallet: existing.referredByWallet, fallbackToTreasury: false, reason: "already bound" });
+  }
+
+  const target = await findReferralBindingByCode(code);
+  if (!target) {
+    return json({ code, valid: false, wallet: null, fallbackToTreasury: false, reason: "referral code not found" }, 404);
+  }
+  if (target.referredByWallet === wallet || target.wallet === wallet) {
+    return json({ code, valid: false, wallet: null, fallbackToTreasury: false, reason: "self-referral blocked" }, 409);
+  }
+
+  await upsertReferralBinding({ wallet, code: `bound:${wallet}`, referredByWallet: target.referredByWallet, createdAt: new Date().toISOString() });
+  return json({ code, valid: true, wallet: target.referredByWallet, fallbackToTreasury: false });
+};
+
+export const claimFunds = async (request: NextRequest) => {
+  const body = await request.json().catch(() => ({} as Record<string, unknown>));
+  const wallet = typeof body.wallet === "string" ? body.wallet.trim() : "";
+  const type = body.type as "creator" | "referral" | "refund" | undefined;
+  const tokenId = typeof body.tokenId === "string" ? body.tokenId : undefined;
+  const txHash = typeof body.txHash === "string" ? body.txHash.trim() : "";
+
+  if (!wallet) return fail(new Error("wallet is required"), 400);
+  if (!type) return fail(new Error("claim type is required"), 400);
+
+  const accounting = await getReferralAccounting(wallet);
+  const claimableTon = accounting?.claimableTon ?? 0;
+  if (type === "referral" && claimableTon <= 0) {
+    return fail(new Error("empty claim blocked"), 409);
+  }
+
+  const now = new Date().toISOString();
+
+  if (txHash) {
+    await upsertClaimRequest({
+      wallet,
+      type,
+      tokenId,
+      amountTon: claimableTon,
+      txHash,
+      status: "verification_pending",
+      createdAt: now,
+      updatedAt: now,
+      reason: "user submitted claim tx"
+    });
+
+    return json({
+      wallet,
+      type,
+      claimedTon: 0,
+      tokenId,
+      txHash,
+      user: await getUserSummary(wallet),
+      status: "verification_pending",
+      manualSignRequired: false,
+      verificationRequired: true,
+      message: "Claim transaction submitted by user. Final payout verification is pending."
+    });
+  }
+
+  await upsertClaimRequest({
+    wallet,
+    type,
+    tokenId,
+    amountTon: claimableTon,
+    status: claimableTon > 0 ? "payload_ready" : "not_eligible",
+    createdAt: now,
+    updatedAt: now,
+    reason: claimableTon > 0 ? "claim prepared" : "no claimable balance"
+  });
+
+  return json({
+    wallet,
+    type,
+    claimedTon: 0,
+    tokenId,
+    user: await getUserSummary(wallet),
+    status: claimableTon > 0 ? "payload_ready" : "not_eligible",
+    manualSignRequired: true,
+    verificationRequired: claimableTon > 0,
+    message: claimableTon > 0
+      ? "Claim intent prepared. User-submitted payout proof is required for verification."
+      : "No claimable balance available."
+  });
+};
 
 export const getUser = async (wallet: string) => {
   try {
@@ -211,7 +347,7 @@ export const dispatchApiPath = async (parts: string[], request: NextRequest, met
   if (resource === "tokens" && id && action === "buy" && method === "POST") return buyToken(id, request);
   if (resource === "tokens" && id && action === "sell" && method === "POST") return sellToken(id, request);
   if (resource === "referral" && id === "resolve" && method === "POST") return resolveReferral(request);
-  if (resource === "claim" && method === "POST") return claimFunds();
+  if (resource === "claim" && method === "POST") return claimFunds(request);
   if (resource === "user" && id && method === "GET") return getUser(id);
 
   return fail(new Error("Route not found"), 404);

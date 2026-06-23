@@ -44,7 +44,7 @@ export const getTrades = (id: string) =>
   requestJson<TradeRecord[]>(`/api/tokens/${id}/trades`);
 
 export const createToken = (input: CreateTokenInput) =>
-  requestJson<{ ok: true; pending: true; message: string }>("/api/tokens", {
+  requestJson<{ ok: boolean; pending?: boolean; message?: string }>("/api/tokens", {
     method: "POST",
     body: JSON.stringify(input)
   });
@@ -57,7 +57,7 @@ export const buyToken = (
   slippageBps = 500,
   txHash?: string
 ) =>
-  requestJson<{ ok: true; pending: true; message: string }>(`/api/tokens/${id}/buy`, {
+  requestJson<{ ok: boolean; pending?: boolean; message: string }>(`/api/tokens/${id}/buy`, {
     method: "POST",
     body: JSON.stringify({ wallet, tonAmount, referralCode, slippageBps, txHash })
   });
@@ -69,7 +69,7 @@ export const sellToken = (
   slippageBps = 500,
   txHash?: string
 ) =>
-  requestJson<{ ok: true; pending: true; message: string }>(`/api/tokens/${id}/sell`, {
+  requestJson<{ ok: boolean; pending?: boolean; message: string }>(`/api/tokens/${id}/sell`, {
     method: "POST",
     body: JSON.stringify({ wallet, tokenAmount, slippageBps, txHash })
   });

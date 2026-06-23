@@ -124,7 +124,7 @@ export function BuySellBox({ token }: { token: TokenRecord }) {
         await submitSell();
       }
 
-      setStage("indexed / verification pending");
+      setStage(mode === "buy" ? "indexed / verification pending" : "sell submitted / verification pending");
       router.refresh();
     } catch (caughtError) {
       setStage("failed");
@@ -197,7 +197,7 @@ export function BuySellBox({ token }: { token: TokenRecord }) {
       </button>
 
       <div className="text-xs text-[#8ba3c1]">Status: {stage}</div>
-      {mode === "sell" ? <div className="text-xs text-[#8ba3c1]">Sell path uses your jetton wallet and sends tokens back toward the bonding pool flow.</div> : null}
+      {mode === "sell" ? <div className="text-xs text-[#8ba3c1]">Sell path uses your jetton wallet, requires manual wallet signing, and must be verified on-chain after execution.</div> : null}
     </div>
   );
 }

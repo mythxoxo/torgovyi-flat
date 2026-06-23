@@ -42,7 +42,7 @@ contract LaunchpadPool {
     }
     require(accepted > 0, "graduated");
 
-    let tokensOut = (accepted / 1000000000) * TOKENS_PER_TON;
+    let tokensOut = (accepted * TOKENS_PER_TON) / 1000000000;
     require(tokensOut > 0, "slippage");
     require(tokensOut >= msg.minTokensOut, "slippage");
 
@@ -63,8 +63,8 @@ contract LaunchpadPool {
           amount: tokensOut,
           sender: myAddress(),
           responseDestination: self.creator,
-          forwardTonAmount: 0,
-          forwardPayload: emptySlice()
+          forwardTonAmount: 1,
+          forwardPayload: beginCell().storeUint(0, 1).endCell().asSlice()
         }
       }.toCell()
     });

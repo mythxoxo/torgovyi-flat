@@ -1,6 +1,6 @@
 import { Address, toNano } from "@ton/core";
 import { mnemonicToPrivateKey } from "@ton/crypto";
-import { TonClient, WalletContractV4 } from "@ton/ton";
+import { TonClient, WalletContractV5R1 } from "@ton/ton";
 import { LaunchpadFactory } from "../build/launchpad-factory/LaunchpadFactory_LaunchpadFactory";
 import { LaunchpadPool } from "../build/launchpad-pool/LaunchpadPool_LaunchpadPool";
 import { LPLock } from "../build/lp-lock/LPLock_LPLock";
@@ -12,7 +12,7 @@ const endpoint = process.env.TONCENTER_API_KEY
   : "https://toncenter.com/api/v2/jsonRPC";
 
 async function main() {
-  const mnemonic = process.env.DEPLOYER_MNEMONIC;
+  const mnemonic = process.env.DEPLOYER_MNEMONIC || process.env.TONK_MEM_DEPLOYER_MNEMONIC;
   const factoryAddress = process.env.NEXT_PUBLIC_FACTORY_ADDRESS;
   const creatorAddress = process.env.EXAMPLE_CREATOR_ADDRESS;
   const jettonMasterAddress = process.env.EXAMPLE_JETTON_MASTER_ADDRESS;
@@ -27,7 +27,7 @@ async function main() {
   const jettonMaster = Address.parse(jettonMasterAddress);
   const keyPair = await mnemonicToPrivateKey(mnemonic.split(" "));
   const client = new TonClient({ endpoint });
-  const wallet = WalletContractV4.create({ workchain: 0, publicKey: keyPair.publicKey });
+  const wallet = WalletContractV5R1.create({ publicKey: keyPair.publicKey });
   const sender = client.open(wallet).sender(keyPair.secretKey);
 
   const lpLock = await LPLock.fromInit(creator, 0n, true);

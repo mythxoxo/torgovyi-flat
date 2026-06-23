@@ -1,11 +1,22 @@
 import { NextResponse } from "next/server";
-import { listFallbackGainers } from "../../../lib/gainers/fallback";
+import { listLiveLaunchpadGainers } from "../../../lib/gainers/live";
 
 export async function GET() {
+  const records = await listLiveLaunchpadGainers();
+
+  if (records.length > 0) {
+    return NextResponse.json({
+      ok: true,
+      source: "live",
+      records,
+      note: "Derived from current indexed launchpad token activity."
+    });
+  }
+
   return NextResponse.json({
-    ok: true,
-    source: "fallback",
-    records: listFallbackGainers(),
-    note: "Live launchpad trader multiples require real post-launch trade/PnL indexing."
+    ok: false,
+    source: "live",
+    records: [],
+    note: "No live indexed launchpad activity is available yet."
   });
 }

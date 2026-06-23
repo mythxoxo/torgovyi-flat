@@ -9,6 +9,7 @@ type GainersResponse = {
   ok: boolean;
   source?: GainerSource;
   records?: GainerRecord[];
+  note?: string;
 };
 
 const formatGram = (value: number) => `${value.toLocaleString("en-US")} GRAM`;
@@ -18,6 +19,7 @@ export function GainersPanel() {
   const [records, setRecords] = useState<GainerRecord[]>([]);
   const [source, setSource] = useState<GainerSource>("fallback");
   const [loading, setLoading] = useState(true);
+  const [note, setNote] = useState("");
 
   useEffect(() => {
     let cancelled = false;
@@ -29,9 +31,13 @@ export function GainersPanel() {
         if (cancelled) return;
         setRecords(data.records ?? []);
         setSource(data.source ?? "fallback");
+        setNote(data.note ?? "");
       })
       .catch(() => {
-        if (!cancelled) setRecords([]);
+        if (!cancelled) {
+          setRecords([]);
+          setNote(locale === "ru" ? "Не удалось загрузить live gainers." : "Failed to load live gainers.");
+        }
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -49,11 +55,15 @@ export function GainersPanel() {
   return (
     <div className="space-y-4">
       <div className="glass-card rounded-[24px] p-4 text-xs leading-5 text-[#8ba3c1]">
-        {source === "live" ? (locale === "ru" ? "Источник: live иксы launchpad-трейдеров" : "Source: live launchpad trader multiples") : (locale === "ru" ? "Источник: fallback, пока нет live PnL индекса." : "Source: fallback until live PnL indexing is available.")}
-        <span className="block mt-1">{locale === "ru" ? "Live иксы появятся после реальных запусков и индексации сделок." : "Live multiples require real launches and trade indexing."}</span>
+        {source === "live" ? (locale === "ru" ? "Источник: live launchpad activity" : "Source: live launchpad activity") : (locale === "ru" ? "Источник: недоступен" : "Source: unavailable")}
+        <span className="block mt-1">{note || (locale === "ru" ? "Данные строятся из текущей проиндексированной активности launchpad." : "Data is derived from currently indexed launchpad activity.")}</span>
       </div>
       <div className="grid gap-4 md:grid-cols-3">
-        {records.map((item) => (
+        {records.length === 0 ? (
+          <div className="glass-card rounded-[24px] p-6 text-sm text-[#8ba3c1]">
+            {locale === "ru" ? "Пока нет live gainers с подтверждённой индексированной активностью." : "No live gainers with confirmed indexed activity yet."}
+          </div>
+        ) : records.map((item) => (
           <div key={`${item.wallet}-${item.token}`} className="glass-card rounded-[24px] p-5">
             <div className="flex items-center justify-between gap-3">
               <div className="rounded-2xl border border-[#22c55e]/30 bg-[#22c55e]/10 p-3 text-[#86efac]">

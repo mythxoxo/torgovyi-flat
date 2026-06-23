@@ -1,10 +1,19 @@
 import type { ListingRow, TokenRow, TradeRow } from "../shared";
 import { ensureSchema, getDb } from "./db";
+import { getRuntimeToken, listRuntimeTokens, upsertRuntimeToken } from "./runtime-store";
+import { listRuntimeTradesByPool, upsertRuntimeTrade } from "./trade-store";
 
 const isDbConfigured = () => Boolean(process.env.DATABASE_URL);
 
 export const listIndexedTokens = async (filter = "trending"): Promise<TokenRow[]> => {
-  if (!isDbConfigured()) return [];
+  if (!isDbConfigured()) {
+    const rows = await listRuntimeTokens();
+    return rows.filter((row) => {
+      if (filter === "graduated") return ["GRADUATED_READY", "LISTED"].includes(row.status);
+      if (filter === "almost-graduated") return row.status === "BONDING";
+      return true;
+    });
+  }
   await ensureSchema();
   const db = getDb();
 
@@ -37,7 +46,7 @@ export const listIndexedTokens = async (filter = "trending"): Promise<TokenRow[]
 };
 
 export const getIndexedToken = async (poolAddress: string): Promise<TokenRow | null> => {
-  if (!isDbConfigured()) return null;
+  if (!isDbConfigured()) return getRuntimeToken(poolAddress);
   await ensureSchema();
   const db = getDb();
   const { rows } = await db.query<TokenRow>(`SELECT * FROM tokens WHERE pool_address = $1 LIMIT 1`, [poolAddress]);
@@ -45,7 +54,7 @@ export const getIndexedToken = async (poolAddress: string): Promise<TokenRow | n
 };
 
 export const getTradesByPool = async (poolAddress: string): Promise<TradeRow[]> => {
-  if (!isDbConfigured()) return [];
+  if (!isDbConfigured()) return listRuntimeTradesByPool(poolAddress);
   await ensureSchema();
   const db = getDb();
   const { rows } = await db.query<TradeRow>(`SELECT * FROM trades WHERE pool_address = $1 ORDER BY created_at DESC LIMIT 100`, [poolAddress]);
@@ -53,7 +62,10 @@ export const getTradesByPool = async (poolAddress: string): Promise<TradeRow[]> 
 };
 
 export const upsertTokenRow = async (row: TokenRow) => {
-  if (!isDbConfigured()) throw new Error("db write mode requires DATABASE_URL");
+  if (!isDbConfigured()) {
+    await upsertRuntimeToken(row);
+    return;
+  }
   await ensureSchema();
   const db = getDb();
   await db.query(
@@ -103,7 +115,10 @@ export const upsertTokenRow = async (row: TokenRow) => {
 };
 
 export const upsertTradeRow = async (row: TradeRow) => {
-  if (!isDbConfigured()) throw new Error("db write mode requires DATABASE_URL");
+  if (!isDbConfigured()) {
+    await upsertRuntimeTrade(row);
+    return;
+  }
   await ensureSchema();
   const db = getDb();
   await db.query(

@@ -16,8 +16,8 @@ export function ReferralPanel({ referralCode, shareUrl, earnedTon, volumeTon, pe
     <div className="space-y-5">
       <section className="glass-card rounded-[28px] p-6">
         <p className="text-xs uppercase tracking-[0.2em] text-[#7dd3fc]">Referrals</p>
-        <h1 className="mt-2 font-display text-3xl font-bold text-white">Referral tracking is pending live deployment.</h1>
-        <p className="mt-3 max-w-2xl text-sm leading-7 text-[#c6d4ea]">The referral system is visible for product review, but earnings and attribution should not be treated as live until manual mainnet deployment is completed.</p>
+        <h1 className="mt-2 font-display text-3xl font-bold text-white">Referral links are live. Rewards depend on indexed eligible buys.</h1>
+        <p className="mt-3 max-w-2xl text-sm leading-7 text-[#c6d4ea]">Link generation and sharing work. Reward and claim values reflect stored backend accounting and remain zero until eligible indexed buys exist.</p>
       </section>
 
       <section className="glass-card rounded-[28px] p-5">
@@ -27,12 +27,16 @@ export function ReferralPanel({ referralCode, shareUrl, earnedTon, volumeTon, pe
       </section>
 
       <section className="grid gap-3 sm:grid-cols-3">
-        {[{ label: 'Status', value: hasReferral ? 'Ready after live deploy' : 'Pending' }, { label: 'Earned', value: hasReferral ? `💎 ${earnedTon.toFixed(2)}` : '—' }, { label: 'Pending', value: hasReferral ? `💎 ${pendingTon.toFixed(2)}` : '—' }].map((stat) => (
+        {[
+          { label: 'Status', value: hasReferral ? 'Share-ready / tracked by backend state' : 'Wallet required' },
+          { label: 'Earned', value: `💎 ${earnedTon.toFixed(2)}` },
+          { label: 'Pending', value: `💎 ${pendingTon.toFixed(2)}` }
+        ].map((stat) => (
           <div key={stat.label} className="glass-card p-4 text-center"><div className="font-mono text-lg font-bold text-white">{stat.value}</div><div className="mt-1 text-xs text-[#8ba3c1]">{stat.label}</div></div>
         ))}
       </section>
 
-      <section className="glass-card rounded-[28px] p-5 text-sm text-[#c6d4ea]">{hasReferral ? `Current review metrics: volume ${volumeTon.toFixed(2)} TON, code ${referralCode}.` : "Connect wallet to generate your referral link. Live referral tracking is not active yet."}</section>
+      <section className="glass-card rounded-[28px] p-5 text-sm text-[#c6d4ea]">{hasReferral ? `Current visible metrics: volume ${volumeTon.toFixed(2)} TON, code ${referralCode || user?.id || ''}. Claim/earn totals update from persisted backend accounting.` : "Connect wallet to generate your referral link."}</section>
     </div>
   );
 }

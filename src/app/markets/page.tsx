@@ -74,7 +74,7 @@ export default function MarketsPage() {
             <button key={item.id} type="button" onClick={() => setTab(item.id)} className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${tab === item.id ? "border-[#0088cc] bg-[#0088cc] text-white" : inactive}`}>{locale === "ru" ? item.ru : item.en}</button>
           ))}
         </div>
-        {tab === "external" && externalSource ? <p className={`mt-3 text-xs ${muted}`}>{externalSource === "live-external" ? (locale === "ru" ? "Источник: live external assets" : "Source: live external assets") : (locale === "ru" ? "Источник: fallback список" : "Source: fallback list")}</p> : null}
+        {tab === "external" && externalSource ? <p className={`mt-3 text-xs ${muted}`}>{externalSource === "live-external" ? (locale === "ru" ? "Источник: live external assets" : "Source: live external assets") : (locale === "ru" ? "Источник: недоступен" : "Source: unavailable")}</p> : null}
       </section>
       {tab === "gainers" ? <GainersPanel /> : <MarketTokenList tokens={tokens} loading={loading} />}
     </div>

@@ -25,15 +25,15 @@ export function prepareDedustLiquidityDraft(input: PrepareDedustLiquidityInput):
 
   return {
     dex: 'dedust',
-    mode: 'dry-run',
-    status: 'payload scaffold',
-    title: 'Prepare DeDust liquidity draft',
-    description: 'Manual DeDust migration scaffold. Exact live payload still requires final on-chain verification before signing.',
+    mode: 'manual',
+    status: 'payload_ready',
+    title: 'Prepare DeDust liquidity transaction',
+    description: 'Manual DeDust liquidity payload prepared for wallet signing. Final live pool/LP verification still happens after execution.',
     messages: [{ address: pool, amount: BigInt(input.tonAmountNano).toString(), payload }],
     warnings: [
       'manual signing required',
-      'live execution not verified',
-      'exact DeDust pool/vault payload must be verified before mainnet signing'
+      'verify token/ton amounts before signing',
+      'confirm resulting pool and LP lock on-chain after execution'
     ],
     validUntil: Math.floor(Date.now() / 1000) + 900,
     manualSigningRequired: true,

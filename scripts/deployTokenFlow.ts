@@ -1,6 +1,6 @@
 import { beginCell, Address, toNano } from "@ton/core";
 import { mnemonicToPrivateKey } from "@ton/crypto";
-import { TonClient, WalletContractV4 } from "@ton/ton";
+import { TonClient, WalletContractV5R1 } from "@ton/ton";
 import { LaunchpadPool } from "../build/launchpad-pool/LaunchpadPool_LaunchpadPool";
 import { LPLock } from "../build/lp-lock/LPLock_LPLock";
 import { JettonMinter } from "../build/jetton-minter/JettonMinter_JettonMinter";
@@ -52,13 +52,13 @@ async function main() {
 
   if (dryRun) return;
 
-  const mnemonic = process.env.DEPLOYER_MNEMONIC;
+  const mnemonic = process.env.DEPLOYER_MNEMONIC || process.env.TONK_MEM_DEPLOYER_MNEMONIC;
   if (!mnemonic) throw new Error("DEPLOYER_MNEMONIC is required");
   if (!process.env.NEXT_PUBLIC_FACTORY_ADDRESS) throw new Error("NEXT_PUBLIC_FACTORY_ADDRESS is required");
 
   const keyPair = await mnemonicToPrivateKey(mnemonic.split(" "));
   const client = new TonClient({ endpoint });
-  const wallet = WalletContractV4.create({ workchain: 0, publicKey: keyPair.publicKey });
+  const wallet = WalletContractV5R1.create({ publicKey: keyPair.publicKey });
   void client.open(wallet).sender(keyPair.secretKey);
 
   console.log("Execute sequence must be confirmed step-by-step. Save tx hashes for deploy/change-owner/register.");

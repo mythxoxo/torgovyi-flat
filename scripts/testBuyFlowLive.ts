@@ -1,7 +1,25 @@
+import { existsSync, readFileSync } from "node:fs";
 import { Address, beginCell, toNano } from "@ton/core";
 import { mnemonicToPrivateKey } from "@ton/crypto";
-import { TonClient, WalletContractV4 } from "@ton/ton";
+import { TonClient, WalletContractV5R1 } from "@ton/ton";
 import { LaunchpadPool } from "../build/launchpad-pool/LaunchpadPool_LaunchpadPool";
+
+
+function loadLocalEnv(path: string) {
+  if (!existsSync(path)) return;
+  const content = readFileSync(path, "utf8");
+  for (const line of content.split(/\r?\n/)) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) continue;
+    const eq = trimmed.indexOf("=");
+    if (eq <= 0) continue;
+    const key = trimmed.slice(0, eq);
+    const value = trimmed.slice(eq + 1);
+    if (!process.env[key]) process.env[key] = value;
+  }
+}
+loadLocalEnv('.env.local');
+loadLocalEnv('.env.production');
 
 const endpoint = process.env.TONCENTER_API_KEY
   ? `https://toncenter.com/api/v2/jsonRPC?api_key=${process.env.TONCENTER_API_KEY}`
@@ -44,11 +62,11 @@ async function main() {
   if (dryRun) return;
   if (!execute) throw new Error("Pass --dry-run or --execute");
 
-  const mnemonic = process.env.DEPLOYER_MNEMONIC;
+  const mnemonic = process.env.DEPLOYER_MNEMONIC || process.env.TONK_MEM_DEPLOYER_MNEMONIC;
   if (!mnemonic) throw new Error("DEPLOYER_MNEMONIC is required for --execute");
 
   const keyPair = await mnemonicToPrivateKey(mnemonic.split(" "));
-  const wallet = WalletContractV4.create({ workchain: 0, publicKey: keyPair.publicKey });
+  const wallet = WalletContractV5R1.create({ publicKey: keyPair.publicKey });
   const sender = client.open(wallet).sender(keyPair.secretKey);
 
   await pool.send(sender, { value: toNano(amountArg) }, {

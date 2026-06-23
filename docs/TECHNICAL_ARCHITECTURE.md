@@ -12,11 +12,12 @@
 - user signs manually in wallet
 - verify scripts read chain state afterward
 
-## Factory registry fallback
+## Factory registry / orchestration model
 
-- Factory currently acts as registry/discovery source
-- Pool/Jetton pair is registered explicitly
-- indexer discovers pools through Factory registry
+- Factory acts as authoritative registry and validation state machine
+- Pool/Jetton pair is registered explicitly and guarded against duplicates
+- backend executor can still orchestrate deploy steps where direct on-chain deployment is not practical
+- UI/API must not present this as a fully autonomous deploy factory
 
 ## JettonMinter
 
@@ -32,17 +33,18 @@
 
 ## LPLock
 
-- contract scaffolded and compiled
-- live LP lock proof still pending
+- contract compiled and available
+- live LP lock verification still depends on real listing execution evidence
 
 ## Indexer
 
 - reads Factory registry and Pool getters
+- stores minimal token/trade-like rows
 - database is cache only
 - blockchain is source of truth
 
-## DeDust listing fallback
+## DeDust listing
 
-- scaffold preserved
-- no fake listed state
-- live listing proof still pending
+- listing intent is persisted
+- payload preparation is manual-sign only
+- verification reports concrete external-liquidity reasons when the external pool/LP is absent

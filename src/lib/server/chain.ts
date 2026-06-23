@@ -69,3 +69,8 @@ export const getRecentTransactions = async (address: string, limit = 20) => {
   const ton = getTonClient();
   return ton.getTransactions(Address.parse(address), { limit });
 };
+
+export const getContractState = async (address: string) => {
+  const ton = getTonClient();
+  return ton.getContractState(Address.parse(address));
+};

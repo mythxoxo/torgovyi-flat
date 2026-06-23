@@ -28,8 +28,8 @@ export type PreparedDexMessage = {
 
 export type PreparedDedustLiquidityTx = {
   dex: "dedust";
-  mode: "dry-run";
-  status: "payload scaffold";
+  mode: "manual";
+  status: "payload_ready";
   title: string;
   description: string;
   messages: PreparedDexMessage[];
