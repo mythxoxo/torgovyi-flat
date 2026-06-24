@@ -5,6 +5,7 @@ export type ListingIntent = {
   poolAddress: string;
   jettonAddress: string;
   ownerWallet: string;
+  liquidityWallet?: string;
   targetDex: "dedust";
   expectedPair: { base: "TON"; quote: string };
   tonAmount: string;
