@@ -8,7 +8,7 @@ export type ReferralBinding = {
   createdAt: string;
 };
 
-export type ClaimState = "not_eligible" | "pending" | "claimable" | "payload_ready" | "verification_pending" | "claimed" | "failed";
+export type ClaimState = "not_eligible" | "pending" | "claimable" | "payload_ready" | "verification_pending" | "claimed" | "failed" | "treasury_unavailable";
 
 export type ReferralAccounting = {
   wallet: string;
