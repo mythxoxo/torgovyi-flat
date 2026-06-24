@@ -1,4 +1,5 @@
 import { getContractState } from "./chain";
+import { getProjectWallets } from "../project-wallets";
 import { ensureListingIntent, getListingIntent } from "./listing-store";
 
 export async function verifyListingPool(poolAddress: string) {
@@ -55,12 +56,14 @@ export async function ensureLivePoolListingIntent() {
   const poolAddress = process.env.LIVE_POOL_ADDRESS || "EQDUYho8-Np3wzUbkbrN36-fCY9utqdjROPmxB0nzpibT6R-";
   const jettonAddress = process.env.LIVE_JETTON_ADDRESS || "EQBq5kppzmz7BJuvQzAW_ZMyXvFhnSPBjyXD_ximwhedL3ca";
   const ownerWallet = process.env.LIVE_BUYER_ADDRESS || process.env.EXAMPLE_CREATOR_ADDRESS || "EQBEz1JfICpZYhsiqDCccu3lTOo5Or91vFOnqiHcdjcddtrx";
+  const liquidityWallet = getProjectWallets().liquidity;
   const now = new Date().toISOString();
 
   return ensureListingIntent({
     poolAddress,
     jettonAddress,
     ownerWallet,
+    liquidityWallet,
     targetDex: "dedust",
     expectedPair: { base: "TON", quote: jettonAddress },
     tonAmount: "0",
