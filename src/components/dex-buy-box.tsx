@@ -69,10 +69,11 @@ export function DexBuyBox({ token }: { token: ExternalTokenRecord }) {
         body: JSON.stringify({ tokenAddress: token.address, side, amount: inputUnits(), platforms: availablePlatforms, slippageBps: 300 })
       });
       const data = (await res.json()) as { ok?: boolean; quotes?: DexQuote[]; error?: string };
-      if (!res.ok || !data.ok || !Array.isArray(data.quotes)) throw new Error(data.error || "Quote failed");
-      setQuotes(data.quotes);
-      const firstReady = data.quotes.find((quote) => quote.status === "quote_ready");
-      setSelectedDex((current) => data.quotes.some((quote) => quote.dex === current && quote.status === "quote_ready") ? current : firstReady?.dex ?? data.quotes[0]?.dex ?? null);
+      const nextQuotes = Array.isArray(data.quotes) ? data.quotes : [];
+      if (!res.ok || !data.ok || nextQuotes.length === 0) throw new Error(data.error || "Quote failed");
+      setQuotes(nextQuotes);
+      const firstReady = nextQuotes.find((quote) => quote.status === "quote_ready");
+      setSelectedDex((current) => current && nextQuotes.some((quote) => quote.dex === current && quote.status === "quote_ready") ? current : firstReady?.dex ?? nextQuotes[0]?.dex ?? null);
       setStage("quoted");
     } catch (err) {
       const message = err instanceof Error ? err.message : "Quote failed";
