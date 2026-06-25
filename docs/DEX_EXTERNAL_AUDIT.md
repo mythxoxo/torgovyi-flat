@@ -22,12 +22,24 @@ Recommended starting platform fee:
 
 Reason: external DEX users already pay DEX spread/fee, slippage, and network fees. Starting at 0.25% is less aggressive than 0.75% bonding fees and is safer for conversion.
 
-Required env keys:
+## Token price display audit
 
-```env
-DEX_PLATFORM_FEE_BPS=25
-DEX_PLATFORM_FEE_TREASURY=
-```
+Root causes found:
+
+1. Launchpad token cards did not render a price row.
+2. Trade box used only active bonding quotes for current price, so non-bonding tokens showed an empty price.
+3. External market API returned an error-shaped response when the live source was unavailable, so the External tab became empty instead of showing fallback tokens.
+
+Applied fixes in this branch:
+
+- Token cards compute a visible fallback price and render a price row.
+- Buy/sell box computes a visible current price even when active bonding quote is unavailable.
+- External token API returns fallback tokens with `ok: true` when the live source is empty or unavailable.
+
+Remaining backend cleanup:
+
+- Move the same price calculation into API mapping so server responses stop returning zero for `currentPriceTon`.
+- Direct update of the large API file was blocked during this pass by the GitHub connector, so local agent should apply the same formula server-side and run build.
 
 ## DeDust state
 
@@ -82,4 +94,3 @@ Fee rows must show:
 - DeDust official SDK export mapping must be verified locally after installing `@dedust/sdk`.
 - DeDust final buy/sell payloads should not be enabled until SDK payload building is confirmed.
 - DeDust sell fee likely needs a PlatformSwapProxy contract or official referral mechanism.
-- `.env.example` still needs `DEX_PLATFORM_FEE_BPS` and `DEX_PLATFORM_FEE_TREASURY` if not already added by local agent, because direct GitHub update was blocked during this pass.
