@@ -64,12 +64,14 @@ export function BuySellBox({ token }: { token: TokenRecord }) {
   }, [numericAmount, token]);
 
   const visibleCurrentPrice = useMemo(() => {
+    const soldSupply = token.state.soldSupply || 0;
+    const collectedTon = token.state.collectedTon ?? token.state.reserveTon ?? 0;
     if (buyQuote) return buyQuote.newState.currentPriceTon;
     if (sellQuoteData) return sellQuoteData.newState.currentPriceTon;
     if (token.state.currentPriceTon > 0) return token.state.currentPriceTon;
-    if (token.status === "BONDING") return spotPriceForSupply(token.state.soldSupply || 0);
+    if (token.status === "BONDING") return spotPriceForSupply(soldSupply);
     if (token.state.circulatingSupply > 0 && token.state.marketCapTon > 0) return token.state.marketCapTon / token.state.circulatingSupply;
-    if (token.state.soldSupply > 0 && token.state.collectedTon > 0) return token.state.collectedTon / token.state.soldSupply;
+    if (soldSupply > 0 && collectedTon > 0) return collectedTon / soldSupply;
     return 0;
   }, [buyQuote, sellQuoteData, token]);
 
