@@ -1,23 +1,46 @@
 import type { ExternalTokenRecord } from "./types";
+import { listLiveDedustExternalTokens } from "./dedust-live";
 import { listExternalTokens, resolveExternalToken, searchExternalTokens, type ExternalTokenFilter } from "./search";
+import { listLiveStonfiExternalTokens } from "./stonfi-live";
 
-async function fetchExternalTokens(): Promise<ExternalTokenRecord[]> {
-  const res = await fetch("/api/external-tokens", { cache: "no-store" });
-  if (!res.ok) {
-    throw new Error(`External token source failed with ${res.status}`);
+const keyOf = (token: ExternalTokenRecord) => token.address.toLowerCase();
+
+const mergeExternalTokens = (groups: ExternalTokenRecord[][]): ExternalTokenRecord[] => {
+  const map = new Map<string, ExternalTokenRecord>();
+  for (const token of groups.flat()) {
+    const key = keyOf(token);
+    const existing = map.get(key);
+    if (!existing) {
+      map.set(key, token);
+      continue;
+    }
+    const dexes = Array.from(new Set([...existing.dexes, ...token.dexes]));
+    map.set(key, {
+      ...existing,
+      ...token,
+      dexes,
+      primaryDex: dexes.includes("DEDUST") ? "DEDUST" : dexes[0],
+      priceGram: token.priceGram ?? existing.priceGram,
+      priceUsd: token.priceUsd ?? existing.priceUsd,
+      liquidityGram: Math.max(existing.liquidityGram ?? 0, token.liquidityGram ?? 0) || existing.liquidityGram || token.liquidityGram,
+      volume24hGram: Math.max(existing.volume24hGram ?? 0, token.volume24hGram ?? 0) || existing.volume24hGram || token.volume24hGram,
+      updatedAt: new Date().toISOString()
+    });
   }
-
-  const data = (await res.json()) as { ok?: boolean; tokens?: ExternalTokenRecord[] };
-  if (!data.ok || !Array.isArray(data.tokens)) {
-    throw new Error("External token payload is invalid");
-  }
-
-  return data.tokens;
-}
+  return [...map.values()].sort((a, b) => (b.volume24hGram ?? b.liquidityGram ?? 0) - (a.volume24hGram ?? a.liquidityGram ?? 0));
+};
 
 export async function listExternalTokensLive(filter: ExternalTokenFilter = "all"): Promise<ExternalTokenRecord[]> {
   try {
-    const tokens = await fetchExternalTokens();
+    const [stonfi, dedust] = await Promise.allSettled([
+      listLiveStonfiExternalTokens(80),
+      listLiveDedustExternalTokens(120)
+    ]);
+    const live = mergeExternalTokens([
+      stonfi.status === "fulfilled" ? stonfi.value : [],
+      dedust.status === "fulfilled" ? dedust.value : []
+    ]);
+    const tokens = live.length > 0 ? live : listExternalTokens(filter);
     if (filter === "verified") return tokens.filter((token) => token.verified);
     if (filter === "risky") return tokens.filter((token) => token.riskLevel === "HIGH");
     return tokens;
@@ -33,7 +56,7 @@ export async function searchExternalTokensLive(query: string, filter: ExternalTo
     if (!q) return tokens;
 
     return tokens.filter((token) => {
-      const hay = [token.name, token.symbol, token.address, token.poolAddress ?? ""].join(" ").toLowerCase();
+      const hay = [token.name, token.symbol, token.address, token.poolAddress ?? "", token.dexes.join(" ")].join(" ").toLowerCase();
       return hay.includes(q);
     });
   } catch {
