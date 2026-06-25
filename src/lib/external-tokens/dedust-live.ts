@@ -24,8 +24,9 @@ const str = (value: unknown, fallback = "") => {
 
 const num = (value: unknown, fallback = 0) => {
   if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "bigint") return Number(value);
   if (typeof value === "string" && value.trim()) {
-    const parsed = Number(value);
+    const parsed = Number(value.replace(/,/g, ""));
     if (Number.isFinite(parsed)) return parsed;
   }
   return fallback;
@@ -34,7 +35,7 @@ const num = (value: unknown, fallback = 0) => {
 const normalizeMetric = (value: unknown, fallback = 0) => {
   let parsed = num(value, fallback);
   if (!Number.isFinite(parsed) || parsed <= 0) return fallback;
-  for (let i = 0; i < 3 && parsed > 1_000_000_000_000; i += 1) parsed /= 1_000_000_000;
+  for (let i = 0; i < 4 && parsed > 1_000_000_000_000; i += 1) parsed /= 1_000_000_000;
   return parsed > 0 && parsed <= 1_000_000_000_000 ? parsed : fallback;
 };
 
@@ -46,9 +47,22 @@ const first = (values: unknown[], fallback = "") => {
   return fallback;
 };
 
+const firstMetric = (values: unknown[], fallback = 0) => {
+  for (const value of values) {
+    const normalized = normalizeMetric(value, 0);
+    if (normalized > 0) return normalized;
+  }
+  return fallback;
+};
+
 const assetsOf = (pool: Pool): Asset[] => {
   const assets = pool.assets || pool.tokens || pool.reservesAssets || get(pool, ["meta", "assets"]);
   return Array.isArray(assets) ? assets.filter((item): item is Asset => Boolean(item && typeof item === "object")) : [];
+};
+
+const reservesOf = (pool: Pool): unknown[] => {
+  const reserves = pool.reserves || pool.balances || pool.amounts || get(pool, ["stats", "reserves"]);
+  return Array.isArray(reserves) ? reserves : [];
 };
 
 const isNativeAsset = (asset: Asset) => {
@@ -57,26 +71,17 @@ const isNativeAsset = (asset: Asset) => {
   return type === "native" || type === "ton" || TON_SYMBOLS.has(symbol);
 };
 
-const tokenAssetFromPool = (pool: Pool): Asset | null => {
-  const assets = assetsOf(pool);
-  return assets.find((asset) => !isNativeAsset(asset)) || null;
+const assetIndex = (pool: Pool, asset: Asset | null) => {
+  if (!asset) return -1;
+  return assetsOf(pool).findIndex((item) => item === asset);
 };
 
-const nativeAssetFromPool = (pool: Pool): Asset | null => {
-  const assets = assetsOf(pool);
-  return assets.find((asset) => isNativeAsset(asset)) || null;
-};
+const reserveAt = (pool: Pool, index: number) => index >= 0 ? reservesOf(pool)[index] : undefined;
 
-const assetAddress = (asset: Asset) => first([
-  asset.address,
-  asset.contractAddress,
-  asset.jettonAddress,
-  asset.rootAddress,
-  get(asset, ["asset", "address"]),
-  get(asset, ["metadata", "address"]),
-  get(asset, ["meta", "address"])
-]);
+const tokenAssetFromPool = (pool: Pool): Asset | null => assetsOf(pool).find((asset) => !isNativeAsset(asset)) || null;
+const nativeAssetFromPool = (pool: Pool): Asset | null => assetsOf(pool).find((asset) => isNativeAsset(asset)) || null;
 
+const assetAddress = (asset: Asset) => first([asset.address, asset.contractAddress, asset.jettonAddress, asset.rootAddress, get(asset, ["asset", "address"]), get(asset, ["metadata", "address"]), get(asset, ["meta", "address"])]);
 const poolAddress = (pool: Pool) => first([pool.address, pool.poolAddress, pool.contractAddress, get(pool, ["pool", "address"])]);
 
 const tokenFromPool = (pool: Pool): ExternalTokenRecord | null => {
@@ -89,9 +94,12 @@ const tokenFromPool = (pool: Pool): ExternalTokenRecord | null => {
 
   const native = nativeAssetFromPool(pool);
   const tokenDecimals = num(asset.decimals ?? get(asset, ["metadata", "decimals"]), 9);
-  const tokenReserve = normalizeMetric(first([asset.reserve, asset.balance, get(asset, ["stats", "reserve"])]), 0);
-  const nativeReserve = normalizeMetric(first([native?.reserve, native?.balance, get(native, ["stats", "reserve"]), pool.reserve0, pool.reserve1]), 0);
-  const priceGram = tokenReserve > 0 && nativeReserve > 0 ? nativeReserve / tokenReserve : normalizeMetric(get(pool, ["price", "ton"]), 0) || undefined;
+  const tokenReserve = firstMetric([asset.reserve, asset.balance, asset.amount, reserveAt(pool, assetIndex(pool, asset)), get(asset, ["stats", "reserve"])], 0);
+  const nativeReserve = firstMetric([native?.reserve, native?.balance, native?.amount, reserveAt(pool, assetIndex(pool, native)), pool.nativeReserve, pool.tonReserve, pool.reserve0, pool.reserve1, get(native, ["stats", "reserve"])], 0);
+  const priceGram = tokenReserve > 0 && nativeReserve > 0 ? nativeReserve / tokenReserve : firstMetric([get(pool, ["price", "ton"]), pool.priceTon, pool.priceGram], 0) || undefined;
+  const liquidityFromApi = firstMetric([pool.liquidity, pool.tvl, pool.totalLiquidity, get(pool, ["stats", "liquidity"]), get(pool, ["stats", "tvl"])], 0);
+  const liquidityGram = liquidityFromApi > 0 ? liquidityFromApi : nativeReserve > 0 ? nativeReserve * 2 : undefined;
+
   const record: ExternalTokenRecord = {
     source: "EXTERNAL",
     address,
@@ -100,10 +108,10 @@ const tokenFromPool = (pool: Pool): ExternalTokenRecord | null => {
     image: first([asset.image, asset.imageUrl, get(asset, ["metadata", "image"]), get(asset, ["meta", "image"])]),
     decimals: tokenDecimals,
     priceGram,
-    priceUsd: normalizeMetric(get(pool, ["price", "usd"]), 0) || undefined,
+    priceUsd: firstMetric([get(pool, ["price", "usd"]), pool.priceUsd], 0) || undefined,
     change24h: num(pool.priceChange24h ?? pool.change24h ?? get(pool, ["stats", "priceChange24h"]), 0),
-    volume24hGram: normalizeMetric(pool.volume24h ?? get(pool, ["stats", "volume24h"]), 0),
-    liquidityGram: normalizeMetric(pool.liquidity ?? pool.tvl ?? get(pool, ["stats", "liquidity"]), nativeReserve),
+    volume24hGram: firstMetric([pool.volume24h, pool.volume, get(pool, ["stats", "volume24h"])], 0),
+    liquidityGram,
     holders: num(asset.holders ?? get(asset, ["stats", "holders"]), 0) || undefined,
     dexes: ["DEDUST"],
     primaryDex: "DEDUST",
