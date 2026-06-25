@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { TokenRecord } from "../lib/shared";
+import { spotPriceForSupply } from "../lib/shared";
 import { ProgressBar } from "./progress-bar";
 import { useUi } from "./page-shell";
 
@@ -21,10 +22,19 @@ function timeAgo(value: string, locale: "ru" | "en") {
   return locale === "ru" ? `${Math.floor(hours / 24)} д назад` : `${Math.floor(hours / 24)} d ago`;
 }
 
+function visiblePrice(token: TokenRecord) {
+  if (token.state.currentPriceTon > 0) return token.state.currentPriceTon;
+  if (token.status === "BONDING") return spotPriceForSupply(token.state.soldSupply || 0);
+  if (token.state.circulatingSupply > 0 && token.state.marketCapTon > 0) return token.state.marketCapTon / token.state.circulatingSupply;
+  if (token.state.soldSupply > 0 && token.state.collectedTon > 0) return token.state.collectedTon / token.state.soldSupply;
+  return 0;
+}
+
 export function TokenCard({ token }: { token: TokenRecord }) {
   const { locale } = useUi();
   const status = statusMeta(token, locale);
   const progress = Math.round(token.state.progress * 100);
+  const price = visiblePrice(token);
 
   return (
     <Link href={`/token/${token.id}`} className="glass-card block rounded-[24px] border border-white/10 bg-[linear-gradient(180deg,rgba(15,24,39,0.9),rgba(9,15,26,0.98))] p-5 transition hover:border-[#2aabee]/30 hover:bg-[linear-gradient(180deg,rgba(18,28,45,0.96),rgba(10,16,28,0.98))]">
@@ -42,7 +52,8 @@ export function TokenCard({ token }: { token: TokenRecord }) {
       <div className="mt-5 rounded-2xl border border-white/8 bg-white/5 p-4">
         <div className="flex items-center justify-between text-xs text-[#8ba3c1]"><span>{locale === "ru" ? "Прогресс" : "Progress"}</span><span>{progress}%</span></div>
         <ProgressBar progress={progress} className="mt-2" />
-        <div className="mt-3 flex items-center justify-between text-sm"><span className="text-[#8ba3c1]">{locale === "ru" ? "Собрано" : "Collected"}</span><span className="font-semibold text-white">💎 {(token.state.collectedTon ?? token.state.marketCapTon).toFixed(2)} GRAM</span></div>
+        <div className="mt-3 flex items-center justify-between text-sm"><span className="text-[#8ba3c1]">{locale === "ru" ? "Цена" : "Price"}</span><span className="font-semibold text-white">{price > 0 ? `${price.toFixed(8)} GRAM` : "—"}</span></div>
+        <div className="mt-2 flex items-center justify-between text-sm"><span className="text-[#8ba3c1]">{locale === "ru" ? "Собрано" : "Collected"}</span><span className="font-semibold text-white">💎 {(token.state.collectedTon ?? token.state.marketCapTon).toFixed(2)} GRAM</span></div>
       </div>
     </Link>
   );
