@@ -1,9 +1,24 @@
+import { Address } from "@ton/core";
 import type { ExternalTokenRecord } from "./types";
 import { listLiveDedustExternalTokens } from "./dedust-live";
 import { listExternalTokens, resolveExternalToken, searchExternalTokens, type ExternalTokenFilter } from "./search";
 import { listLiveStonfiExternalTokens } from "./stonfi-live";
 
-const keyOf = (token: ExternalTokenRecord) => token.address.toLowerCase();
+const normalizeAddress = (value: string) => {
+  try {
+    return Address.parse(value).toRawString().toLowerCase();
+  } catch {
+    return value.trim().toLowerCase();
+  }
+};
+
+const keyOf = (token: ExternalTokenRecord) => normalizeAddress(token.address);
+
+const bestNumber = (a?: number, b?: number) => {
+  const left = Number.isFinite(a ?? 0) ? a ?? 0 : 0;
+  const right = Number.isFinite(b ?? 0) ? b ?? 0 : 0;
+  return Math.max(left, right) || undefined;
+};
 
 const mergeExternalTokens = (groups: ExternalTokenRecord[][]): ExternalTokenRecord[] => {
   const map = new Map<string, ExternalTokenRecord>();
@@ -11,19 +26,25 @@ const mergeExternalTokens = (groups: ExternalTokenRecord[][]): ExternalTokenReco
     const key = keyOf(token);
     const existing = map.get(key);
     if (!existing) {
-      map.set(key, token);
+      map.set(key, { ...token, address: token.address.trim() });
       continue;
     }
     const dexes = Array.from(new Set([...existing.dexes, ...token.dexes]));
     map.set(key, {
       ...existing,
-      ...token,
+      name: existing.name || token.name,
+      symbol: existing.symbol || token.symbol,
+      image: existing.image || token.image,
+      decimals: existing.decimals || token.decimals,
       dexes,
       primaryDex: dexes.includes("DEDUST") ? "DEDUST" : dexes[0],
       priceGram: token.priceGram ?? existing.priceGram,
       priceUsd: token.priceUsd ?? existing.priceUsd,
-      liquidityGram: Math.max(existing.liquidityGram ?? 0, token.liquidityGram ?? 0) || existing.liquidityGram || token.liquidityGram,
-      volume24hGram: Math.max(existing.volume24hGram ?? 0, token.volume24hGram ?? 0) || existing.volume24hGram || token.volume24hGram,
+      liquidityGram: bestNumber(existing.liquidityGram, token.liquidityGram),
+      volume24hGram: bestNumber(existing.volume24hGram, token.volume24hGram),
+      holders: bestNumber(existing.holders, token.holders),
+      verified: existing.verified || token.verified,
+      poolAddress: existing.poolAddress || token.poolAddress,
       updatedAt: new Date().toISOString()
     });
   }
@@ -33,8 +54,8 @@ const mergeExternalTokens = (groups: ExternalTokenRecord[][]): ExternalTokenReco
 export async function listExternalTokensLive(filter: ExternalTokenFilter = "all"): Promise<ExternalTokenRecord[]> {
   try {
     const [stonfi, dedust] = await Promise.allSettled([
-      listLiveStonfiExternalTokens(80),
-      listLiveDedustExternalTokens(120)
+      listLiveStonfiExternalTokens(160),
+      listLiveDedustExternalTokens(240)
     ]);
     const live = mergeExternalTokens([
       stonfi.status === "fulfilled" ? stonfi.value : [],
@@ -68,7 +89,8 @@ export async function resolveExternalTokenLive(idOrAddress: string): Promise<Ext
   try {
     const tokens = await listExternalTokensLive("all");
     const id = decodeURIComponent(idOrAddress).trim().toLowerCase();
-    return tokens.find((token) => token.address.toLowerCase() === id || token.symbol.toLowerCase() === id) ?? null;
+    const normalizedId = normalizeAddress(id);
+    return tokens.find((token) => normalizeAddress(token.address) === normalizedId || token.symbol.toLowerCase() === id) ?? null;
   } catch {
     return resolveExternalToken(idOrAddress);
   }
