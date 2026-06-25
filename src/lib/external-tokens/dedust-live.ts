@@ -121,11 +121,18 @@ const tokenFromPool = (pool: Pool): ExternalTokenRecord | null => {
 export async function listLiveDedustExternalTokens(limit = 80): Promise<ExternalTokenRecord[]> {
   const response = await fetch(`${DEDUST_API_URL.replace(/\/$/, "")}/v2/pools`, { cache: "no-store" });
   if (!response.ok) throw new Error(`DeDust pools API failed with ${response.status}`);
-  const data = await response.json();
-  const pools = Array.isArray(data) ? data : Array.isArray(data?.pools) ? data.pools : Array.isArray(data?.data) ? data.data : [];
+  const data: unknown = await response.json();
+  const pools: unknown[] = Array.isArray(data)
+    ? data
+    : data && typeof data === "object" && Array.isArray((data as { pools?: unknown[] }).pools)
+      ? (data as { pools: unknown[] }).pools
+      : data && typeof data === "object" && Array.isArray((data as { data?: unknown[] }).data)
+        ? (data as { data: unknown[] }).data
+        : [];
+
   return pools
-    .map((pool) => tokenFromPool(pool as Pool))
+    .map((pool: unknown) => tokenFromPool(pool as Pool))
     .filter((token): token is ExternalTokenRecord => Boolean(token))
-    .sort((a, b) => (b.liquidityGram ?? 0) - (a.liquidityGram ?? 0))
+    .sort((a: ExternalTokenRecord, b: ExternalTokenRecord) => (b.liquidityGram ?? 0) - (a.liquidityGram ?? 0))
     .slice(0, limit);
 }
