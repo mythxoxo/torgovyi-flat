@@ -1,9 +1,14 @@
 import { existsSync, readFileSync } from 'node:fs';
-import { TonClient } from '@ton/ton';
+import { TonClient, TonClient4 } from '@ton/ton';
 
-let client: TonClient | null = null;
-let lastEndpointHost = 'unknown';
-let lastToncenterKeyPresent = false;
+let v4Client: TonClient4 | null = null;
+let rpcClient: TonClient | null = null;
+let lastMeta = {
+  providerType: 'v4',
+  endpointHost: 'unknown',
+  explicitV4EndpointPresent: false,
+  explicitRpcEndpointPresent: false,
+};
 
 function loadLocalEnv(path: string) {
   if (!existsSync(path)) return;
@@ -31,44 +36,62 @@ function pickToncenterKey() {
   );
 }
 
-function buildEndpoint() {
+function getProviderType(): 'v4' | 'jsonrpc' {
+  const raw = (process.env.DEDUST_PROVIDER_TYPE?.trim() || 'v4').toLowerCase();
+  return raw === 'jsonrpc' ? 'jsonrpc' : 'v4';
+}
+
+function getV4Endpoint() {
+  return process.env.DEDUST_TON_V4_ENDPOINT?.trim() || 'https://mainnet-v4.tonhubapi.com';
+}
+
+function getRpcEndpoint() {
   const explicit =
     process.env.TON_RPC_ENDPOINT?.trim() ||
     process.env.TONCENTER_RPC_URL?.trim() ||
     process.env.TONCENTER_ENDPOINT?.trim() ||
     '';
   const toncenterKey = pickToncenterKey();
-
-  if (explicit) {
-    return { endpoint: explicit, toncenterKey };
-  }
-  if (toncenterKey) {
-    return { endpoint: `https://toncenter.com/api/v2/jsonRPC?api_key=${toncenterKey}`, toncenterKey };
-  }
+  if (explicit) return { endpoint: explicit, toncenterKey };
+  if (toncenterKey) return { endpoint: `https://toncenter.com/api/v2/jsonRPC?api_key=${toncenterKey}`, toncenterKey };
   return { endpoint: 'https://toncenter.com/api/v2/jsonRPC', toncenterKey };
 }
 
+function safeHost(url: string) {
+  try { return new URL(url).host; } catch { return 'invalid-endpoint'; }
+}
+
 export function getDedustClientMeta() {
-  return {
-    endpointHost: lastEndpointHost,
-    toncenterKeyPresent: lastToncenterKeyPresent,
-  };
+  return lastMeta;
 }
 
 export function getDedustTonClient() {
-  if (client) return client;
-  const { endpoint, toncenterKey } = buildEndpoint();
-  const endpointHost = (() => {
-    try { return new URL(endpoint).host; } catch { return 'invalid-endpoint'; }
-  })();
-  lastEndpointHost = endpointHost;
-  lastToncenterKeyPresent = Boolean(toncenterKey);
-  console.log(`[dedust-client] endpointHost=${endpointHost} toncenterKeyPresent=${Boolean(toncenterKey)}`);
-  client = new TonClient({
-    endpoint,
-    apiKey: toncenterKey || undefined,
-  });
-  return client;
+  const providerType = getProviderType();
+  if (providerType === 'v4') {
+    if (v4Client) return v4Client;
+    const endpoint = getV4Endpoint();
+    lastMeta = {
+      providerType: 'v4',
+      endpointHost: safeHost(endpoint),
+      explicitV4EndpointPresent: Boolean(process.env.DEDUST_TON_V4_ENDPOINT?.trim()),
+      explicitRpcEndpointPresent: Boolean(process.env.TON_RPC_ENDPOINT?.trim() || process.env.TONCENTER_RPC_URL?.trim() || process.env.TONCENTER_ENDPOINT?.trim()),
+    };
+    console.log(`[dedust-client] providerType=v4 endpointHost=${lastMeta.endpointHost} explicitV4EndpointPresent=${lastMeta.explicitV4EndpointPresent} explicitRpcEndpointPresent=${lastMeta.explicitRpcEndpointPresent}`);
+    v4Client = new TonClient4({ endpoint });
+    return v4Client;
+  }
+
+  if (rpcClient) return rpcClient;
+  const { endpoint, toncenterKey } = getRpcEndpoint();
+  lastMeta = {
+    providerType: 'jsonrpc',
+    endpointHost: safeHost(endpoint),
+    explicitV4EndpointPresent: Boolean(process.env.DEDUST_TON_V4_ENDPOINT?.trim()),
+    explicitRpcEndpointPresent: Boolean(process.env.TON_RPC_ENDPOINT?.trim() || process.env.TONCENTER_RPC_URL?.trim() || process.env.TONCENTER_ENDPOINT?.trim()),
+  };
+  console.log(`[dedust-client] providerType=jsonrpc endpointHost=${lastMeta.endpointHost} explicitV4EndpointPresent=${lastMeta.explicitV4EndpointPresent} explicitRpcEndpointPresent=${lastMeta.explicitRpcEndpointPresent} toncenterKeyPresent=${Boolean(toncenterKey)}`);
+  rpcClient = new TonClient({ endpoint, apiKey: toncenterKey || undefined });
+  return rpcClient;
 }
 
 export async function loadDedustSdk() {
