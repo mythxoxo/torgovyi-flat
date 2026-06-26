@@ -8,6 +8,7 @@ export type DexQuoteStatus =
   | "pool_not_ready"
   | "sdk_missing"
   | "payload_unavailable"
+  | "dex_rate_limited"
   | "failed"
   | "unknown_error";
 
@@ -20,6 +21,7 @@ export type DexSwapStatus =
   | "proxy_required_for_sell_fee"
   | "sdk_missing"
   | "payload_unavailable"
+  | "dex_rate_limited"
   | "failed"
   | "unknown_error";
 

@@ -2,6 +2,8 @@ import { existsSync, readFileSync } from 'node:fs';
 import { TonClient } from '@ton/ton';
 
 let client: TonClient | null = null;
+let lastEndpointHost = 'unknown';
+let lastToncenterKeyPresent = false;
 
 function loadLocalEnv(path: string) {
   if (!existsSync(path)) return;
@@ -46,12 +48,21 @@ function buildEndpoint() {
   return { endpoint: 'https://toncenter.com/api/v2/jsonRPC', toncenterKey };
 }
 
+export function getDedustClientMeta() {
+  return {
+    endpointHost: lastEndpointHost,
+    toncenterKeyPresent: lastToncenterKeyPresent,
+  };
+}
+
 export function getDedustTonClient() {
   if (client) return client;
   const { endpoint, toncenterKey } = buildEndpoint();
   const endpointHost = (() => {
     try { return new URL(endpoint).host; } catch { return 'invalid-endpoint'; }
   })();
+  lastEndpointHost = endpointHost;
+  lastToncenterKeyPresent = Boolean(toncenterKey);
   console.log(`[dedust-client] endpointHost=${endpointHost} toncenterKeyPresent=${Boolean(toncenterKey)}`);
   client = new TonClient({
     endpoint,
@@ -67,4 +78,20 @@ export async function loadDedustSdk() {
   } catch {
     return null;
   }
+}
+
+export async function with429Retry<T>(fn: () => Promise<T>): Promise<T> {
+  const delays = [500, 1500, 3000];
+  let lastError: unknown;
+  for (let i = 0; i < delays.length; i += 1) {
+    try {
+      return await fn();
+    } catch (error) {
+      lastError = error;
+      const reason = error instanceof Error ? error.message : String(error);
+      if (!/429/.test(reason)) throw error;
+      await new Promise((resolve) => setTimeout(resolve, delays[i]));
+    }
+  }
+  throw lastError;
 }

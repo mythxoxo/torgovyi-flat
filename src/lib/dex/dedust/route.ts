@@ -1,7 +1,7 @@
 import { Address } from '@ton/core';
-import { getDedustTonClient, loadDedustSdk } from './client';
+import { getDedustTonClient, loadDedustSdk, with429Retry } from './client';
 
-export type DedustRouteStatus = 'quote_ready' | 'route_not_found' | 'liquidity_not_found' | 'pool_not_ready' | 'payload_unavailable' | 'sdk_missing' | 'unknown_error';
+export type DedustRouteStatus = 'quote_ready' | 'route_not_found' | 'liquidity_not_found' | 'pool_not_ready' | 'payload_unavailable' | 'sdk_missing' | 'dex_rate_limited' | 'unknown_error';
 
 export type DedustResolvedRoute = {
   status: DedustRouteStatus;
@@ -25,13 +25,16 @@ async function resolveBase(tokenAddress: string) {
     const { Factory, MAINNET_FACTORY_ADDR, Asset, PoolType, ReadinessStatus } = sdk as any;
     const factory = client.open(Factory.createFromAddress(MAINNET_FACTORY_ADDR));
     const jettonMaster = Address.parse(tokenAddress);
-    const unresolvedPool = await factory.getPool(PoolType.VOLATILE, [Asset.native(), Asset.jetton(jettonMaster)]);
+    const unresolvedPool = await with429Retry(() => factory.getPool(PoolType.VOLATILE, [Asset.native(), Asset.jetton(jettonMaster)]));
     const pool = client.open(unresolvedPool);
-    const poolReadiness = await pool.getReadinessStatus();
+    const poolReadiness = await with429Retry(() => pool.getReadinessStatus());
     const poolAddress = pool.address.toString({ bounceable: true, testOnly: false });
     return { sdk, client, factory, jettonMaster, pool, poolReadiness, poolAddress, ReadinessStatus };
   } catch (error) {
     const reason = error instanceof Error ? error.message : 'route resolution failed';
+    if (/429/.test(reason)) {
+      return { status: 'dex_rate_limited' as const, reason, tokenAddress };
+    }
     if (/Cannot convert undefined to a BigInt|Invalid address/i.test(reason)) {
       return { status: 'route_not_found' as const, reason, tokenAddress };
     }
@@ -51,9 +54,9 @@ export async function resolveDedustBuyRoute(tokenAddress: string): Promise<Dedus
   if ('status' in base) return base as DedustResolvedRoute;
   try {
     const { factory, pool, poolReadiness, poolAddress, ReadinessStatus } = base as any;
-    const unresolvedNativeVault = await factory.getNativeVault();
+    const unresolvedNativeVault = await with429Retry(() => factory.getNativeVault());
     const nativeVault = (base as any).client.open(unresolvedNativeVault);
-    const vaultReadiness = await nativeVault.getReadinessStatus();
+    const vaultReadiness = await with429Retry(() => nativeVault.getReadinessStatus());
     const vaultAddress = nativeVault.address.toString({ bounceable: true, testOnly: false });
 
     if (poolReadiness !== ReadinessStatus.READY) {
@@ -63,7 +66,7 @@ export async function resolveDedustBuyRoute(tokenAddress: string): Promise<Dedus
       return { status: 'pool_not_ready', tokenAddress, poolAddress, vaultAddress, poolReadiness, vaultReadiness, sdk: base.sdk as any };
     }
 
-    const reserves = await pool.getReserves().catch(() => null);
+    const reserves = await with429Retry(() => pool.getReserves()).catch(() => null);
     if (!reserves) {
       return { status: 'liquidity_not_found', tokenAddress, poolAddress, vaultAddress, poolReadiness, vaultReadiness, sdk: base.sdk as any };
     }
@@ -78,7 +81,9 @@ export async function resolveDedustBuyRoute(tokenAddress: string): Promise<Dedus
       sdk: base.sdk as any,
     };
   } catch (error) {
-    return { status: 'unknown_error', reason: error instanceof Error ? error.message : 'buy route failed', tokenAddress };
+    const reason = error instanceof Error ? error.message : 'buy route failed';
+    if (/429/.test(reason)) return { status: 'dex_rate_limited', reason, tokenAddress };
+    return { status: 'unknown_error', reason, tokenAddress };
   }
 }
 
@@ -87,11 +92,11 @@ export async function resolveDedustSellRoute(tokenAddress: string, userWallet: s
   if ('status' in base) return base as DedustResolvedRoute;
   try {
     const { factory, pool, poolReadiness, poolAddress, jettonMaster, ReadinessStatus } = base as any;
-    const unresolvedJettonVault = await factory.getJettonVault(jettonMaster);
+    const unresolvedJettonVault = await with429Retry(() => factory.getJettonVault(jettonMaster));
     const jettonVault = (base as any).client.open(unresolvedJettonVault);
-    const vaultReadiness = await jettonVault.getReadinessStatus();
+    const vaultReadiness = await with429Retry(() => jettonVault.getReadinessStatus());
     const vaultAddress = jettonVault.address.toString({ bounceable: true, testOnly: false });
-    const userJettonWallet = await pool.getWallet(Address.parse(userWallet));
+    const userJettonWallet = await with429Retry(() => pool.getWallet(Address.parse(userWallet)));
     const userJettonWalletAddress = userJettonWallet.address.toString({ bounceable: true, testOnly: false });
 
     if (poolReadiness !== ReadinessStatus.READY) {
@@ -112,6 +117,8 @@ export async function resolveDedustSellRoute(tokenAddress: string, userWallet: s
       sdk: base.sdk as any,
     };
   } catch (error) {
-    return { status: 'unknown_error', reason: error instanceof Error ? error.message : 'sell route failed', tokenAddress };
+    const reason = error instanceof Error ? error.message : 'sell route failed';
+    if (/429/.test(reason)) return { status: 'dex_rate_limited', reason, tokenAddress };
+    return { status: 'unknown_error', reason, tokenAddress };
   }
 }
