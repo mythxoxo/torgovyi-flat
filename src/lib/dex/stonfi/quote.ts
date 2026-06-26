@@ -41,6 +41,8 @@ export async function quoteStonfi(input: DexQuoteRequest): Promise<DexQuote> {
     };
   } catch (error) {
     const reason = error instanceof Error ? error.message : "quote failed";
-    return failed(input, /route|liquidity|not found/i.test(reason) ? "route_not_found" : "failed", reason);
+    if (/400 Bad Request|route|not found/i.test(reason)) return failed(input, "route_not_found", reason);
+    if (/liquidity|reserve|pool/i.test(reason)) return failed(input, "liquidity_not_found", reason);
+    return failed(input, "unknown_error", reason);
   }
 }

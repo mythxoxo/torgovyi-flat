@@ -8,7 +8,8 @@ export type DexQuoteStatus =
   | "pool_not_ready"
   | "sdk_missing"
   | "payload_unavailable"
-  | "failed";
+  | "failed"
+  | "unknown_error";
 
 export type DexSwapStatus =
   | "payload_ready"
@@ -19,7 +20,8 @@ export type DexSwapStatus =
   | "proxy_required_for_sell_fee"
   | "sdk_missing"
   | "payload_unavailable"
-  | "failed";
+  | "failed"
+  | "unknown_error";
 
 export type DexQuote = {
   dex: ExternalDex;

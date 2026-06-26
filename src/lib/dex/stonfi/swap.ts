@@ -77,6 +77,8 @@ export async function buildStonfiSwapPayload(input: DexSwapRequest): Promise<Dex
     };
   } catch (error) {
     const reason = error instanceof Error ? error.message : "STON.fi payload failed";
-    return result(input, /route|liquidity|not found/i.test(reason) ? "route_not_found" : "failed", reason);
+    if (/400 Bad Request|route|not found/i.test(reason)) return result(input, "route_not_found", reason);
+    if (/liquidity|reserve|pool/i.test(reason)) return result(input, "liquidity_not_found", reason);
+    return result(input, "unknown_error", reason);
   }
 }
