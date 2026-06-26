@@ -25,7 +25,8 @@ async function resolveBase(tokenAddress: string) {
     const { Factory, MAINNET_FACTORY_ADDR, Asset, PoolType, ReadinessStatus } = sdk as any;
     const factory = client.open(Factory.createFromAddress(MAINNET_FACTORY_ADDR));
     const jettonMaster = Address.parse(tokenAddress);
-    const pool = await factory.getPool(PoolType.VOLATILE, [Asset.native(), Asset.jetton(jettonMaster)]);
+    const unresolvedPool = await factory.getPool(PoolType.VOLATILE, [Asset.native(), Asset.jetton(jettonMaster)]);
+    const pool = client.open(unresolvedPool);
     const poolReadiness = await pool.getReadinessStatus();
     const poolAddress = pool.address.toString({ bounceable: true, testOnly: false });
     return { sdk, client, factory, jettonMaster, pool, poolReadiness, poolAddress, ReadinessStatus };
@@ -50,7 +51,8 @@ export async function resolveDedustBuyRoute(tokenAddress: string): Promise<Dedus
   if ('status' in base) return base as DedustResolvedRoute;
   try {
     const { factory, pool, poolReadiness, poolAddress, ReadinessStatus } = base as any;
-    const nativeVault = await factory.getNativeVault();
+    const unresolvedNativeVault = await factory.getNativeVault();
+    const nativeVault = (base as any).client.open(unresolvedNativeVault);
     const vaultReadiness = await nativeVault.getReadinessStatus();
     const vaultAddress = nativeVault.address.toString({ bounceable: true, testOnly: false });
 
@@ -85,7 +87,8 @@ export async function resolveDedustSellRoute(tokenAddress: string, userWallet: s
   if ('status' in base) return base as DedustResolvedRoute;
   try {
     const { factory, pool, poolReadiness, poolAddress, jettonMaster, ReadinessStatus } = base as any;
-    const jettonVault = await factory.getJettonVault(jettonMaster);
+    const unresolvedJettonVault = await factory.getJettonVault(jettonMaster);
+    const jettonVault = (base as any).client.open(unresolvedJettonVault);
     const vaultReadiness = await jettonVault.getReadinessStatus();
     const vaultAddress = jettonVault.address.toString({ bounceable: true, testOnly: false });
     const userJettonWallet = await pool.getWallet(Address.parse(userWallet));
