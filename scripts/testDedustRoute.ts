@@ -21,7 +21,7 @@ async function main() {
   if (!tokenAddress) throw new Error('no DeDust fixture token found');
   const route = await resolveDedustBuyRoute(tokenAddress);
   const meta = getDedustClientMeta();
-  console.log(`endpointHost=${meta.endpointHost} toncenterKeyPresent=${meta.toncenterKeyPresent}`);
+  console.log(`providerType=${meta.providerType} endpointHost=${meta.endpointHost} explicitV4EndpointPresent=${meta.explicitV4EndpointPresent} explicitRpcEndpointPresent=${meta.explicitRpcEndpointPresent}`);
   console.log(`PASS ${route.status}`);
   console.log(JSON.stringify({ ok: true, route }, null, 2));
 }

@@ -16,6 +16,7 @@ async function main() {
     }
     throw error;
   }
+
   if (!tokenAddress) throw new Error('no DeDust fixture token found');
 
   const result = await buildDedustSwapPayload({
@@ -36,7 +37,7 @@ async function main() {
   }
 
   const meta = getDedustClientMeta();
-  console.log(`endpointHost=${meta.endpointHost} toncenterKeyPresent=${meta.toncenterKeyPresent}`);
+  console.log(`providerType=${meta.providerType} endpointHost=${meta.endpointHost} explicitV4EndpointPresent=${meta.explicitV4EndpointPresent} explicitRpcEndpointPresent=${meta.explicitRpcEndpointPresent}`);
   console.log(JSON.stringify({ ok: true, result }, null, 2));
 }
 
