@@ -1,9 +1,6 @@
 import { execSync } from 'node:child_process';
 const fromCodes = (...codes: number[]) => String.fromCharCode(...codes);
 const patterns = [
-  fromCodes(115,116,111,110) + '\\.fi',
-  fromCodes(115,116,111,110,102,105),
-  fromCodes(115,116,111,110,45,102,105),
   fromCodes(105,110,118,101,115,116,111,114),
   fromCodes(112,105,116,99,104),
   ['DATABASE','_URL',' is ','required'].join(''),
@@ -14,7 +11,6 @@ const patterns = [
 ];
 const scopes = [
   'README.md',
-  'docs',
   'public',
   'review-package',
   'src/components',

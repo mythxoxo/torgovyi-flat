@@ -23,7 +23,7 @@ export default function SearchPage() {
 
     searchMarketTokens(query, filter)
       .then((tokens) => {
-        if (!cancelled) setItems(tokens.slice(0, 16));
+        if (!cancelled) setItems(tokens.slice(0, 100));
       })
       .catch(() => {
         if (!cancelled) setError(locale === "ru" ? "Поиск временно недоступен. Повтори позже." : "Search is temporarily unavailable. Try again later.");
@@ -55,10 +55,10 @@ export default function SearchPage() {
     <div className="space-y-6 pb-24">
       <section className={`rounded-[32px] border p-7 ${panel}`}>
         <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#0088cc]">{locale === "ru" ? "Поиск рынков" : "Market search"}</p>
-        <h1 className="mt-2 font-display text-4xl font-black tracking-[-0.05em] sm:text-5xl">{locale === "ru" ? "Поиск токенов" : "Search tokens"}</h1>
-        <p className={`mt-3 max-w-2xl text-sm leading-7 ${muted}`}>{locale === "ru" ? "Ищи запуски TONS of GRAM отдельно от live External DEX токенов." : "Search TONS of GRAM launches separately from live External DEX tokens."}</p>
+        <h1 className="mt-2 font-display text-4xl font-black tracking-[-0.05em] sm:text-5xl">{locale === "ru" ? "Поиск всех токенов" : "Search all tokens"}</h1>
+        <p className={`mt-3 max-w-2xl text-sm leading-7 ${muted}`}>{locale === "ru" ? "Ищи launchpad, External, STON.fi и DeDust токены по имени, тикеру, адресу или DEX." : "Search launchpad, External, STON.fi and DeDust tokens by name, ticker, address or DEX."}</p>
         <div className={`mt-6 overflow-hidden rounded-2xl border ${input}`}>
-          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={locale === "ru" ? "Название, тикер или адрес токена" : "Name, ticker or token address"} className="w-full bg-transparent px-4 py-4 text-sm outline-none" />
+          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={locale === "ru" ? "Название, тикер, адрес, DeDust или STON.fi" : "Name, ticker, address, DeDust or STON.fi"} className="w-full bg-transparent px-4 py-4 text-sm outline-none" />
         </div>
         <div className="mt-4 flex flex-wrap gap-2">
           {filters.map((item) => (
@@ -71,7 +71,7 @@ export default function SearchPage() {
       {!loading && visibleItems.length === 0 ? (
         <div className={`rounded-[24px] border p-8 text-center ${panel}`}>
           <h3 className="font-display text-2xl font-bold tracking-[-0.04em]">{locale === "ru" ? "Ничего не найдено" : "Nothing found"}</h3>
-          <p className={`mt-3 text-sm leading-6 ${muted}`}>{locale === "ru" ? "Попробуй другой тикер, имя или адрес." : "Try another ticker, name or address."}</p>
+          <p className={`mt-3 text-sm leading-6 ${muted}`}>{locale === "ru" ? "Попробуй другой тикер, имя, адрес или DEX." : "Try another ticker, name, address or DEX."}</p>
         </div>
       ) : <MarketTokenList tokens={visibleItems} loading={loading} />}
     </div>

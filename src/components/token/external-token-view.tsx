@@ -9,11 +9,14 @@ import { WatchlistButton } from "../watchlist-button";
 import { useUi } from "../page-shell";
 import { ExternalTokenWalletPanel } from "./external-token-wallet-panel";
 
+const dexLabel = (dex: string) => dex === "DEDUST" ? "DeDust" : dex === "STONFI" ? "STON.fi" : dex;
+
 export function ExternalTokenView({ token }: { token: ExternalTokenRecord }) {
   const { locale } = useUi();
   const copyAddress = async () => navigator.clipboard.writeText(token.address);
   const change = token.change24h ?? 0;
   const changeClass = change >= 0 ? "text-[#86efac]" : "text-[#ff8a95]";
+  const dexes = token.dexes.length ? token.dexes : token.primaryDex ? [token.primaryDex] : [];
 
   return (
     <div className="space-y-4 pb-24 pt-4">
@@ -24,7 +27,7 @@ export function ExternalTokenView({ token }: { token: ExternalTokenRecord }) {
               <Image src={token.image || "/brand/img_04.jpg"} alt={token.name} width={56} height={56} className="h-full w-full object-cover" />
             </div>
             <div className="min-w-0">
-              <div className="text-xs uppercase tracking-[0.18em] text-[#5ac8fa]">External token</div>
+              <div className="flex flex-wrap gap-1 text-xs uppercase tracking-[0.18em] text-[#5ac8fa]"><span>External token</span>{dexes.map((dex) => <span key={dex} className="rounded-full border border-[#2aabee]/30 bg-[#2aabee]/10 px-2 py-0.5 tracking-normal text-[#bfe9ff]">{dexLabel(dex)}</span>)}</div>
               <h1 className="truncate font-display text-xl font-bold text-white">{token.name}</h1>
               <span className="font-mono text-sm text-[#2aabee]">{token.symbol}</span>
             </div>
@@ -33,7 +36,7 @@ export function ExternalTokenView({ token }: { token: ExternalTokenRecord }) {
         </div>
 
         <p className="text-sm leading-6 text-[#8ba3c1]">
-          {locale === "ru" ? "Этот токен не был запущен через TONS of GRAM. Но купить его можно прямо здесь через DEX-маршрут и подпись в кошельке." : "This token was not launched through TONS of GRAM, but you can still buy it here through a DEX route and wallet signature."}
+          {locale === "ru" ? "Этот токен не был запущен через TONS of GRAM. Купить или продать его можно через выбранный DEX-маршрут и подпись в кошельке." : "This token was not launched through TONS of GRAM, but you can buy or sell it through the selected DEX route and wallet signature."}
         </p>
 
         <div className="flex items-center gap-2 rounded-lg bg-[#1a2235] px-3 py-2">
@@ -49,10 +52,10 @@ export function ExternalTokenView({ token }: { token: ExternalTokenRecord }) {
           <div className="glass-card rounded-[24px] p-5">
             <h2 className="font-display text-2xl font-bold text-white">{locale === "ru" ? "Рынок" : "Market"}</h2>
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
-              <div className="rounded-2xl border border-white/8 bg-white/5 p-4"><div className="text-xs text-[#8ba3c1]">{locale === "ru" ? "Цена" : "Price"}</div><div className="mt-1 font-semibold text-white">{token.priceGram ? `${token.priceGram.toLocaleString("en-US")} GRAM` : "—"}</div></div>
+              <div className="rounded-2xl border border-white/8 bg-white/5 p-4"><div className="text-xs text-[#8ba3c1]">{locale === "ru" ? "Цена" : "Price"}</div><div className="mt-1 font-semibold text-white">{token.priceGram ? `${token.priceGram.toLocaleString("en-US")} GRAM` : token.priceUsd ? `$${token.priceUsd.toLocaleString("en-US")}` : "—"}</div></div>
               <div className="rounded-2xl border border-white/8 bg-white/5 p-4"><div className="text-xs text-[#8ba3c1]">24h</div><div className={`mt-1 font-semibold ${changeClass}`}>{change > 0 ? "+" : ""}{change.toFixed(1)}%</div></div>
               <div className="rounded-2xl border border-white/8 bg-white/5 p-4"><div className="text-xs text-[#8ba3c1]">{locale === "ru" ? "Ликвидность" : "Liquidity"}</div><div className="mt-1 font-semibold text-white">{token.liquidityGram ? `${token.liquidityGram.toLocaleString("en-US")} GRAM` : "—"}</div></div>
-              <div className="rounded-2xl border border-white/8 bg-white/5 p-4"><div className="text-xs text-[#8ba3c1]">DEX</div><div className="mt-1 font-semibold text-white">{token.primaryDex ?? "No route"}</div></div>
+              <div className="rounded-2xl border border-white/8 bg-white/5 p-4"><div className="text-xs text-[#8ba3c1]">DEX</div><div className="mt-1 flex flex-wrap gap-1">{dexes.length ? dexes.map((dex) => <span key={dex} className="rounded-full bg-white/8 px-2 py-0.5 text-xs font-semibold text-white">{dexLabel(dex)}</span>) : <span className="font-semibold text-white">No route</span>}</div></div>
             </div>
           </div>
           <ExternalTokenWalletPanel token={token} />
