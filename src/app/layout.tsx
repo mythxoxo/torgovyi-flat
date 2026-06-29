@@ -19,20 +19,27 @@ const sora = Sora({
   weight: ["400", "500", "600", "700", "800"]
 });
 
+const brandIcon = "/brand/tons-of-gram-tonconnect.svg";
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://torgovyi-flat.vercel.app"),
-  title: "TONS of GRAM",
-  description: "Telegram-style GRAM launchpad for wallet-first token launches.",
+  title: "TONS of GRAM Launchpad",
+  description: "Wallet-first TON launchpad for bonding token launches.",
+  icons: {
+    icon: brandIcon,
+    shortcut: brandIcon,
+    apple: brandIcon
+  },
   openGraph: {
-    title: "TONS of GRAM",
-    description: "Telegram-style GRAM launchpad for wallet-first token launches.",
-    images: ["/brand/img_02.jpg"]
+    title: "TONS of GRAM Launchpad",
+    description: "Wallet-first TON launchpad for bonding token launches.",
+    images: [brandIcon]
   },
   twitter: {
     card: "summary_large_image",
-    title: "TONS of GRAM",
-    description: "Telegram-style GRAM launchpad for wallet-first token launches.",
-    images: ["/brand/img_02.jpg"]
+    title: "TONS of GRAM Launchpad",
+    description: "Wallet-first TON launchpad for bonding token launches.",
+    images: [brandIcon]
   }
 };
 
