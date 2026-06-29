@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Compass, Home, Search, User } from "lucide-react";
+import { Activity, Compass, Home, Search, User } from "lucide-react";
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { WalletConnectButton } from "./wallet-connect-button";
@@ -17,12 +17,11 @@ export function DesktopShell({ children }: { children: ReactNode }) {
   const { t, theme } = useUi();
   const [gramPrice, setGramPrice] = useState<number | null>(null);
 
-  useEffect(() => {
-    getTonPrice().then((r) => setGramPrice(r.usd)).catch(() => setGramPrice(null));
-  }, []);
+  useEffect(() => { getTonPrice().then((r) => setGramPrice(r.usd)).catch(() => setGramPrice(null)); }, []);
 
   const navItems = [
     { href: "/", label: t.nav.home, icon: Home },
+    { href: "/terminal", label: "Terminal", icon: Activity },
     { href: "/search", label: t.nav.search, icon: Search },
     { href: "/markets", label: t.nav.markets, icon: Compass },
     { href: "/my-tokens", label: t.nav.profile, icon: User }
@@ -40,32 +39,12 @@ export function DesktopShell({ children }: { children: ReactNode }) {
     <div className={`min-h-screen ${shellBg}`}>
       <header className={`sticky top-0 z-40 border-b backdrop-blur-xl ${headerBg}`}>
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4">
-          <Link href="/" className="flex items-center">
-            <BrandLogo subtitle={t.misc.mainnet} />
-          </Link>
-
+          <Link href="/" className="flex items-center"><BrandLogo subtitle={t.misc.mainnet} /></Link>
           <nav className={`flex items-center gap-2 rounded-full border p-1.5 ${navBg}`}>
-            {navItems.map(({ href, label, icon: Icon }) => {
-              const active = pathname === href;
-              return (
-                <Link
-                  key={href}
-                  href={href}
-                  className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition ${
-                    active ? "bg-[#0088cc] text-white" : inactiveNav
-                  }`}
-                >
-                  <Icon className="h-4 w-4" />
-                  {label}
-                </Link>
-              );
-            })}
+            {navItems.map(({ href, label, icon: Icon }) => { const active = pathname === href; return <Link key={href} href={href} className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition ${active ? "bg-[#0088cc] text-white" : inactiveNav}`}><Icon className="h-4 w-4" />{label}</Link>; })}
           </nav>
-
           <div className="flex items-center gap-3">
-            <div className={`inline-flex items-center gap-2 rounded-full border px-3 py-2 text-xs ${pillBg}`}>
-              {gramPrice ? `GRAM $${gramPrice.toFixed(2)}` : t.misc.mainnet}
-            </div>
+            <div className={`inline-flex items-center gap-2 rounded-full border px-3 py-2 text-xs ${pillBg}`}>{gramPrice ? `GRAM $${gramPrice.toFixed(2)}` : t.misc.mainnet}</div>
             <ThemeSwitcher />
             <LanguageSwitcher />
             <WalletConnectButton />
