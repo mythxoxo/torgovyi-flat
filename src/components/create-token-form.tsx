@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { isTonAddress } from "../lib/onchain";
+import { buildCreateTokenDraft, isTonAddress, toMainnetAddress } from "../lib/onchain";
 import { normalizeCreatorTax } from "../lib/shared";
 import { createToken as createTokenRequest, uploadTokenImage as uploadImage } from "../lib/api";
 import { useWallet } from "./wallet-context";
@@ -17,7 +17,7 @@ const primaryButtonClass = "rounded-full bg-[linear-gradient(135deg,#5ac8fa,#2aa
 export function CreateTokenForm() {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const { wallet, isMainnet } = useWallet();
+  const { wallet, walletSource, isMainnet, sendTransaction } = useWallet();
   const { locale, t } = useUi();
   const app = getTelegramWebApp();
   const [name, setName] = useState("");
@@ -25,7 +25,7 @@ export function CreateTokenForm() {
   const [description, setDescription] = useState("");
   const [image, setImage] = useState("");
   const [preview, setPreview] = useState("");
-  const [targetMode, setTargetMode] = useState<"test" | "production">("production");
+  const [targetMode, setTargetMode] = useState<"test" | "production">("test");
   const [loading, setLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [error, setError] = useState("");
@@ -37,12 +37,12 @@ export function CreateTokenForm() {
     setDescription("");
     setPreview("");
     setImage("");
-    setTargetMode("production");
+    setTargetMode("test");
   }, []);
 
   const targetModes = [
-    { id: "production" as const, label: t.create.modeMain, targetTon: 8888 },
-    { id: "test" as const, label: t.create.modeTest, targetTon: 5 }
+    { id: "test" as const, label: t.create.modeTest, targetTon: 5 },
+    { id: "production" as const, label: t.create.modeMain, targetTon: 8888 }
   ];
 
   const activeTarget = targetModes.find((m) => m.id === targetMode) || targetModes[0];
@@ -74,9 +74,24 @@ export function CreateTokenForm() {
       setError("");
       app?.HapticFeedback.impactOccurred("medium");
       const creatorTax = normalizeCreatorTax({ mode: "normal" });
-      if (!isMainnet) throw new Error(locale === "ru" ? "Нужен mainnet" : "Mainnet is required");
+      if (walletSource !== "tonconnect") throw new Error("TonConnect is required");
+      if (!isMainnet) throw new Error(locale === "ru" ? "Нужен TON mainnet" : "TON mainnet is required");
       const factoryAddress = process.env.NEXT_PUBLIC_FACTORY_ADDRESS || "";
       if (!isTonAddress(factoryAddress)) throw new Error(locale === "ru" ? "Factory address ещё не настроен" : "Factory address is not configured yet");
+
+      await sendTransaction(
+        buildCreateTokenDraft({
+          factoryAddress: toMainnetAddress(factoryAddress),
+          creatorAddress: wallet,
+          name,
+          ticker,
+          description,
+          imageUrl: image || "",
+          totalSupply: 1_000_000_000n,
+          creatorTax,
+          curveConfig: { targetTon: activeTarget.targetTon, minBuyTon: 0.05, feeBps: 75 }
+        })
+      );
 
       await createTokenRequest({
         name,
@@ -106,7 +121,7 @@ export function CreateTokenForm() {
         <section className="glass-card rounded-[28px] p-5">
           <p className="text-xs uppercase tracking-[0.2em] text-[#5ac8fa]">{locale === "ru" ? "Нужен кошелёк" : "Wallet required"}</p>
           <h2 className="mt-2 font-display text-2xl font-bold text-white">{locale === "ru" ? "Подключи кошелёк, чтобы запустить токен" : "Connect your wallet to launch a token"}</h2>
-          <p className="mt-3 text-sm leading-6 text-[#c6d4ea]">{locale === "ru" ? "Лаунч идёт через встроенный серверный executor проекта." : "Launch runs through the built-in server executor."}</p>
+          <p className="mt-3 text-sm leading-6 text-[#c6d4ea]">{locale === "ru" ? "Лаунч будет подготовлен как TonConnect транзакция." : "Launch will be prepared as a TonConnect transaction."}</p>
           <div className="mt-5"><WalletConnectButton /></div>
         </section>
       ) : (
@@ -153,8 +168,8 @@ export function CreateTokenForm() {
       {error ? <div className="rounded-2xl border border-[#5ac8fa]/20 bg-[#5ac8fa]/10 px-4 py-3 text-sm text-[#c6e8ff]">{error}</div> : null}
 
       <div>
-        <button onClick={handleLaunch} disabled={!isValid || loading || uploadingImage || !wallet} className={`${primaryButtonClass} flex w-full items-center justify-center disabled:cursor-not-allowed disabled:opacity-40`}>{loading ? (locale === "ru" ? "Запускаю токен..." : "Launching token...") : (locale === "ru" ? "Запустить токен" : "Launch token")}</button>
-        <p className="mt-3 text-center text-sm text-[#8ba3c1]">{locale === "ru" ? "Проект пытается выполнить launch автоматически через серверный executor." : "The project attempts to execute launch automatically through the server executor."}</p>
+        <button onClick={handleLaunch} disabled={!isValid || loading || uploadingImage || !wallet} className={`${primaryButtonClass} flex w-full items-center justify-center disabled:cursor-not-allowed disabled:opacity-40`}>{loading ? (locale === "ru" ? "Готовлю транзакцию..." : "Preparing transaction...") : (locale === "ru" ? "Подготовить launch транзакцию" : "Prepare launch transaction")}</button>
+        <p className="mt-3 text-center text-sm text-[#8ba3c1]">{locale === "ru" ? "Проект подготовит TonConnect транзакцию для твоего кошелька." : "The project will prepare a TonConnect transaction for your wallet."}</p>
       </div>
 
       {successUrl ? <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 px-4"><div className="glass-card w-full max-w-md p-6 text-center"><h2 className="font-display text-2xl font-bold text-white">{locale === "ru" ? "Запуск отправлен" : "Launch submitted"}</h2><p className="mt-3 text-sm text-[#8ba3c1]">{locale === "ru" ? "Теперь дождись подтверждения индексера. Фейковый live-статус не показывается." : "Now wait for indexer confirmation. No fake live status is shown before that."}</p><div className="mt-5 flex gap-3"><Link href={successUrl} className={`${primaryButtonClass} flex-1`}>{locale === "ru" ? "Мои токены" : "My tokens"}</Link></div></div></div> : null}
