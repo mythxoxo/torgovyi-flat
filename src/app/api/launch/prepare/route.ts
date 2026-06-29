@@ -13,6 +13,11 @@ const parseAddress = (value: unknown, field: string): string => {
   }
 };
 
+const parseOptionalAddress = (value: unknown): string | undefined => {
+  if (typeof value !== "string" || !value.trim()) return undefined;
+  return parseAddress(value, "factoryAddress");
+};
+
 const parseText = (value: unknown, field: string, min: number, max: number): string => {
   if (typeof value !== "string") throw new Error(`${field} is required`);
   const text = value.trim().replace(/\s+/g, " ");
@@ -29,7 +34,6 @@ const parseTicker = (value: unknown): string => {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json().catch(() => ({} as Record<string, unknown>));
-    const factoryAddress = parseAddress(process.env.NEXT_PUBLIC_FACTORY_ADDRESS || body.factoryAddress, "factoryAddress");
     const creatorAddress = parseAddress(body.creatorAddress, "creatorAddress");
     const name = parseText(body.name, "name", 2, 64);
     const ticker = parseTicker(body.ticker);
@@ -37,6 +41,7 @@ export async function POST(request: NextRequest) {
     const imageUrl = typeof body.imageUrl === "string" ? body.imageUrl.trim().slice(0, 512) : "";
     const targetTonRaw = Number(body.targetTon ?? 5);
     const targetTon = targetTonRaw === 8888 ? 8888 : 5;
+    const factoryAddress = parseOptionalAddress(process.env.NEXT_PUBLIC_FACTORY_ADDRESS || body.factoryAddress);
 
     const result = await prepareFullLaunchDraft({
       factoryAddress,
