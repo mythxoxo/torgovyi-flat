@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { buildCreateTokenDraft, isTonAddress, toMainnetAddress } from "../lib/onchain";
+import type { TonTransactionDraft } from "../lib/onchain";
 import { normalizeCreatorTax } from "../lib/shared";
 import { createToken as createTokenRequest, uploadTokenImage as uploadImage } from "../lib/api";
 import { useWallet } from "./wallet-context";
@@ -13,6 +13,40 @@ import { getTelegramWebApp } from "../lib/telegram";
 import { useUi } from "./page-shell";
 
 const primaryButtonClass = "rounded-full bg-[linear-gradient(135deg,#5ac8fa,#2aabee_52%,#229ed9)] px-6 py-3 text-center text-[15px] font-semibold tracking-[-0.01em] text-[#06101a] shadow-[0_16px_36px_rgba(42,171,238,0.26)]";
+
+type LaunchPrepareResponse = {
+  ok: boolean;
+  error?: string;
+  contracts: {
+    factory: string;
+    bondingCurve: string;
+    jettonMaster: string;
+    lpLock: string;
+  };
+  deploymentDraft: TonTransactionDraft;
+  activationDraft: TonTransactionDraft;
+  launchFeeTon: number;
+  launchFeeTreasury: string;
+};
+
+async function prepareLaunchDraft(input: {
+  creatorAddress: string;
+  name: string;
+  ticker: string;
+  description: string;
+  imageUrl: string;
+  targetTon: number;
+}): Promise<LaunchPrepareResponse> {
+  const response = await fetch("/api/launch/prepare", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    cache: "no-store",
+    body: JSON.stringify(input)
+  });
+  const data = (await response.json().catch(() => ({}))) as Partial<LaunchPrepareResponse>;
+  if (!response.ok || !data.ok) throw new Error(data.error || "Launch draft preparation failed");
+  return data as LaunchPrepareResponse;
+}
 
 export function CreateTokenForm() {
   const router = useRouter();
@@ -30,6 +64,7 @@ export function CreateTokenForm() {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [error, setError] = useState("");
   const [successUrl, setSuccessUrl] = useState("");
+  const [launchStatus, setLaunchStatus] = useState("");
 
   useEffect(() => {
     setName("");
@@ -70,28 +105,29 @@ export function CreateTokenForm() {
   const handleLaunch = async () => {
     try {
       if (!wallet) throw new Error(locale === "ru" ? "Сначала подключи кошелёк" : "Connect wallet first");
-      setLoading(true);
-      setError("");
-      app?.HapticFeedback.impactOccurred("medium");
-      const creatorTax = normalizeCreatorTax({ mode: "normal" });
       if (walletSource !== "tonconnect") throw new Error("TonConnect is required");
       if (!isMainnet) throw new Error(locale === "ru" ? "Нужен TON mainnet" : "TON mainnet is required");
-      const factoryAddress = process.env.NEXT_PUBLIC_FACTORY_ADDRESS || "";
-      if (!isTonAddress(factoryAddress)) throw new Error(locale === "ru" ? "Factory address ещё не настроен" : "Factory address is not configured yet");
+      setLoading(true);
+      setError("");
+      setSuccessUrl("");
+      app?.HapticFeedback.impactOccurred("medium");
+      const creatorTax = normalizeCreatorTax({ mode: "normal" });
 
-      await sendTransaction(
-        buildCreateTokenDraft({
-          factoryAddress: toMainnetAddress(factoryAddress),
-          creatorAddress: wallet,
-          name,
-          ticker,
-          description,
-          imageUrl: image || "",
-          totalSupply: 1_000_000_000n,
-          creatorTax,
-          curveConfig: { targetTon: activeTarget.targetTon, minBuyTon: 0.05, feeBps: 75 }
-        })
-      );
+      setLaunchStatus(locale === "ru" ? "Готовлю полный launch draft..." : "Preparing full launch draft...");
+      const launch = await prepareLaunchDraft({
+        creatorAddress: wallet,
+        name,
+        ticker,
+        description,
+        imageUrl: image || "",
+        targetTon: activeTarget.targetTon
+      });
+
+      setLaunchStatus(locale === "ru" ? "Шаг 1/2: подпиши deploy factory/pool/jetton..." : "Step 1/2: sign factory/pool/jetton deploy...");
+      await sendTransaction(launch.deploymentDraft);
+
+      setLaunchStatus(locale === "ru" ? "Шаг 2/2: подпиши activation/register + commission..." : "Step 2/2: sign activation/register + fee...");
+      await sendTransaction(launch.activationDraft);
 
       await createTokenRequest({
         name,
@@ -101,15 +137,23 @@ export function CreateTokenForm() {
         creatorWallet: wallet,
         creatorTax,
         totalSupply: "1000000000",
-        curveConfig: { targetTon: activeTarget.targetTon, minBuyTon: 0.05, feeBps: 75 }
+        curveConfig: { targetTon: activeTarget.targetTon, minBuyTon: 0.05, feeBps: 75 },
+        contractAddresses: {
+          factory: launch.contracts.factory,
+          bondingCurve: launch.contracts.bondingCurve,
+          jettonMaster: launch.contracts.jettonMaster,
+          lpLock: launch.contracts.lpLock
+        }
       });
 
-      setSuccessUrl("/my-tokens");
+      setLaunchStatus(locale === "ru" ? "Launch активирован. Открываю токен..." : "Launch activated. Opening token...");
+      setSuccessUrl(`/token/${encodeURIComponent(launch.contracts.bondingCurve)}`);
       app?.HapticFeedback.notificationOccurred("success");
       router.refresh();
     } catch (caughtError) {
       app?.HapticFeedback.notificationOccurred("error");
-      setError(caughtError instanceof Error ? caughtError.message : locale === "ru" ? "Подготовка запуска не удалась" : "Launch preparation failed");
+      setLaunchStatus("");
+      setError(caughtError instanceof Error ? caughtError.message : locale === "ru" ? "Запуск не удался" : "Launch failed");
     } finally {
       setLoading(false);
     }
@@ -121,7 +165,7 @@ export function CreateTokenForm() {
         <section className="glass-card rounded-[28px] p-5">
           <p className="text-xs uppercase tracking-[0.2em] text-[#5ac8fa]">{locale === "ru" ? "Нужен кошелёк" : "Wallet required"}</p>
           <h2 className="mt-2 font-display text-2xl font-bold text-white">{locale === "ru" ? "Подключи кошелёк, чтобы запустить токен" : "Connect your wallet to launch a token"}</h2>
-          <p className="mt-3 text-sm leading-6 text-[#c6d4ea]">{locale === "ru" ? "Лаунч будет подготовлен как TonConnect транзакция." : "Launch will be prepared as a TonConnect transaction."}</p>
+          <p className="mt-3 text-sm leading-6 text-[#c6d4ea]">{locale === "ru" ? "Лаунч создаст реальные pool/jetton контракты и комиссию через TonConnect." : "Launch creates real pool/jetton contracts and fee through TonConnect."}</p>
           <div className="mt-5"><WalletConnectButton /></div>
         </section>
       ) : (
@@ -168,11 +212,11 @@ export function CreateTokenForm() {
       {error ? <div className="rounded-2xl border border-[#5ac8fa]/20 bg-[#5ac8fa]/10 px-4 py-3 text-sm text-[#c6e8ff]">{error}</div> : null}
 
       <div>
-        <button onClick={handleLaunch} disabled={!isValid || loading || uploadingImage || !wallet} className={`${primaryButtonClass} flex w-full items-center justify-center disabled:cursor-not-allowed disabled:opacity-40`}>{loading ? (locale === "ru" ? "Готовлю транзакцию..." : "Preparing transaction...") : (locale === "ru" ? "Подготовить launch транзакцию" : "Prepare launch transaction")}</button>
-        <p className="mt-3 text-center text-sm text-[#8ba3c1]">{locale === "ru" ? "Проект подготовит TonConnect транзакцию для твоего кошелька." : "The project will prepare a TonConnect transaction for your wallet."}</p>
+        <button onClick={handleLaunch} disabled={!isValid || loading || uploadingImage || !wallet} className={`${primaryButtonClass} flex w-full items-center justify-center disabled:cursor-not-allowed disabled:opacity-40`}>{loading ? (launchStatus || (locale === "ru" ? "Готовлю launch..." : "Preparing launch...")) : (locale === "ru" ? "Запустить реальный launch" : "Launch real token")}</button>
+        <p className="mt-3 text-center text-sm text-[#8ba3c1]">{launchStatus || (locale === "ru" ? "Будет две подписи: deploy контрактов, затем activation/register + комиссия." : "Two signatures: contract deploy, then activation/register + fee.")}</p>
       </div>
 
-      {successUrl ? <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 px-4"><div className="glass-card w-full max-w-md p-6 text-center"><h2 className="font-display text-2xl font-bold text-white">{locale === "ru" ? "Запуск отправлен" : "Launch submitted"}</h2><p className="mt-3 text-sm text-[#8ba3c1]">{locale === "ru" ? "Теперь дождись подтверждения индексера. Фейковый live-статус не показывается." : "Now wait for indexer confirmation. No fake live status is shown before that."}</p><div className="mt-5 flex gap-3"><Link href={successUrl} className={`${primaryButtonClass} flex-1`}>{locale === "ru" ? "Мои токены" : "My tokens"}</Link></div></div></div> : null}
+      {successUrl ? <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 px-4"><div className="glass-card w-full max-w-md p-6 text-center"><h2 className="font-display text-2xl font-bold text-white">{locale === "ru" ? "Launch активирован" : "Launch activated"}</h2><p className="mt-3 text-sm text-[#8ba3c1]">{locale === "ru" ? "Токен сохранён как BONDING. Покупки доступны после открытия страницы токена." : "Token is saved as BONDING. Buys are available on the token page."}</p><div className="mt-5 flex gap-3"><Link href={successUrl} className={`${primaryButtonClass} flex-1`}>{locale === "ru" ? "Открыть токен" : "Open token"}</Link></div></div></div> : null}
     </div>
   );
 }
