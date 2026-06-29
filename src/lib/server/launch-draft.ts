@@ -2,11 +2,12 @@ import { Address, beginCell, storeStateInit, toNano } from "@ton/core";
 import { LaunchpadPool } from "../../../build/launchpad-pool/LaunchpadPool_LaunchpadPool";
 import { LPLock } from "../../../build/lp-lock/LPLock_LPLock";
 import { JettonMinter, storeChangeOwner, storeConfigureLaunchPhase } from "../../../build/jetton-minter/JettonMinter_JettonMinter";
-import { storeCreateToken, storeRegisterPool } from "../../../build/launchpad-factory/LaunchpadFactory_LaunchpadFactory";
 
 const DEFAULT_QUERY_TTL = 600;
 const DEFAULT_MIN_BUY_TON = 0.05;
-const DEFAULT_FEE_BPS = 75;
+
+// Frontend token amount is currently modeled as raw bonding units.
+// The live LaunchpadPool contract mints 1_000_000 raw units per 1 TON.
 const DEFAULT_TOTAL_SUPPLY = 1_000_000_000n;
 
 type TonConnectMessage = { address: string; amount: string; payload?: string; stateInit?: string };
@@ -56,7 +57,7 @@ const resolveLaunchFeeTon = () => {
 };
 
 export async function prepareFullLaunchDraft(input: {
-  factoryAddress: string;
+  factoryAddress?: string;
   creatorAddress: string;
   name: string;
   ticker: string;
@@ -66,13 +67,11 @@ export async function prepareFullLaunchDraft(input: {
   minBuyTon?: number;
   feeBps?: number;
 }): Promise<FullLaunchDraftResult> {
-  const factory = asMainnet(input.factoryAddress);
+  const factory = input.factoryAddress ? asMainnet(input.factoryAddress) : "";
   const creator = Address.parse(input.creatorAddress);
   const ticker = normalizeTicker(input.ticker);
   const validUntil = Math.floor(Date.now() / 1000) + DEFAULT_QUERY_TTL;
   const targetTon = input.targetTon === 8888 ? 8888 : 5;
-  const minBuyTon = input.minBuyTon && input.minBuyTon > 0 ? input.minBuyTon : DEFAULT_MIN_BUY_TON;
-  const feeBps = Number.isInteger(input.feeBps) ? Math.max(0, Math.min(1000, Number(input.feeBps))) : DEFAULT_FEE_BPS;
   const launchFeeTreasury = resolveLaunchFeeTreasury();
   const launchFeeTon = resolveLaunchFeeTon();
 
@@ -80,19 +79,6 @@ export async function prepareFullLaunchDraft(input: {
   const minter = await JettonMinter.fromInit(0n, creator, beginCell().endCell(), creator, false);
   const pool = await LaunchpadPool.fromInit(creator, minter.address, lpLock.address, toNano(String(targetTon)));
   if (!lpLock.init || !minter.init || !pool.init) throw new Error("launch state init generation failed");
-
-  const createTokenPayload = beginCell().store(storeCreateToken({
-    $$type: "CreateToken",
-    name: input.name.trim(),
-    symbol: ticker,
-    description: input.description?.trim() || "",
-    imageUrl: input.imageUrl?.trim() || "",
-    totalSupply: DEFAULT_TOTAL_SUPPLY,
-    creator,
-    curveTarget: toNano(String(targetTon)),
-    minBuy: toNano(String(minBuyTon)),
-    feeBps: BigInt(feeBps)
-  })).endCell().toBoc().toString("base64");
 
   const configurePayload = beginCell().store(storeConfigureLaunchPhase({
     $$type: "ConfigureLaunchPhase",
@@ -107,17 +93,9 @@ export async function prepareFullLaunchDraft(input: {
     newOwner: pool.address
   })).endCell().toBoc().toString("base64");
 
-  const registerPoolPayload = beginCell().store(storeRegisterPool({
-    $$type: "RegisterPool",
-    pool: pool.address,
-    jettonMaster: minter.address,
-    creator
-  })).endCell().toBoc().toString("base64");
-
   const activationMessages: TonConnectMessage[] = [
     { address: asMainnet(minter.address), amount: toNano("0.05").toString(), payload: configurePayload },
     { address: asMainnet(minter.address), amount: toNano("0.05").toString(), payload: changeOwnerPayload },
-    { address: factory, amount: toNano("0.15").toString(), payload: registerPoolPayload },
     { address: launchFeeTreasury, amount: toNano(String(launchFeeTon)).toString(), payload: commentPayload(`TONS launch fee ${ticker}`) }
   ];
 
@@ -131,7 +109,6 @@ export async function prepareFullLaunchDraft(input: {
     deploymentDraft: {
       validUntil,
       messages: [
-        { address: factory, amount: toNano("0.15").toString(), payload: createTokenPayload },
         { address: asMainnet(lpLock.address), amount: toNano("0.05").toString(), stateInit: stateInitBase64(lpLock.init) },
         { address: asMainnet(minter.address), amount: toNano("0.12").toString(), stateInit: stateInitBase64(minter.init) },
         { address: asMainnet(pool.address), amount: toNano("0.12").toString(), stateInit: stateInitBase64(pool.init) }
