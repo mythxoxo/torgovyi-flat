@@ -36,6 +36,25 @@ const commentPayload = (text: string) =>
 
 const normalizeTicker = (ticker: string) => ticker.trim().replace(/^\$/g, "").toUpperCase().slice(0, 10);
 
+const resolveLaunchFeeTreasury = () => {
+  const value =
+    process.env.DEX_PLATFORM_FEE_TREASURY ||
+    process.env.LAUNCH_FEE_TREASURY ||
+    process.env.TREASURY_ADDRESS ||
+    process.env.TREASURY ||
+    process.env.treasury ||
+    process.env.REFERRAL_TREASURY_ADDRESS ||
+    "";
+  if (!value.trim()) throw new Error("Launch fee treasury is not configured. Set DEX_PLATFORM_FEE_TREASURY or TREASURY in Vercel.");
+  return asMainnet(value.trim());
+};
+
+const resolveLaunchFeeTon = () => {
+  const value = Number(process.env.LAUNCH_FEE_TON || "0.25");
+  if (!Number.isFinite(value) || value <= 0 || value > 50) throw new Error("LAUNCH_FEE_TON must be > 0 and <= 50");
+  return value;
+};
+
 export async function prepareFullLaunchDraft(input: {
   factoryAddress: string;
   creatorAddress: string;
@@ -54,6 +73,8 @@ export async function prepareFullLaunchDraft(input: {
   const targetTon = input.targetTon === 8888 ? 8888 : 5;
   const minBuyTon = input.minBuyTon && input.minBuyTon > 0 ? input.minBuyTon : DEFAULT_MIN_BUY_TON;
   const feeBps = Number.isInteger(input.feeBps) ? Math.max(0, Math.min(1000, Number(input.feeBps))) : DEFAULT_FEE_BPS;
+  const launchFeeTreasury = resolveLaunchFeeTreasury();
+  const launchFeeTon = resolveLaunchFeeTon();
 
   const lpLock = await LPLock.fromInit(creator, 0n, true);
   const minter = await JettonMinter.fromInit(0n, creator, beginCell().endCell(), creator, false);
@@ -93,21 +114,12 @@ export async function prepareFullLaunchDraft(input: {
     creator
   })).endCell().toBoc().toString("base64");
 
-  const launchFeeTreasury = process.env.DEX_PLATFORM_FEE_TREASURY || process.env.REFERRAL_TREASURY_ADDRESS || "";
-  const launchFeeTon = Number(process.env.LAUNCH_FEE_TON || "0.25");
   const activationMessages: TonConnectMessage[] = [
     { address: asMainnet(minter.address), amount: toNano("0.05").toString(), payload: configurePayload },
     { address: asMainnet(minter.address), amount: toNano("0.05").toString(), payload: changeOwnerPayload },
-    { address: factory, amount: toNano("0.15").toString(), payload: registerPoolPayload }
+    { address: factory, amount: toNano("0.15").toString(), payload: registerPoolPayload },
+    { address: launchFeeTreasury, amount: toNano(String(launchFeeTon)).toString(), payload: commentPayload(`TONS launch fee ${ticker}`) }
   ];
-
-  if (launchFeeTreasury && launchFeeTon > 0) {
-    activationMessages.push({
-      address: asMainnet(launchFeeTreasury),
-      amount: toNano(String(launchFeeTon)).toString(),
-      payload: commentPayload(`TONS launch fee ${ticker}`)
-    });
-  }
 
   return {
     contracts: {
@@ -126,7 +138,7 @@ export async function prepareFullLaunchDraft(input: {
       ]
     },
     activationDraft: { validUntil, messages: activationMessages },
-    launchFeeTon: launchFeeTreasury ? launchFeeTon : 0,
-    launchFeeTreasury: launchFeeTreasury ? asMainnet(launchFeeTreasury) : ""
+    launchFeeTon,
+    launchFeeTreasury
   };
 }
