@@ -1,0 +1,69 @@
+name: Production Build and Security
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - prod-existing-token-trading
+  pull_request:
+    branches:
+      - prod-existing-token-trading
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build contracts and app
+        run: npm run build
+
+      - name: Project security checks
+        run: npm run security:check
+
+      - name: Public copy checks
+        run: npm run check:public-copy
+
+      - name: Contract verification
+        run: npm run verify:contracts
+
+      - name: Factory flow test
+        run: npm run test:factory-flow
+
+      - name: Buy flow test
+        run: npm run test:buy-flow
+
+      - name: DEX fee model test
+        run: npm run test:dex-fees
+
+      - name: npm production audit
+        run: npm audit --omit=dev --audit-level=high
+
+  secrets-scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
