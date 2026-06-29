@@ -12,6 +12,11 @@ const parseTonAddress = (value: unknown, field: string): string => {
   }
 };
 
+const parseOptionalTonAddress = (value: unknown, field: string): string | null => {
+  if (value == null || value === "") return null;
+  return parseTonAddress(value, field);
+};
+
 const normalizeName = (value: unknown): string => {
   if (typeof value !== "string") throw new Error("name is required");
   const name = value.trim().replace(/\s+/g, " ");
@@ -67,10 +72,16 @@ export const createToken = async (input: CreateTokenInput) => {
   if (!Number.isFinite(minBuyTon) || minBuyTon <= 0 || minBuyTon > 10) throw new Error("minBuyTon is out of range");
   if (!Number.isInteger(feeBps) || feeBps < 0 || feeBps > 1000) throw new Error("feeBps is out of range");
 
+  const factory = parseOptionalTonAddress(input.contractAddresses?.factory || process.env.NEXT_PUBLIC_FACTORY_ADDRESS, "contractAddresses.factory");
+  const pool = parseOptionalTonAddress(input.contractAddresses?.bondingCurve, "contractAddresses.bondingCurve");
+  const jettonMaster = parseOptionalTonAddress(input.contractAddresses?.jettonMaster, "contractAddresses.jettonMaster");
+  const lpLock = parseOptionalTonAddress(input.contractAddresses?.lpLock, "contractAddresses.lpLock");
+  const hasRealLaunchContracts = Boolean(pool && jettonMaster);
+
   const now = new Date().toISOString();
   const stagedRow: TokenRow = {
-    pool_address: `pending:${creator}:${Date.now()}`,
-    jetton_address: "",
+    pool_address: pool || `pending:${creator}:${Date.now()}`,
+    jetton_address: jettonMaster || "",
     creator,
     name,
     symbol: ticker,
@@ -79,9 +90,9 @@ export const createToken = async (input: CreateTokenInput) => {
     collected_ton: 0,
     target_ton: targetTon,
     sold_tokens: 0,
-    status: "PENDING",
+    status: hasRealLaunchContracts ? "BONDING" : "PENDING",
     is_listed: false,
-    lp_lock_address: null,
+    lp_lock_address: lpLock,
     dedust_pool_address: null,
     created_at: now,
     updated_at: now
@@ -91,11 +102,20 @@ export const createToken = async (input: CreateTokenInput) => {
 
   return {
     ok: true,
-    pending: true,
+    pending: !hasRealLaunchContracts,
+    tokenId: stagedRow.pool_address,
     creatorWallet: creator,
     submittedVia: "tonconnect-user-signature",
     stagedId: stagedRow.pool_address,
-    message: "Launch metadata staged. User-signed TonConnect transaction must be confirmed by the indexer before live status is shown."
+    contractAddresses: {
+      factory: factory || "",
+      bondingCurve: pool || "",
+      jettonMaster: jettonMaster || "",
+      lpLock: lpLock || ""
+    },
+    message: hasRealLaunchContracts
+      ? "Launch contracts were staged as BONDING after user-signed TonConnect deployment/activation drafts. Indexer must confirm on-chain state."
+      : "Launch metadata staged. User-signed TonConnect transaction must be confirmed by the indexer before live status is shown."
   };
 };
 
