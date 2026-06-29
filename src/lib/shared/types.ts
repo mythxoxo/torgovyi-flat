@@ -223,6 +223,7 @@ export interface CreateTokenInput {
   creatorTax?: Partial<CreatorTaxConfig>;
   totalSupply?: string | number;
   curveConfig?: Record<string, unknown>;
+  contractAddresses?: Partial<TokenContractAddresses>;
 }
 
 export interface BuySellRequest {
@@ -262,38 +263,13 @@ export interface TokenRow {
   symbol: string;
   description: string | null;
   image_url: string | null;
-  collected_ton: string | number;
-  target_ton: string | number;
-  sold_tokens: string | number;
+  collected_ton: number | string;
+  target_ton: number | string;
+  sold_tokens: number | string;
   status: string;
   is_listed: boolean;
   lp_lock_address: string | null;
   dedust_pool_address: string | null;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface TradeRow {
-  id?: number;
-  pool_address: string;
-  buyer: string;
-  ton_amount: string | number;
-  token_amount: string | number;
-  tx_hash: string;
-  lt: string | null;
-  created_at: string;
-}
-
-export interface ListingRow {
-  id?: number;
-  pool_address: string;
-  jetton_address: string;
-  ton_amount: string | number;
-  jetton_amount: string | number;
-  lp_lock_address: string;
-  dedust_tx_hash: string | null;
-  status: string;
-  error: string | null;
   created_at: string;
   updated_at: string;
 }
