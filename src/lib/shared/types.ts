@@ -273,3 +273,26 @@ export interface TokenRow {
   created_at: string;
   updated_at: string;
 }
+
+export interface TradeRow {
+  pool_address: string;
+  buyer: string;
+  ton_amount: string | number;
+  token_amount: string | number;
+  tx_hash: string;
+  lt: string | null;
+  created_at: string;
+}
+
+export interface ListingRow {
+  pool_address: string;
+  jetton_address: string;
+  ton_amount: string | number;
+  jetton_amount: string | number;
+  lp_lock_address: string | null;
+  dedust_tx_hash: string;
+  status: string;
+  error: string | null;
+  created_at: string;
+  updated_at: string;
+}
