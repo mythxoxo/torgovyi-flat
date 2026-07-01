@@ -19,13 +19,12 @@ const normalizeMetric = (value?: number) => {
 
 const formatGramMetric = (value?: number) => {
   const normalized = normalizeMetric(value);
-  return normalized ? `${compact.format(normalized)} GRAM` : "—";
+  return normalized ? `${compact.format(normalized)} GRAM` : "N/A";
 };
 
 const formatPrice = (token: ExternalTokenRecord) => {
-  if (token.priceUsd && Number.isFinite(token.priceUsd)) return `$${priceFormat.format(token.priceUsd)}`;
   if (token.priceGram && Number.isFinite(token.priceGram)) return `${priceFormat.format(token.priceGram)} GRAM`;
-  return "—";
+  return "N/A";
 };
 
 const dexLabel = (dex: string) => dex === "DEDUST" ? "DeDust" : dex === "STONFI" ? "STON.fi" : dex;

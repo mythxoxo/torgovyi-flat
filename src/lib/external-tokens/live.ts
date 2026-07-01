@@ -20,8 +20,8 @@ const bestNumber = (a?: number, b?: number) => {
   return Math.max(left, right) || undefined;
 };
 
-const bannedSymbols = new Set(["TON", "GRAM", "USDT", "USD₮", "JUSDT", "JUSDC", "TSTON", "STON", "HGRAM", "NOT"]);
-const bannedNames = ["tonstakers", "tether usd", "wrapped ton", "staked ton", "stable", "notcoin", "wallet token", "hipo staked"];
+const bannedSymbols = new Set(["TON", "GRAM", "USDT", "USD₮", "JUSDT", "JUSDC", "TSTON", "STON", "HGRAM", "NOT", "WSTON", "TELEBTC"]);
+const bannedNames = ["tonstakers", "tether usd", "wrapped ton", "staked ton", "stable", "notcoin", "wallet token", "hipo staked", "liquid staking", "telebtc"];
 
 function isRelevantExternalToken(token: ExternalTokenRecord) {
   const symbol = token.symbol.trim().toUpperCase();
