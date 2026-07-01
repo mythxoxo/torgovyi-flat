@@ -1,9 +1,11 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 import type { TokenRecord } from "../lib/shared";
 import { ProgressBar } from "./progress-bar";
 import { useUi } from "./page-shell";
 
 function statusMeta(token: TokenRecord, locale: "ru" | "en") {
+  if (token.id.startsWith("blum:")) return { label: "Blum", className: "bg-[#7dd3fc]/15 text-[#7dd3fc]" };
   if (token.status === "LISTED") return { label: locale === "ru" ? "На рынке" : "Listed", className: "bg-white/10 text-white" };
   if (token.status === "GRADUATED_READY") return { label: locale === "ru" ? "Готов к ликвидности" : "Ready for liquidity", className: "bg-[#3df6a2]/15 text-[#a5fbce]" };
   const pct = token.state.progress * 100;
@@ -21,13 +23,32 @@ function timeAgo(value: string, locale: "ru" | "en") {
   return locale === "ru" ? `${Math.floor(hours / 24)} д назад` : `${Math.floor(hours / 24)} d ago`;
 }
 
+function TokenCardFrame({ token, children }: { token: TokenRecord; children: ReactNode }) {
+  const className = "glass-card block rounded-[24px] border border-white/10 bg-[linear-gradient(180deg,rgba(15,24,39,0.9),rgba(9,15,26,0.98))] p-5 transition hover:border-[#7dd3fc]/30 hover:bg-[linear-gradient(180deg,rgba(18,28,45,0.96),rgba(10,16,28,0.98))]";
+
+  if (token.id.startsWith("blum:")) {
+    const href = token.links.website || `https://tonviewer.com/${token.contractAddresses.jettonMaster}`;
+    return (
+      <a href={href} target="_blank" rel="noreferrer" className={className}>
+        {children}
+      </a>
+    );
+  }
+
+  return (
+    <Link href={`/token/${token.id}`} className={className}>
+      {children}
+    </Link>
+  );
+}
+
 export function TokenCard({ token }: { token: TokenRecord }) {
   const { locale } = useUi();
   const status = statusMeta(token, locale);
   const progress = Math.round(token.state.progress * 100);
 
   return (
-    <Link href={`/token/${token.id}`} className="glass-card block rounded-[24px] border border-white/10 bg-[linear-gradient(180deg,rgba(15,24,39,0.9),rgba(9,15,26,0.98))] p-5 transition hover:border-[#7dd3fc]/30 hover:bg-[linear-gradient(180deg,rgba(18,28,45,0.96),rgba(10,16,28,0.98))]">
+    <TokenCardFrame token={token}>
       <div className="flex items-start justify-between gap-3">
         <div>
           <div className="text-xs uppercase tracking-[0.16em] text-[#8ba3c1]">{timeAgo(token.createdAt, locale)}</div>
@@ -44,6 +65,6 @@ export function TokenCard({ token }: { token: TokenRecord }) {
         <ProgressBar progress={progress} className="mt-2" />
         <div className="mt-3 flex items-center justify-between text-sm"><span className="text-[#8ba3c1]">{locale === "ru" ? "Собрано" : "Collected"}</span><span className="font-semibold text-white">💎 {(token.state.collectedTon ?? token.state.marketCapTon).toFixed(2)} TON</span></div>
       </div>
-    </Link>
+    </TokenCardFrame>
   );
 }
