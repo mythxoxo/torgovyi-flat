@@ -8,6 +8,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ ok: true, source: "live-external", tokens, note: tokens.length > 0 ? undefined : "No curated live external tokens available." });
   } catch (error) {
     console.warn("Live external token sources failed", error);
-    return NextResponse.json({ ok: true, source: "fallback", tokens: [], note: "Live external token source is unavailable." });
+    return NextResponse.json({ ok: false, source: "unavailable", tokens: [], note: "Live external token source is unavailable." }, { status: 503 });
   }
 }

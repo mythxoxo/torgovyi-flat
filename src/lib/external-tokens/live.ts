@@ -1,7 +1,7 @@
 import { Address } from "@ton/core";
 import type { ExternalTokenRecord } from "./types";
 import { listLiveDedustExternalTokens } from "./dedust-live";
-import { listCuratedExternalTokens, resolveExternalToken, searchExternalTokens, type ExternalTokenFilter } from "./search";
+import { resolveExternalToken, searchExternalTokens, type ExternalTokenFilter } from "./search";
 import { listLiveStonfiExternalTokens } from "./stonfi-live";
 
 const normalizeAddress = (value: string) => {
@@ -71,27 +71,19 @@ const mergeExternalTokens = (groups: ExternalTokenRecord[][]): ExternalTokenReco
     .sort((a, b) => (b.volume24hGram ?? b.liquidityGram ?? 0) - (a.volume24hGram ?? a.liquidityGram ?? 0));
 };
 
-const curatedFallback = (filter: ExternalTokenFilter) => {
-  const tokens = listCuratedExternalTokens().filter(isRelevantExternalToken);
-  if (filter === "verified") return tokens.filter((token) => token.verified);
-  if (filter === "risky") return tokens.filter((token) => token.riskLevel === "HIGH");
-  return tokens;
-};
-
 export async function listExternalTokensLive(filter: ExternalTokenFilter = "all"): Promise<ExternalTokenRecord[]> {
   const [dedust, stonfi] = await Promise.allSettled([
-    listLiveDedustExternalTokens(120),
-    listLiveStonfiExternalTokens(60)
+    listLiveDedustExternalTokens(240),
+    listLiveStonfiExternalTokens(120)
   ]);
 
   const dedustTokens = dedust.status === "fulfilled" ? dedust.value : [];
   const stonfiTokens = stonfi.status === "fulfilled" ? stonfi.value : [];
   const live = mergeExternalTokens([dedustTokens, stonfiTokens]);
-  const tokens = live.length > 0 ? live : curatedFallback(filter);
 
-  if (filter === "verified") return tokens.filter((token) => token.verified);
-  if (filter === "risky") return tokens.filter((token) => token.riskLevel === "HIGH");
-  return tokens;
+  if (filter === "verified") return live.filter((token) => token.verified);
+  if (filter === "risky") return live.filter((token) => token.riskLevel === "HIGH");
+  return live;
 }
 
 export async function searchExternalTokensLive(query: string, filter: ExternalTokenFilter = "all"): Promise<ExternalTokenRecord[]> {
