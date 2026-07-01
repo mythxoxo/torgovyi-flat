@@ -30,16 +30,7 @@ const formatPrice = (token: ExternalTokenRecord) => {
 const dexLabel = (dex: string) => dex === "DEDUST" ? "DeDust" : dex === "STONFI" ? "STON.fi" : dex;
 
 function isUsableTokenImage(value?: string) {
-  if (typeof value !== "string") return false;
-  const normalized = value.trim();
-  return /^https?:\/\//i.test(normalized) || normalized.startsWith("/") || normalized.startsWith("ipfs://");
-}
-
-function normalizeTokenImage(value?: string) {
-  if (!isUsableTokenImage(value)) return "";
-  const normalized = value!.trim();
-  if (normalized.startsWith("ipfs://")) return `https://ipfs.io/ipfs/${normalized.slice("ipfs://".length)}`;
-  return normalized;
+  return typeof value === "string" && (/^https?:\/\//i.test(value.trim()) || value.startsWith("/"));
 }
 
 function TokenPlaceholder({ symbol }: { symbol: string }) {
@@ -52,7 +43,7 @@ function TokenPlaceholder({ symbol }: { symbol: string }) {
 
 export function ExternalTokenCard({ token }: { token: ExternalTokenRecord }) {
   const { locale } = useUi();
-  const initialImage = useMemo(() => normalizeTokenImage(token.image), [token.image]);
+  const initialImage = useMemo(() => (isUsableTokenImage(token.image) ? token.image!.trim() : ""), [token.image]);
   const [imageSrc, setImageSrc] = useState(initialImage);
   const change = typeof token.change24h === "number" && Number.isFinite(token.change24h) ? token.change24h : null;
   const changeClass = change == null ? "text-[#8ba3c1]" : change >= 0 ? "text-[#86efac]" : "text-[#ff8a95]";

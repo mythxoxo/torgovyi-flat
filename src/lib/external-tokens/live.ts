@@ -20,7 +20,7 @@ const bestNumber = (a?: number, b?: number) => {
   return Math.max(left, right) || undefined;
 };
 
-const hasUsefulImage = (value?: string) => typeof value === "string" && (value.trim().startsWith("/") || /^https?:\/\//i.test(value.trim()) || value.trim().startsWith("ipfs://"));
+const hasUsefulImage = (value?: string) => typeof value === "string" && /^https?:\/\//i.test(value.trim());
 const hasUsefulVolume = (value?: number) => Number.isFinite(value ?? 0) && (value ?? 0) > 0;
 const hasUsefulLiquidity = (value?: number) => Number.isFinite(value ?? 0) && (value ?? 0) > 0;
 const hasRoute = (token: ExternalTokenRecord) => Boolean(token.primaryDex || token.dexes.length > 0 || token.poolAddress);
