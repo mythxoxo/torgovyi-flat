@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for helping improve TONK.MEM.
+Thanks for helping improve TONS of GRAM.
 
 ## Development
 

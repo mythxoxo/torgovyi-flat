@@ -1,4 +1,4 @@
-# TONK.MEM
+# TONS of GRAM
 
 [![ci](https://github.com/mythxoxo/torgovyi-flat/actions/workflows/ci.yml/badge.svg)](https://github.com/mythxoxo/torgovyi-flat/actions/workflows/ci.yml)
 

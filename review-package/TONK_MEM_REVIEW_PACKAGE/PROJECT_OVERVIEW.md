@@ -1,6 +1,6 @@
 # PROJECT OVERVIEW
 
-TONK.MEM is a security-first TON meme token launchpad designed for Telegram-native distribution and manual no-custody wallet flow.
+TONS of GRAM is a security-first TON meme token launchpad designed for Telegram-native distribution and manual no-custody wallet flow.
 
 ## Why TON / Telegram
 

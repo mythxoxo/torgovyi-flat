@@ -1,4 +1,4 @@
-TONK.MEM is a TON meme token launchpad.
+TONS of GRAM is a TON meme token launchpad.
 
 The product supports manual wallet signing, a 5 TON test target, an 8888 TON production target, and a DeDust-first liquidity path.
 

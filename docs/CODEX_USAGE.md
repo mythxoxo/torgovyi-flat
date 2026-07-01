@@ -1,6 +1,6 @@
 # Codex usage plan
 
-TONK.MEM will use Codex for open-source maintenance workflows.
+TONS of GRAM will use Codex for open-source maintenance workflows.
 
 ## Pull request review
 

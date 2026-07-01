@@ -13,4 +13,4 @@
 
 ## Notes
 
-This release focuses on repository readiness, maintenance workflow, and public security posture for TONK.MEM.
+This release focuses on repository readiness, maintenance workflow, and public security posture for TONS of GRAM.

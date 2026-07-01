@@ -1,6 +1,6 @@
 # Maintainer workflow
 
-This document tracks repository maintenance work for TONK.MEM.
+This document tracks repository maintenance work for TONS of GRAM.
 
 ## Pull requests
 
