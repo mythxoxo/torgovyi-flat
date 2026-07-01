@@ -11,7 +11,9 @@ export interface ExternalTokenRecord {
   priceUsd?: number;
   change24h?: number;
   volume24hGram?: number;
+  volume24hUsd?: number;
   liquidityGram?: number;
+  liquidityUsd?: number;
   holders?: number;
   dexes: DexId[];
   primaryDex?: DexId;
