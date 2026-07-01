@@ -8,12 +8,14 @@ import type { ExternalTokenRecord } from "../../lib/external-tokens/types";
 import { listMarketTokens } from "../../lib/market/list-market-tokens";
 import type { MarketFilter, MarketToken } from "../../lib/market/types";
 
+type ExternalSource = "live-external" | "snapshot-external" | "unavailable" | "";
+
 export default function MarketsPage() {
   const { locale, theme } = useUi();
   const [tokens, setTokens] = useState<MarketToken[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<MarketFilter>("trending");
-  const [externalSource, setExternalSource] = useState<"live-external" | "unavailable" | "">("");
+  const [externalSource, setExternalSource] = useState<ExternalSource>("");
 
   useEffect(() => {
     let cancelled = false;
@@ -23,10 +25,10 @@ export default function MarketsPage() {
     const load = async () => {
       if (tab === "external") {
         const res = await fetch("/api/external-tokens", { cache: "no-store" });
-        const data = await res.json() as { ok: boolean; source?: "live-external" | "unavailable"; tokens?: ExternalTokenRecord[] };
-        if (!data.ok || !data.tokens) throw new Error("External source failed");
+        const data = await res.json() as { ok: boolean; source?: ExternalSource; tokens?: ExternalTokenRecord[] };
+        if (!data.tokens) throw new Error("External source failed");
         if (!cancelled) {
-          setExternalSource(data.source ?? "unavailable");
+          setExternalSource(data.source ?? (data.ok ? "live-external" : "unavailable"));
           setTokens(data.tokens.map((token) => ({ source: "EXTERNAL", token })));
         }
         return;
@@ -65,6 +67,11 @@ export default function MarketsPage() {
   const panel = theme === "light" ? "border-[#dbe8f4] bg-white text-[#111827]" : "border-white/10 bg-[#0f1724] text-white";
   const muted = theme === "light" ? "text-[#64748b]" : "text-[#8ba3c1]";
   const inactive = theme === "light" ? "border-[#dbe8f4] bg-white text-[#475569]" : "border-white/10 bg-white/5 text-[#c6d4ea]";
+  const externalSourceLabel = externalSource === "live-external"
+    ? (locale === "ru" ? "Источник: live external assets" : "Source: live external assets")
+    : externalSource === "snapshot-external"
+      ? (locale === "ru" ? "Источник: real cached DEX snapshot" : "Source: real cached DEX snapshot")
+      : (locale === "ru" ? "Источник: недоступен" : "Source: unavailable");
 
   return (
     <div className="space-y-6 pb-24">
@@ -77,7 +84,7 @@ export default function MarketsPage() {
             <button key={item.id} type="button" onClick={() => setTab(item.id)} className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${tab === item.id ? "border-[#0088cc] bg-[#0088cc] text-white" : inactive}`}>{locale === "ru" ? item.ru : item.en}</button>
           ))}
         </div>
-        {tab === "external" && externalSource ? <p className={`mt-3 text-xs ${muted}`}>{externalSource === "live-external" ? (locale === "ru" ? "Источник: live external assets" : "Source: live external assets") : (locale === "ru" ? "Источник: недоступен" : "Source: unavailable")}</p> : null}
+        {tab === "external" && externalSource ? <p className={`mt-3 text-xs ${muted}`}>{externalSourceLabel}</p> : null}
       </section>
       {tab === "gainers" ? (
         <GainersPanel />
@@ -86,7 +93,7 @@ export default function MarketsPage() {
           tokens={tokens}
           loading={loading}
           emptyTitle={tab === "external" ? (locale === "ru" ? "External временно недоступен" : "External is temporarily unavailable") : undefined}
-          emptyText={tab === "external" ? (locale === "ru" ? "Мы не показываем фейковый внешний рынок. Как только live source вернётся, здесь появятся реальные токены." : "We do not show a fake external market. Real tokens will appear here once the live source is available.") : undefined}
+          emptyText={tab === "external" ? (locale === "ru" ? "Live source и cached snapshot не вернули токены. Это аварийное состояние, а не нормальная витрина." : "Live source and cached snapshot returned no tokens. This is a failure state, not the normal market view.") : undefined}
         />
       )}
     </div>
