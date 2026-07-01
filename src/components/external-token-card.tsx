@@ -10,6 +10,8 @@ import { useUi } from "./page-shell";
 
 const compact = new Intl.NumberFormat("en-US", { notation: "compact", maximumFractionDigits: 2 });
 const priceFormat = new Intl.NumberFormat("en-US", { maximumFractionDigits: 6 });
+const usdPriceFormat = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 8 });
+const usdMetricFormat = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", notation: "compact", maximumFractionDigits: 2 });
 
 const normalizeMetric = (value?: number) => {
   if (!value || !Number.isFinite(value) || value <= 0) return null;
@@ -21,10 +23,19 @@ const formatGramMetric = (value?: number) => {
   return normalized ? `${compact.format(normalized)} GRAM` : "N/A";
 };
 
+const formatUsdMetric = (value?: number) => {
+  const normalized = normalizeMetric(value);
+  return normalized ? usdMetricFormat.format(normalized) : "N/A";
+};
+
 const formatPrice = (token: ExternalTokenRecord) => {
   if (token.priceGram && Number.isFinite(token.priceGram)) return `${priceFormat.format(token.priceGram)} GRAM`;
+  if (token.priceUsd && Number.isFinite(token.priceUsd)) return usdPriceFormat.format(token.priceUsd);
   return "N/A";
 };
+
+const formatLiquidity = (token: ExternalTokenRecord) => token.liquidityGram ? formatGramMetric(token.liquidityGram) : formatUsdMetric(token.liquidityUsd);
+const formatVolume = (token: ExternalTokenRecord) => token.volume24hGram ? formatGramMetric(token.volume24hGram) : formatUsdMetric(token.volume24hUsd);
 
 const dexLabel = (dex: string) => dex === "DEDUST" ? "DeDust" : dex === "STONFI" ? "STON.fi" : dex;
 
@@ -56,6 +67,9 @@ export function ExternalTokenCard({ token }: { token: ExternalTokenRecord }) {
   const change = typeof token.change24h === "number" && Number.isFinite(token.change24h) ? token.change24h : null;
   const changeClass = change == null ? "text-[#8ba3c1]" : change >= 0 ? "text-[#86efac]" : "text-[#ff8a95]";
   const dexes = token.dexes.length ? token.dexes : token.primaryDex ? [token.primaryDex] : [];
+  const price = formatPrice(token);
+  const liquidity = formatLiquidity(token);
+  const volume = formatVolume(token);
 
   return (
     <Link href={`/token/${encodeURIComponent(token.address)}`} className="glass-card block overflow-hidden rounded-[24px] border border-white/10 bg-[linear-gradient(180deg,rgba(15,24,39,0.9),rgba(9,15,26,0.98))] p-5 transition hover:border-[#2aabee]/30">
@@ -80,7 +94,7 @@ export function ExternalTokenCard({ token }: { token: ExternalTokenRecord }) {
       <div className="mt-5 grid grid-cols-2 gap-3 text-sm">
         <div className="min-w-0 rounded-2xl border border-white/8 bg-white/5 p-3">
           <div className="text-xs text-[#8ba3c1]">{locale === "ru" ? "Цена" : "Price"}</div>
-          <div className="mt-1 truncate font-semibold text-white" title={formatPrice(token)}>{formatPrice(token)}</div>
+          <div className="mt-1 truncate font-semibold text-white" title={price}>{price}</div>
         </div>
         <div className="min-w-0 rounded-2xl border border-white/8 bg-white/5 p-3">
           <div className="text-xs text-[#8ba3c1]">24h</div>
@@ -88,11 +102,11 @@ export function ExternalTokenCard({ token }: { token: ExternalTokenRecord }) {
         </div>
         <div className="min-w-0 rounded-2xl border border-white/8 bg-white/5 p-3">
           <div className="text-xs text-[#8ba3c1]">{locale === "ru" ? "Ликвидность" : "Liquidity"}</div>
-          <div className="mt-1 truncate font-semibold text-white" title={formatGramMetric(token.liquidityGram)}>{formatGramMetric(token.liquidityGram)}</div>
+          <div className="mt-1 truncate font-semibold text-white" title={liquidity}>{liquidity}</div>
         </div>
         <div className="min-w-0 rounded-2xl border border-white/8 bg-white/5 p-3">
           <div className="text-xs text-[#8ba3c1]">{locale === "ru" ? "Объём 24ч" : "24h volume"}</div>
-          <div className="mt-1 truncate font-semibold text-white" title={formatGramMetric(token.volume24hGram)}>{formatGramMetric(token.volume24hGram)}</div>
+          <div className="mt-1 truncate font-semibold text-white" title={volume}>{volume}</div>
         </div>
       </div>
 
