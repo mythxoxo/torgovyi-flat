@@ -1,7 +1,7 @@
 import { Address } from "@ton/core";
 import type { ExternalTokenRecord } from "./types";
 import { listLiveDedustExternalTokens } from "./dedust-live";
-import { resolveExternalToken, searchExternalTokens, type ExternalTokenFilter } from "./search";
+import type { ExternalTokenFilter } from "./search";
 import { listLiveStonfiExternalTokens } from "./stonfi-live";
 
 const normalizeAddress = (value: string) => {
@@ -124,27 +124,19 @@ export async function listExternalTokensLive(filter: ExternalTokenFilter = "all"
 }
 
 export async function searchExternalTokensLive(query: string, filter: ExternalTokenFilter = "all"): Promise<ExternalTokenRecord[]> {
-  try {
-    const tokens = await listExternalTokensLive(filter);
-    const q = query.trim().toLowerCase();
-    if (!q) return tokens;
+  const tokens = await listExternalTokensLive(filter);
+  const q = query.trim().toLowerCase();
+  if (!q) return tokens;
 
-    return tokens.filter((token) => {
-      const hay = [token.name, token.symbol, token.address, token.poolAddress ?? "", token.dexes.join(" ")].join(" ").toLowerCase();
-      return hay.includes(q);
-    });
-  } catch {
-    return searchExternalTokens(query, filter).filter(isRelevantExternalToken);
-  }
+  return tokens.filter((token) => {
+    const hay = [token.name, token.symbol, token.address, token.poolAddress ?? "", token.dexes.join(" ")].join(" ").toLowerCase();
+    return hay.includes(q);
+  });
 }
 
 export async function resolveExternalTokenLive(idOrAddress: string): Promise<ExternalTokenRecord | null> {
-  try {
-    const tokens = await listExternalTokensLive("all");
-    const id = decodeURIComponent(idOrAddress).trim().toLowerCase();
-    const normalizedId = normalizeAddress(id);
-    return tokens.find((token) => normalizeAddress(token.address) === normalizedId || token.symbol.toLowerCase() === id) ?? null;
-  } catch {
-    return resolveExternalToken(idOrAddress);
-  }
+  const tokens = await listExternalTokensLive("all");
+  const id = decodeURIComponent(idOrAddress).trim().toLowerCase();
+  const normalizedId = normalizeAddress(id);
+  return tokens.find((token) => normalizeAddress(token.address) === normalizedId || token.symbol.toLowerCase() === id) ?? null;
 }
