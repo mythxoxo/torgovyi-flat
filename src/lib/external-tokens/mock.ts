@@ -15,7 +15,7 @@ const token = (symbol: string, name: string, i: number, priceGram: number, chang
   address: `EQ${i.toString().padStart(2, "0")}${symbol}${"0".repeat(Math.max(0, 42 - symbol.length))}`,
   name,
   symbol,
-  image: `/brand/img_0${(i % 6) + 1}.jpg`,
+  image: undefined,
   decimals: 9,
   priceGram,
   priceUsd: Number((priceGram * 5.8).toFixed(6)),
