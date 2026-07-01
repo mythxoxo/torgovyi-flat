@@ -13,7 +13,7 @@ export default function MarketsPage() {
   const [tokens, setTokens] = useState<MarketToken[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<MarketFilter>("trending");
-  const [externalSource, setExternalSource] = useState<"live-external" | "fallback" | "">("");
+  const [externalSource, setExternalSource] = useState<"live-external" | "unavailable" | "">("");
 
   useEffect(() => {
     let cancelled = false;
@@ -23,10 +23,10 @@ export default function MarketsPage() {
     const load = async () => {
       if (tab === "external") {
         const res = await fetch("/api/external-tokens", { cache: "no-store" });
-        const data = await res.json() as { ok: boolean; source?: "live-external" | "fallback"; tokens?: ExternalTokenRecord[] };
+        const data = await res.json() as { ok: boolean; source?: "live-external" | "unavailable"; tokens?: ExternalTokenRecord[] };
         if (!data.ok || !data.tokens) throw new Error("External source failed");
         if (!cancelled) {
-          setExternalSource(data.source ?? "fallback");
+          setExternalSource(data.source ?? "unavailable");
           setTokens(data.tokens.map((token) => ({ source: "EXTERNAL", token })));
         }
         return;
@@ -38,7 +38,10 @@ export default function MarketsPage() {
 
     load()
       .catch(() => {
-        if (!cancelled) setTokens([]);
+        if (!cancelled) {
+          setTokens([]);
+          if (tab === "external") setExternalSource("unavailable");
+        }
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -76,7 +79,16 @@ export default function MarketsPage() {
         </div>
         {tab === "external" && externalSource ? <p className={`mt-3 text-xs ${muted}`}>{externalSource === "live-external" ? (locale === "ru" ? "Источник: live external assets" : "Source: live external assets") : (locale === "ru" ? "Источник: недоступен" : "Source: unavailable")}</p> : null}
       </section>
-      {tab === "gainers" ? <GainersPanel /> : <MarketTokenList tokens={tokens} loading={loading} />}
+      {tab === "gainers" ? (
+        <GainersPanel />
+      ) : (
+        <MarketTokenList
+          tokens={tokens}
+          loading={loading}
+          emptyTitle={tab === "external" ? (locale === "ru" ? "External временно недоступен" : "External is temporarily unavailable") : undefined}
+          emptyText={tab === "external" ? (locale === "ru" ? "Мы не показываем фейковый внешний рынок. Как только live source вернётся, здесь появятся реальные токены." : "We do not show a fake external market. Real tokens will appear here once the live source is available.") : undefined}
+        />
+      )}
     </div>
   );
 }
