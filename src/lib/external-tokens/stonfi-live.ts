@@ -14,28 +14,18 @@ const get = (source: unknown, path: string[]) => {
 };
 
 const str = (value: unknown, fallback = "") => {
-  if (typeof value === "string" && value.length > 0) return value;
+  if (typeof value === "string" && value.trim()) return value.trim();
   if (typeof value === "number" && Number.isFinite(value)) return String(value);
   return fallback;
 };
 
-const num = (value: unknown, fallback = 0) => {
+const num = (value: unknown) => {
   if (typeof value === "number" && Number.isFinite(value)) return value;
   if (typeof value === "string" && value.trim()) {
     const parsed = Number(value.replace(/,/g, ""));
     if (Number.isFinite(parsed)) return parsed;
   }
-  return fallback;
-};
-
-const safeMarketMetric = (values: unknown[], fallback = 0) => {
-  for (const value of values) {
-    let parsed = num(value, Number.NaN);
-    if (!Number.isFinite(parsed) || parsed <= 0) continue;
-    for (let i = 0; i < 4 && parsed > 1_000_000_000_000; i += 1) parsed = parsed / 1_000_000_000;
-    if (parsed > 0 && parsed <= 1_000_000_000_000) return parsed;
-  }
-  return fallback;
+  return undefined;
 };
 
 const first = (values: unknown[], fallback = "") => {
@@ -46,25 +36,35 @@ const first = (values: unknown[], fallback = "") => {
   return fallback;
 };
 
+const firstNumber = (values: unknown[]) => {
+  for (const value of values) {
+    const normalized = num(value);
+    if (normalized != null && normalized > 0) return normalized;
+  }
+  return undefined;
+};
+
+const bannedSymbols = new Set(["TON", "GRAM", "USDT", "USDT₮", "JUSDT", "TSTON", "STON", "NOT"]);
+const bannedNames = ["tonstakers", "tether usd", "wrapped ton", "staked ton", "stable", "notcoin"];
+
+function isRelevantAsset(record: ExternalTokenRecord) {
+  const symbol = record.symbol.trim().toUpperCase();
+  const name = record.name.trim().toLowerCase();
+  if (bannedSymbols.has(symbol)) return false;
+  if (bannedNames.some((bad) => name.includes(bad))) return false;
+  if (!record.poolAddress && !record.primaryDex) return false;
+  return true;
+}
+
 const toExternalToken = (asset: Asset): ExternalTokenRecord | null => {
-  const address = first([asset.contractAddress, asset.address, get(asset, ["meta", "contractAddress"]), get(asset, ["meta", "address"])]);
+  const address = first([
+    asset.contractAddress,
+    asset.address,
+    get(asset, ["meta", "contractAddress"]),
+    get(asset, ["meta", "address"])
+  ]);
   const symbol = first([asset.symbol, get(asset, ["meta", "symbol"])], "UNKNOWN");
   if (!address || !symbol || symbol === "UNKNOWN") return null;
-
-  const popularity = num(asset.popularityIndex, 0);
-  const liquidity = safeMarketMetric([
-    asset.liquidityGram,
-    asset.liquidityTon,
-    asset.liquidityUsd,
-    asset.tvl,
-    asset.tvlTon,
-    asset.tvlUsd,
-    get(asset, ["stats", "liquidityGram"]),
-    get(asset, ["stats", "liquidityTon"]),
-    get(asset, ["stats", "liquidityUsd"]),
-    get(asset, ["market", "liquidityGram"]),
-    get(asset, ["market", "liquidityUsd"])
-  ], popularity);
 
   const record: ExternalTokenRecord = {
     source: "EXTERNAL",
@@ -72,13 +72,15 @@ const toExternalToken = (asset: Asset): ExternalTokenRecord | null => {
     name: first([asset.displayName, asset.name, get(asset, ["meta", "displayName"]), get(asset, ["meta", "name"])], symbol),
     symbol,
     image: first([asset.imageUrl, asset.image, get(asset, ["meta", "imageUrl"]), get(asset, ["meta", "image"])]),
-    decimals: num(asset.decimals ?? get(asset, ["meta", "decimals"]), 9),
-    priceGram: safeMarketMetric([asset.dexPrice, asset.priceGram, asset.priceTon, get(asset, ["market", "priceGram"]), get(asset, ["market", "priceTon"])]) || undefined,
-    priceUsd: safeMarketMetric([asset.dexPriceUsd, asset.priceUsd, get(asset, ["market", "priceUsd"])]) || undefined,
-    change24h: num(asset.priceChange24h ?? asset.change24h ?? get(asset, ["market", "change24h"]), 0),
-    volume24hGram: safeMarketMetric([asset.volume24hGram, asset.volume24hTon, asset.volume24h, asset.volume24hUsd, get(asset, ["stats", "volume24h"]), get(asset, ["market", "volume24h"])], popularity),
-    liquidityGram: liquidity || undefined,
-    holders: num(asset.holders ?? get(asset, ["stats", "holders"]), 0) || undefined,
+    decimals: firstNumber([asset.decimals, get(asset, ["meta", "decimals"])]) ?? 9,
+    priceGram: firstNumber([asset.priceTon, get(asset, ["market", "priceTon"])]),
+    priceUsd: firstNumber([asset.priceUsd, get(asset, ["market", "priceUsd"])]),
+    change24h: typeof firstNumber([asset.priceChange24h, asset.change24h, get(asset, ["market", "change24h"])]) === "number"
+      ? firstNumber([asset.priceChange24h, asset.change24h, get(asset, ["market", "change24h"])])
+      : undefined,
+    volume24hGram: firstNumber([asset.volume24hTon, get(asset, ["stats", "volume24hTon"]), get(asset, ["market", "volume24hTon"])]),
+    liquidityGram: firstNumber([asset.liquidityTon, get(asset, ["stats", "liquidityTon"]), get(asset, ["market", "liquidityTon"])]),
+    holders: firstNumber([asset.holders, get(asset, ["stats", "holders"])]),
     dexes: ["STONFI"],
     primaryDex: "STONFI",
     verified: Boolean(asset.verified ?? asset.tags),
@@ -86,6 +88,8 @@ const toExternalToken = (asset: Asset): ExternalTokenRecord | null => {
     warnings: [],
     updatedAt: new Date().toISOString()
   };
+
+  if (!isRelevantAsset(record)) return null;
 
   const risk = evaluateTokenRisk(record);
   return { ...record, riskLevel: risk.riskLevel, warnings: risk.warnings };
