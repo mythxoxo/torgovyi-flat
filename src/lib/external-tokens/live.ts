@@ -21,18 +21,18 @@ const bestNumber = (a?: number, b?: number) => {
 };
 
 const hasUsefulImage = (value?: string) => typeof value === "string" && /^https?:\/\//i.test(value.trim());
-const hasUsefulVolume = (value?: number) => Number.isFinite(value ?? 0) && (value ?? 0) > 0;
-const hasUsefulLiquidity = (value?: number) => Number.isFinite(value ?? 0) && (value ?? 0) > 0;
+const hasUsefulVolume = (value?: number) => Number.isFinite(value ?? 0) && (value ?? 0) >= 100;
+const hasUsefulLiquidity = (value?: number) => Number.isFinite(value ?? 0) && (value ?? 0) >= 100;
 const hasRoute = (token: ExternalTokenRecord) => Boolean(token.primaryDex || token.dexes.length > 0 || token.poolAddress);
 
 const bannedSymbols = new Set(["TON", "GRAM", "STON", "USDT", "USDT₮", "TSUSDE", "TSTON", "NOT", "MAJOR"]);
-const bannedNames = ["tonstakers", "tetherusd", "wrapped ton", "staked ton"];
+const bannedNames = ["tonstakers", "tetherusd", "wrapped ton", "staked ton", "gram", "major"];
 
 function isRelevantExternalToken(token: ExternalTokenRecord) {
   const symbol = token.symbol.trim().toUpperCase();
   const name = token.name.trim().toLowerCase();
   if (bannedSymbols.has(symbol)) return false;
-  if (bannedNames.some((bad) => name.includes(bad))) return false;
+  if (bannedNames.some((bad) => name === bad || name.includes(`${bad} `) || name.includes(` ${bad}`))) return false;
   if (!hasRoute(token)) return false;
   if (!hasUsefulLiquidity(token.liquidityGram) && !hasUsefulVolume(token.volume24hGram)) return false;
   return true;
