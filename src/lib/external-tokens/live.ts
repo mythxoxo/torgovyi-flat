@@ -20,19 +20,20 @@ const bestNumber = (a?: number, b?: number) => {
   return Math.max(left, right) || undefined;
 };
 
-const bannedSymbols = new Set(["TON", "GRAM", "USDT", "USD₮", "JUSDT", "JUSDC", "TSTON", "STON", "HGRAM", "NOT", "WSTON", "TELEBTC"]);
+const bannedSymbols = new Set(["TON", "GRAM", "USDT", "JUSDT", "JUSDC", "TSTON", "STON", "HGRAM", "NOT", "WSTON", "TELEBTC"]);
 const bannedNames = ["tonstakers", "tether usd", "wrapped ton", "staked ton", "stable", "notcoin", "wallet token", "hipo staked", "liquid staking", "telebtc"];
 
 function isRelevantExternalToken(token: ExternalTokenRecord) {
   const symbol = token.symbol.trim().toUpperCase();
   const name = token.name.trim().toLowerCase();
+  if (!token.address.trim() || !symbol || !name) return false;
   if (bannedSymbols.has(symbol)) return false;
   if (bannedNames.some((bad) => name.includes(bad))) return false;
-  if (!token.poolAddress && !token.primaryDex) return false;
-  if (!token.priceGram && !token.priceUsd) return false;
-  if (!token.liquidityGram || token.liquidityGram <= 0) return false;
+  if (!token.poolAddress && !token.primaryDex && token.dexes.length === 0) return false;
   return true;
 }
+
+const metricRank = (token: ExternalTokenRecord) => token.volume24hGram ?? token.liquidityGram ?? (token.image ? 1 : 0);
 
 const mergeExternalTokens = (groups: ExternalTokenRecord[][]): ExternalTokenRecord[] => {
   const map = new Map<string, ExternalTokenRecord>();
@@ -63,7 +64,7 @@ const mergeExternalTokens = (groups: ExternalTokenRecord[][]): ExternalTokenReco
       updatedAt: new Date().toISOString()
     });
   }
-  return [...map.values()].sort((a, b) => (b.volume24hGram ?? b.liquidityGram ?? 0) - (a.volume24hGram ?? a.liquidityGram ?? 0));
+  return [...map.values()].sort((a, b) => metricRank(b) - metricRank(a));
 };
 
 export async function listExternalTokensLive(filter: ExternalTokenFilter = "all"): Promise<ExternalTokenRecord[]> {
@@ -74,7 +75,7 @@ export async function listExternalTokensLive(filter: ExternalTokenFilter = "all"
   const stonfiTokens = stonfi.status === "fulfilled" ? stonfi.value : [];
   const dedustTokens = dedust.status === "fulfilled" ? dedust.value : [];
   const mergedLive = mergeExternalTokens([stonfiTokens, dedustTokens]);
-  const live = mergedLive.length > 0 ? mergedLive : dedustTokens.filter(isRelevantExternalToken);
+  const live = mergedLive.length > 0 ? mergedLive : dedustTokens.filter(isRelevantExternalToken).sort((a, b) => metricRank(b) - metricRank(a));
   if (filter === "verified") return live.filter((token) => token.verified);
   if (filter === "risky") return live.filter((token) => token.riskLevel === "HIGH");
   return live;
