@@ -30,7 +30,7 @@ const liquidityWallet = get('--liquidity-wallet') || getProjectWallets().liquidi
 
 if (!jetton) throw new Error('--jetton is required');
 if (!pool) throw new Error('--pool is required');
-if (!liquidityWallet) throw new Error('--liquidity-wallet is required or TONK_MEM_LIQUIDITY_ADDRESS must be set');
+if (!liquidityWallet) throw new Error('--liquidity-wallet is required or TONS_OF_GRAM_LIQUIDITY_ADDRESS must be set');
 
 const draft = prepareDedustLiquidityDraft({
   jettonMaster: jetton,

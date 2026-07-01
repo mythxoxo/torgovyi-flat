@@ -30,12 +30,12 @@ const FALLBACK_CREATOR = 'EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c';
 async function main() {
   const step = process.argv[2];
   if (!step || !['1','2','3'].includes(step)) throw new Error('Pass step: 1 | 2 | 3');
-  const mnemonic = process.env.DEPLOYER_MNEMONIC || process.env.TONK_MEM_DEPLOYER_MNEMONIC;
+  const mnemonic = process.env.DEPLOYER_MNEMONIC || process.env.TONS_OF_GRAM_DEPLOYER_MNEMONIC;
   if (!mnemonic) throw new Error('DEPLOYER_MNEMONIC is required');
   const factory = process.env.NEXT_PUBLIC_FACTORY_ADDRESS;
   if (!factory) throw new Error('NEXT_PUBLIC_FACTORY_ADDRESS is required');
 
-  const creator = Address.parse(process.env.EXAMPLE_CREATOR_ADDRESS || process.env.TONK_MEM_DEPLOYER_ADDRESS || process.env.FACTORY_OWNER_ADDRESS || FALLBACK_CREATOR);
+  const creator = Address.parse(process.env.EXAMPLE_CREATOR_ADDRESS || process.env.TONS_OF_GRAM_DEPLOYER_ADDRESS || process.env.FACTORY_OWNER_ADDRESS || FALLBACK_CREATOR);
   const jetton = Address.parse(process.env.LIVE_JETTON_ADDRESS || 'EQAIwaFJVmiCycuB5BCaUL0EYqs8ZHD_Xp82Lq5T-Ibf-ix9');
   const pool = Address.parse(process.env.LIVE_POOL_ADDRESS || 'EQAOUNHKfo5ocpKjbCA-lsqedae5EqRlH1nep4a-MqzRvnTX');
 

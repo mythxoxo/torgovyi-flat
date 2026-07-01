@@ -12,7 +12,7 @@ const endpoint = process.env.TONCENTER_API_KEY
   : "https://toncenter.com/api/v2/jsonRPC";
 
 async function main() {
-  const mnemonic = process.env.DEPLOYER_MNEMONIC || process.env.TONK_MEM_DEPLOYER_MNEMONIC;
+  const mnemonic = process.env.DEPLOYER_MNEMONIC || process.env.TONS_OF_GRAM_DEPLOYER_MNEMONIC;
   const factoryAddress = process.env.NEXT_PUBLIC_FACTORY_ADDRESS;
   const creatorAddress = process.env.EXAMPLE_CREATOR_ADDRESS;
   const jettonMasterAddress = process.env.EXAMPLE_JETTON_MASTER_ADDRESS;

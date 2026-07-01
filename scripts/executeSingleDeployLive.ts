@@ -29,7 +29,7 @@ const endpoint = process.env.TONCENTER_API_KEY
 async function main() {
   const kind = process.argv[2];
   if (!kind || !['jetton', 'lplock', 'pool'].includes(kind)) throw new Error('Pass kind: jetton | lplock | pool');
-  const mnemonic = process.env.DEPLOYER_MNEMONIC || process.env.TONK_MEM_DEPLOYER_MNEMONIC;
+  const mnemonic = process.env.DEPLOYER_MNEMONIC || process.env.TONS_OF_GRAM_DEPLOYER_MNEMONIC;
   if (!mnemonic) throw new Error('DEPLOYER_MNEMONIC is required');
 
   const keyPair = await mnemonicToPrivateKey(mnemonic.split(' '));

@@ -10,7 +10,7 @@ Scope: production/runtime launch flow, public API routes, DeDust/STON.fi DEX end
 - `src/lib/server/service-v2.ts`
 - `src/lib/server/launch-executor.ts`
 
-**Risk:** the old create-token path called a server executor that required `DEPLOYER_MNEMONIC` / `TONK_MEM_DEPLOYER_MNEMONIC`. This caused production launch failures and created an unacceptable backend-custody path.
+**Risk:** the old create-token path called a server executor that required `DEPLOYER_MNEMONIC` / `TONS_OF_GRAM_DEPLOYER_MNEMONIC`. This caused production launch failures and created an unacceptable backend-custody path.
 
 **Fix:** create token now stages metadata after the user's TonConnect-signed transaction flow. Runtime no longer needs a deployer mnemonic for user launch. The old launch executor is disabled and returns a hard failure if accidentally called.
 

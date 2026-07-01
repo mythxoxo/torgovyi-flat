@@ -18,7 +18,7 @@ function loadLocalEnv(path: string) {
 loadLocalEnv('.env.local');
 
 async function main() {
-  const mnemonic = process.env.TONK_MEM_DEPLOYER_MNEMONIC!;
+  const mnemonic = process.env.TONS_OF_GRAM_DEPLOYER_MNEMONIC!;
   const keyPair = await mnemonicToPrivateKey(mnemonic.split(' '));
   const wallet = WalletContractV5R1.create({ publicKey: keyPair.publicKey });
   const endpoint = `https://toncenter.com/api/v2/jsonRPC?api_key=${process.env.TONCENTER_API_KEY}`;

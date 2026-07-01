@@ -62,7 +62,7 @@ async function main() {
   if (dryRun) return;
   if (!execute) throw new Error("Pass --dry-run or --execute");
 
-  const mnemonic = process.env.DEPLOYER_MNEMONIC || process.env.TONK_MEM_DEPLOYER_MNEMONIC;
+  const mnemonic = process.env.DEPLOYER_MNEMONIC || process.env.TONS_OF_GRAM_DEPLOYER_MNEMONIC;
   if (!mnemonic) throw new Error("DEPLOYER_MNEMONIC is required for --execute");
 
   const keyPair = await mnemonicToPrivateKey(mnemonic.split(" "));

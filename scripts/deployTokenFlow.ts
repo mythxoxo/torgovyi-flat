@@ -52,7 +52,7 @@ async function main() {
 
   if (dryRun) return;
 
-  const mnemonic = process.env.DEPLOYER_MNEMONIC || process.env.TONK_MEM_DEPLOYER_MNEMONIC;
+  const mnemonic = process.env.DEPLOYER_MNEMONIC || process.env.TONS_OF_GRAM_DEPLOYER_MNEMONIC;
   if (!mnemonic) throw new Error("DEPLOYER_MNEMONIC is required");
   if (!process.env.NEXT_PUBLIC_FACTORY_ADDRESS) throw new Error("NEXT_PUBLIC_FACTORY_ADDRESS is required");
 

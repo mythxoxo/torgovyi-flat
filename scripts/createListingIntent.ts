@@ -16,7 +16,7 @@ const liquidityWallet = pick("--liquidity") || getProjectWallets().liquidity;
 if (!pool) throw new Error("--pool is required");
 if (!jetton) throw new Error("--jetton is required");
 if (!creator) throw new Error("--creator is required");
-if (!liquidityWallet) throw new Error("--liquidity is required or TONK_MEM_LIQUIDITY_ADDRESS must be set");
+if (!liquidityWallet) throw new Error("--liquidity is required or TONS_OF_GRAM_LIQUIDITY_ADDRESS must be set");
 if (dex !== "dedust") throw new Error("only --dex dedust is supported");
 
 const now = new Date().toISOString();

@@ -24,7 +24,7 @@ loadLocalEnv('.env.local');
 loadLocalEnv('.env.production');
 
 async function main() {
-  const mnemonic = process.env.DEPLOYER_MNEMONIC || process.env.TONK_MEM_DEPLOYER_MNEMONIC;
+  const mnemonic = process.env.DEPLOYER_MNEMONIC || process.env.TONS_OF_GRAM_DEPLOYER_MNEMONIC;
   if (!mnemonic) throw new Error('DEPLOYER_MNEMONIC is required');
 
   const keyPair = await mnemonicToPrivateKey(mnemonic.split(' '));

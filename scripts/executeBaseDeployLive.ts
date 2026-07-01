@@ -27,10 +27,10 @@ const endpoint = process.env.TONCENTER_API_KEY
   : 'https://toncenter.com/api/v2/jsonRPC';
 
 async function main() {
-  const mnemonic = process.env.DEPLOYER_MNEMONIC || process.env.TONK_MEM_DEPLOYER_MNEMONIC;
+  const mnemonic = process.env.DEPLOYER_MNEMONIC || process.env.TONS_OF_GRAM_DEPLOYER_MNEMONIC;
   if (!mnemonic) throw new Error('DEPLOYER_MNEMONIC is required');
 
-  const creator = process.env.TONK_MEM_DEPLOYER_ADDRESS || process.env.FACTORY_OWNER_ADDRESS;
+  const creator = process.env.TONS_OF_GRAM_DEPLOYER_ADDRESS || process.env.FACTORY_OWNER_ADDRESS;
   if (!creator) throw new Error('creator address env missing');
 
   const creatorAddr = WalletContractV5R1.create({ workchain: 0, publicKey: (await mnemonicToPrivateKey(mnemonic.split(' '))).publicKey }).address;

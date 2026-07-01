@@ -1,6 +1,6 @@
 import { mkdirSync, rmSync, writeFileSync, copyFileSync, existsSync } from 'node:fs';
 import { execSync } from 'node:child_process';
-const base = 'review-package/TONK_MEM_REVIEW_PACKAGE';
+const base = 'review-package/TONS_OF_GRAM_REVIEW_PACKAGE';
 rmSync(base, { recursive: true, force: true });
 mkdirSync(base, { recursive: true });
 const files: Record<string,string> = {
@@ -22,5 +22,5 @@ writeFileSync(`${base}/SCREENSHOTS/SCREENSHOTS_NOT_CAPTURED.txt`, 'Screenshots w
 for (const doc of ['docs/PROJECT_STATUS.md','docs/PROJECT_OVERVIEW.md','docs/TECHNICAL_ARCHITECTURE.md','docs/SECURITY_REVIEW.md','docs/TEST_EVIDENCE.md','docs/RISK_REGISTER.md','docs/ROADMAP_TO_LAUNCH.md']) {
  if (existsSync(doc)) copyFileSync(doc, `${base}/${doc.split('/').pop()}`);
 }
-execSync(`cd review-package && rm -f TONK_MEM_REVIEW_PACKAGE.zip && zip -r TONK_MEM_REVIEW_PACKAGE.zip TONK_MEM_REVIEW_PACKAGE -x "*.env*" -x "*mnemonic*" -x "*secret*" -x "*.key" -x "node_modules/*" -x ".git/*"`, { stdio: 'inherit', shell: '/bin/bash' });
-console.log(JSON.stringify({ ok: true, zip: 'review-package/TONK_MEM_REVIEW_PACKAGE.zip' }, null, 2));
+execSync(`cd review-package && rm -f TONS_OF_GRAM_REVIEW_PACKAGE.zip && zip -r TONS_OF_GRAM_REVIEW_PACKAGE.zip TONS_OF_GRAM_REVIEW_PACKAGE -x "*.env*" -x "*mnemonic*" -x "*secret*" -x "*.key" -x "node_modules/*" -x ".git/*"`, { stdio: 'inherit', shell: '/bin/bash' });
+console.log(JSON.stringify({ ok: true, zip: 'review-package/TONS_OF_GRAM_REVIEW_PACKAGE.zip' }, null, 2));

@@ -31,7 +31,7 @@ function arg(name: string) {
 }
 
 async function main() {
-  const creator = Address.parse(process.env.EXAMPLE_CREATOR_ADDRESS || process.env.TONK_MEM_DEPLOYER_ADDRESS || process.env.FACTORY_OWNER_ADDRESS || FALLBACK_CREATOR);
+  const creator = Address.parse(process.env.EXAMPLE_CREATOR_ADDRESS || process.env.TONS_OF_GRAM_DEPLOYER_ADDRESS || process.env.FACTORY_OWNER_ADDRESS || FALLBACK_CREATOR);
   const factory = process.env.NEXT_PUBLIC_FACTORY_ADDRESS;
   if (!factory) throw new Error("NEXT_PUBLIC_FACTORY_ADDRESS is required");
 

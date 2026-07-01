@@ -27,7 +27,7 @@ loadLocalEnv(".env.production");
 
 async function main() {
   const wallets = getProjectWallets();
-  const expectedOwnerInput = process.env.TONK_MEM_OWNER_ADDRESS || process.env.TONK_OWNER_ADDRESS || process.env.FACTORY_OWNER_ADDRESS || FALLBACK_OWNER;
+  const expectedOwnerInput = process.env.TONS_OF_GRAM_OWNER_ADDRESS || process.env.TONK_OWNER_ADDRESS || process.env.FACTORY_OWNER_ADDRESS || FALLBACK_OWNER;
   const owner = Address.parse(wallets.owner || expectedOwnerInput);
   const factory = await LaunchpadFactory.fromInit(owner);
   const stateInit = factory.init;
