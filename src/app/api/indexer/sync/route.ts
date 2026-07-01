@@ -6,14 +6,11 @@ const MIN_INTERVAL_MS = 20_000;
 
 const json = (body: unknown, status = 200) => NextResponse.json(body, { status });
 
-const isProduction = () => process.env.VERCEL_ENV === "production" || process.env.NODE_ENV === "production";
-
 const isAuthorized = (request: NextRequest) => {
   const secret = process.env.INDEXER_SHARED_SECRET || "";
-  if (!secret) return !isProduction();
+  if (!secret) return false;
   const header = request.headers.get("authorization") || "";
-  const querySecret = request.nextUrl.searchParams.get("secret") || "";
-  return header === `Bearer ${secret}` || querySecret === secret;
+  return header === `Bearer ${secret}`;
 };
 
 async function handle(request: NextRequest) {

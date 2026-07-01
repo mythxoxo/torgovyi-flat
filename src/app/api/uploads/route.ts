@@ -3,6 +3,9 @@ import { createMediaStorage } from "../../../lib/server/media";
 
 const MAX_IMAGE_BYTES = 2_000_000;
 const ALLOWED_IMAGE_MIME = new Set(["image/png", "image/jpeg", "image/webp"]);
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX = 10;
+const recentUploads = new Map<string, number[]>();
 
 const apiPublicUrl = () => process.env.API_PUBLIC_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
 const sanitizeFilename = (name: string) => name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(0, 120) || "upload.bin";
@@ -29,11 +32,30 @@ const getMediaStorage = () => createMediaStorage({
   s3PublicBaseUrl: process.env.S3_PUBLIC_BASE_URL || ""
 });
 
+const requireUploadSecret = (request: NextRequest) => {
+  const secret = process.env.UPLOAD_SHARED_SECRET || "";
+  if (!secret) throw new Error("Upload secret is not configured");
+  const auth = request.headers.get("authorization") || "";
+  if (auth !== `Bearer ${secret}`) throw new Error("Unauthorized");
+};
+
+const enforceRateLimit = (request: NextRequest) => {
+  const key = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  const now = Date.now();
+  const hits = (recentUploads.get(key) || []).filter((ts) => now - ts < RATE_LIMIT_WINDOW_MS);
+  if (hits.length >= RATE_LIMIT_MAX) throw new Error("Rate limit exceeded");
+  hits.push(now);
+  recentUploads.set(key, hits);
+};
+
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
   try {
+    requireUploadSecret(request);
+    enforceRateLimit(request);
+
     const formData = await request.formData();
     const image = formData.get("image");
     if (!(image instanceof File)) throw new Error("Image file is required");
@@ -51,6 +73,8 @@ export async function POST(request: NextRequest) {
     });
     return json({ url }, 201);
   } catch (error) {
-    return json({ error: error instanceof Error ? error.message : "Upload failed" }, 400);
+    const message = error instanceof Error ? error.message : "Upload failed";
+    const status = message === "Unauthorized" ? 401 : message === "Rate limit exceeded" ? 429 : 400;
+    return json({ error: message }, status);
   }
 }

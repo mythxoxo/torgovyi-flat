@@ -26,9 +26,8 @@ export async function buildStonfiSwapPayload(input: DexSwapRequest): Promise<Dex
   try {
     const { StonApiClient } = await import("@ston-fi/api");
     const { Client, dexFactory } = await import("@ston-fi/sdk");
-    const endpoint = process.env.TONCENTER_API_KEY
-      ? `https://toncenter.com/api/v2/jsonRPC?api_key=${process.env.TONCENTER_API_KEY}`
-      : "https://toncenter.com/api/v2/jsonRPC";
+    const endpoint = process.env.TONCENTER_ENDPOINT || "https://toncenter.com/api/v2/jsonRPC";
+    const apiKey = process.env.TONCENTER_API_KEY;
     const apiClient = new StonApiClient();
     const platformFee = input.side === "buy" ? calculatePlatformFeeUnits(input.amount) : "0";
     const offerAmount = input.side === "buy" ? subtractFeeUnits(input.amount, platformFee) : input.amount;
@@ -39,7 +38,7 @@ export async function buildStonfiSwapPayload(input: DexSwapRequest): Promise<Dex
       slippageTolerance: String(Math.max(0, input.slippageBps ?? 300) / 10000),
     });
     const dexContracts = dexFactory(simulation.router);
-    const client = new Client({ endpoint });
+    const client = apiKey ? new Client({ endpoint, apiKey }) : new Client({ endpoint });
     const router = client.open(dexContracts.Router.create(simulation.router.address));
     const treasury = getDexPlatformFeeTreasury();
     const referralValue = getDexPlatformFeeBps();
