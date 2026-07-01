@@ -1,7 +1,7 @@
 import { Address } from "@ton/core";
 import type { ExternalTokenRecord } from "./types";
 import { listLiveDedustExternalTokens } from "./dedust-live";
-import { listExternalTokens, resolveExternalToken, searchExternalTokens, type ExternalTokenFilter } from "./search";
+import { listCuratedExternalTokens, resolveExternalToken, searchExternalTokens, type ExternalTokenFilter } from "./search";
 import { listLiveStonfiExternalTokens } from "./stonfi-live";
 
 const normalizeAddress = (value: string) => {
@@ -25,8 +25,8 @@ const hasUsefulVolume = (value?: number) => Number.isFinite(value ?? 0) && (valu
 const hasUsefulLiquidity = (value?: number) => Number.isFinite(value ?? 0) && (value ?? 0) > 0;
 const hasRoute = (token: ExternalTokenRecord) => Boolean(token.primaryDex || token.dexes.length > 0 || token.poolAddress);
 
-const bannedSymbols = new Set(["TON", "USDT", "USDT₮", "TSUSDE", "TSTON"]);
-const bannedNames = ["tonstakers", "tetherusd", "wrapped ton", "staked ton"];
+const bannedSymbols = new Set(["TON", "USDT", "USDT₮", "TSUSDE", "TSTON", "NOT", "STON", "JUSDT", "GRAM"]);
+const bannedNames = ["tonstakers", "tetherusd", "wrapped ton", "staked ton", "notcoin"];
 
 function isRelevantExternalToken(token: ExternalTokenRecord) {
   const symbol = token.symbol.trim().toUpperCase();
@@ -72,7 +72,7 @@ const mergeExternalTokens = (groups: ExternalTokenRecord[][]): ExternalTokenReco
 };
 
 const curatedFallback = (filter: ExternalTokenFilter) => {
-  const tokens = listExternalTokens(filter).filter(isRelevantExternalToken);
+  const tokens = listCuratedExternalTokens().filter(isRelevantExternalToken);
   if (filter === "verified") return tokens.filter((token) => token.verified);
   if (filter === "risky") return tokens.filter((token) => token.riskLevel === "HIGH");
   return tokens;
