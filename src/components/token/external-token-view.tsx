@@ -14,7 +14,18 @@ const dexLabel = (dex: string) => dex === "DEDUST" ? "DeDust" : dex === "STONFI"
 const compact = new Intl.NumberFormat("en-US", { notation: "compact", maximumFractionDigits: 2 });
 
 const formatGram = (value?: number) => value && Number.isFinite(value) && value > 0 ? `${compact.format(value)} GRAM` : "N/A";
-const isUsableTokenImage = (value?: string) => typeof value === "string" && (/^https?:\/\//i.test(value.trim()) || value.startsWith("/"));
+const isUsableTokenImage = (value?: string) => {
+  if (typeof value !== "string") return false;
+  const normalized = value.trim();
+  return /^https?:\/\//i.test(normalized) || normalized.startsWith("/") || normalized.startsWith("ipfs://");
+};
+
+const normalizeTokenImage = (value?: string) => {
+  if (!isUsableTokenImage(value)) return "";
+  const normalized = value!.trim();
+  if (normalized.startsWith("ipfs://")) return `https://ipfs.io/ipfs/${normalized.slice("ipfs://".length)}`;
+  return normalized;
+};
 
 function TokenPlaceholder({ symbol }: { symbol: string }) {
   return (
@@ -26,7 +37,7 @@ function TokenPlaceholder({ symbol }: { symbol: string }) {
 
 export function ExternalTokenView({ token }: { token: ExternalTokenRecord }) {
   const { locale } = useUi();
-  const initialImage = useMemo(() => (isUsableTokenImage(token.image) ? token.image!.trim() : ""), [token.image]);
+  const initialImage = useMemo(() => normalizeTokenImage(token.image), [token.image]);
   const [imageSrc, setImageSrc] = useState(initialImage);
   const copyAddress = async () => navigator.clipboard.writeText(token.address);
   const change = typeof token.change24h === "number" && Number.isFinite(token.change24h) ? token.change24h : null;
