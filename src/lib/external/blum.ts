@@ -15,7 +15,6 @@ interface FetchBlumMemepadTokensOptions {
 
 type UnknownRecord = Record<string, unknown>;
 
-const BLUM_TOTAL_SUPPLY = 1_000_000_000;
 const BLUM_BONDING_SUPPLY = 800_000_000;
 const BLUM_LISTING_TARGET_TON = 1500;
 const BLUM_LIQUIDITY_TON = 1450;
@@ -205,7 +204,6 @@ function buildTokenFromRecord(record: UnknownRecord, index: number): TokenRecord
       creatorRefundTon: 0,
       liquidityTon: listed ? BLUM_LIQUIDITY_TON : 0,
       liquidityTokens: listed ? 200_000_000 : 0,
-      dedustPoolAddress: null,
       listingTxHash: undefined
     },
     contractAddresses: {
