@@ -1,4 +1,4 @@
-import { curatedExternalTokens, mockExternalTokens } from "./mock";
+import { mockExternalTokens } from "./mock";
 import type { ExternalTokenRecord } from "./types";
 
 export type ExternalTokenFilter = "all" | "verified" | "risky";
@@ -10,11 +10,6 @@ export function listExternalTokens(filter: ExternalTokenFilter = "all"): Externa
   if (filter === "verified") return mockExternalTokens.filter((token) => token.verified);
   if (filter === "risky") return mockExternalTokens.filter((token) => token.riskLevel === "HIGH");
   return mockExternalTokens;
-}
-
-export function listCuratedExternalTokens(): ExternalTokenRecord[] {
-  if (!enabled()) return [];
-  return curatedExternalTokens;
 }
 
 export function searchExternalTokens(query: string, filter: ExternalTokenFilter = "all"): ExternalTokenRecord[] {

@@ -51,7 +51,3 @@ export const mockExternalTokens: ExternalTokenRecord[] = [
   withRisk(token("DUCK", "Duck", 19, 0.00031, 33.8, 21000, 9500, ["STONFI"])),
   withRisk(token("MEME", "New Meme", 20, 0.000004, 91, 64, 220, [], false))
 ];
-
-const curatedSymbols = new Set(["DOGS", "REDO", "FISH", "DFC", "SCALE", "HYDRA", "PUNK", "JETTON", "WALL", "BOLT", "RAFF", "DUCK"]);
-
-export const curatedExternalTokens: ExternalTokenRecord[] = mockExternalTokens.filter((token) => curatedSymbols.has(token.symbol));
