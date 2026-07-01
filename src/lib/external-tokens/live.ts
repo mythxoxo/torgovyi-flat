@@ -20,24 +20,6 @@ const bestNumber = (a?: number, b?: number) => {
   return Math.max(left, right) || undefined;
 };
 
-const hasUsefulImage = (value?: string) => typeof value === "string" && /^https?:\/\//i.test(value.trim());
-const hasUsefulVolume = (value?: number) => Number.isFinite(value ?? 0) && (value ?? 0) > 0;
-const hasUsefulLiquidity = (value?: number) => Number.isFinite(value ?? 0) && (value ?? 0) > 0;
-const hasRoute = (token: ExternalTokenRecord) => Boolean(token.primaryDex || token.dexes.length > 0 || token.poolAddress);
-
-const bannedSymbols = new Set(["TON", "STON", "TSUSDE", "TSTON", "NOT"]);
-const bannedNames = ["tonstakers", "tetherusd", "wrapped ton", "staked ton"];
-
-function isRelevantExternalToken(token: ExternalTokenRecord) {
-  const symbol = token.symbol.trim().toUpperCase();
-  const name = token.name.trim().toLowerCase();
-  if (bannedSymbols.has(symbol)) return false;
-  if (bannedNames.some((bad) => name.includes(bad))) return false;
-  if (!hasRoute(token)) return false;
-  if (!hasUsefulLiquidity(token.liquidityGram) && !hasUsefulVolume(token.volume24hGram)) return false;
-  return true;
-}
-
 const mergeExternalTokens = (groups: ExternalTokenRecord[][]): ExternalTokenRecord[] => {
   const map = new Map<string, ExternalTokenRecord>();
   for (const token of groups.flat()) {
@@ -52,7 +34,7 @@ const mergeExternalTokens = (groups: ExternalTokenRecord[][]): ExternalTokenReco
       ...existing,
       name: existing.name || token.name,
       symbol: existing.symbol || token.symbol,
-      image: hasUsefulImage(existing.image) ? existing.image : token.image,
+      image: existing.image || token.image,
       decimals: existing.decimals || token.decimals,
       dexes,
       primaryDex: dexes.includes("DEDUST") ? "DEDUST" : dexes[0],
@@ -66,9 +48,7 @@ const mergeExternalTokens = (groups: ExternalTokenRecord[][]): ExternalTokenReco
       updatedAt: new Date().toISOString()
     });
   }
-  return [...map.values()]
-    .filter(isRelevantExternalToken)
-    .sort((a, b) => (b.volume24hGram ?? b.liquidityGram ?? 0) - (a.volume24hGram ?? a.liquidityGram ?? 0));
+  return [...map.values()].sort((a, b) => (b.volume24hGram ?? b.liquidityGram ?? 0) - (a.volume24hGram ?? a.liquidityGram ?? 0));
 };
 
 export async function listExternalTokensLive(filter: ExternalTokenFilter = "all"): Promise<ExternalTokenRecord[]> {
@@ -86,7 +66,7 @@ export async function listExternalTokensLive(filter: ExternalTokenFilter = "all"
     if (filter === "risky") return tokens.filter((token) => token.riskLevel === "HIGH");
     return tokens;
   } catch {
-    return listExternalTokens(filter).filter(isRelevantExternalToken);
+    return listExternalTokens(filter);
   }
 }
 
