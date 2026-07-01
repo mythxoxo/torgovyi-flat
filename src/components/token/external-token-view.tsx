@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { Copy } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { ExternalTokenRecord } from "../../lib/external-tokens/types";
 import { DexBuyBox } from "../dex-buy-box";
 import { RiskBadges } from "../risk-badges";
@@ -11,14 +11,23 @@ import { useUi } from "../page-shell";
 import { ExternalTokenWalletPanel } from "./external-token-wallet-panel";
 
 const dexLabel = (dex: string) => dex === "DEDUST" ? "DeDust" : dex === "STONFI" ? "STON.fi" : dex;
-const FALLBACK_IMAGE = "/brand/img_04.jpg";
 const compact = new Intl.NumberFormat("en-US", { notation: "compact", maximumFractionDigits: 2 });
 
 const formatGram = (value?: number) => value && Number.isFinite(value) && value > 0 ? `${compact.format(value)} GRAM` : "N/A";
+const isUsableTokenImage = (value?: string) => typeof value === "string" && (/^https?:\/\//i.test(value.trim()) || value.startsWith("/"));
+
+function TokenPlaceholder({ symbol }: { symbol: string }) {
+  return (
+    <div className="flex h-full w-full items-center justify-center bg-[radial-gradient(circle_at_top,#1f3f65,#0f1724_70%)] text-sm font-black uppercase tracking-[0.18em] text-[#bfe9ff]">
+      {symbol.slice(0, 4)}
+    </div>
+  );
+}
 
 export function ExternalTokenView({ token }: { token: ExternalTokenRecord }) {
   const { locale } = useUi();
-  const [imageSrc, setImageSrc] = useState(token.image || FALLBACK_IMAGE);
+  const initialImage = useMemo(() => (isUsableTokenImage(token.image) ? token.image!.trim() : ""), [token.image]);
+  const [imageSrc, setImageSrc] = useState(initialImage);
   const copyAddress = async () => navigator.clipboard.writeText(token.address);
   const change = typeof token.change24h === "number" && Number.isFinite(token.change24h) ? token.change24h : null;
   const changeClass = change == null ? "text-[#8ba3c1]" : change >= 0 ? "text-[#86efac]" : "text-[#ff8a95]";
@@ -30,7 +39,11 @@ export function ExternalTokenView({ token }: { token: ExternalTokenRecord }) {
         <div className="flex items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-3">
             <div className="h-14 w-14 overflow-hidden rounded-xl border border-[#1e3a5f] bg-white/5">
-              <Image src={imageSrc} alt={token.name} width={56} height={56} className="h-full w-full object-cover" onError={() => setImageSrc(FALLBACK_IMAGE)} unoptimized />
+              {imageSrc ? (
+                <Image src={imageSrc} alt={token.name} width={56} height={56} className="h-full w-full object-cover" onError={() => setImageSrc("")} unoptimized />
+              ) : (
+                <TokenPlaceholder symbol={token.symbol} />
+              )}
             </div>
             <div className="min-w-0">
               <div className="flex flex-wrap gap-1 text-xs uppercase tracking-[0.18em] text-[#5ac8fa]"><span>External token</span>{dexes.map((dex) => <span key={dex} className="rounded-full border border-[#2aabee]/30 bg-[#2aabee]/10 px-2 py-0.5 tracking-normal text-[#bfe9ff]">{dexLabel(dex)}</span>)}</div>

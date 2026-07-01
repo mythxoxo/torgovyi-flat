@@ -25,7 +25,7 @@ const hasUsefulVolume = (value?: number) => Number.isFinite(value ?? 0) && (valu
 const hasUsefulLiquidity = (value?: number) => Number.isFinite(value ?? 0) && (value ?? 0) > 0;
 const hasRoute = (token: ExternalTokenRecord) => Boolean(token.primaryDex || token.dexes.length > 0 || token.poolAddress);
 
-const bannedSymbols = new Set(["TON", "GRAM", "STON", "USDT", "USDT₮", "TSUSDE", "TSTON", "NOT", "MAJOR"]);
+const bannedSymbols = new Set(["TON", "USDT", "USDT₮", "TSUSDE", "TSTON"]);
 const bannedNames = ["tonstakers", "tetherusd", "wrapped ton", "staked ton"];
 
 function isRelevantExternalToken(token: ExternalTokenRecord) {
