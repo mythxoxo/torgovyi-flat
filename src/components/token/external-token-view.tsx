@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { Copy } from "lucide-react";
+import { useState } from "react";
 import type { ExternalTokenRecord } from "../../lib/external-tokens/types";
 import { DexBuyBox } from "../dex-buy-box";
 import { RiskBadges } from "../risk-badges";
@@ -10,12 +11,17 @@ import { useUi } from "../page-shell";
 import { ExternalTokenWalletPanel } from "./external-token-wallet-panel";
 
 const dexLabel = (dex: string) => dex === "DEDUST" ? "DeDust" : dex === "STONFI" ? "STON.fi" : dex;
+const FALLBACK_IMAGE = "/brand/img_04.jpg";
+const compact = new Intl.NumberFormat("en-US", { notation: "compact", maximumFractionDigits: 2 });
+
+const formatGram = (value?: number) => value && Number.isFinite(value) && value > 0 ? `${compact.format(value)} GRAM` : "N/A";
 
 export function ExternalTokenView({ token }: { token: ExternalTokenRecord }) {
   const { locale } = useUi();
+  const [imageSrc, setImageSrc] = useState(token.image || FALLBACK_IMAGE);
   const copyAddress = async () => navigator.clipboard.writeText(token.address);
-  const change = token.change24h ?? 0;
-  const changeClass = change >= 0 ? "text-[#86efac]" : "text-[#ff8a95]";
+  const change = typeof token.change24h === "number" && Number.isFinite(token.change24h) ? token.change24h : null;
+  const changeClass = change == null ? "text-[#8ba3c1]" : change >= 0 ? "text-[#86efac]" : "text-[#ff8a95]";
   const dexes = token.dexes.length ? token.dexes : token.primaryDex ? [token.primaryDex] : [];
 
   return (
@@ -24,7 +30,7 @@ export function ExternalTokenView({ token }: { token: ExternalTokenRecord }) {
         <div className="flex items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-3">
             <div className="h-14 w-14 overflow-hidden rounded-xl border border-[#1e3a5f] bg-white/5">
-              <Image src={token.image || "/brand/img_04.jpg"} alt={token.name} width={56} height={56} className="h-full w-full object-cover" />
+              <Image src={imageSrc} alt={token.name} width={56} height={56} className="h-full w-full object-cover" onError={() => setImageSrc(FALLBACK_IMAGE)} unoptimized />
             </div>
             <div className="min-w-0">
               <div className="flex flex-wrap gap-1 text-xs uppercase tracking-[0.18em] text-[#5ac8fa]"><span>External token</span>{dexes.map((dex) => <span key={dex} className="rounded-full border border-[#2aabee]/30 bg-[#2aabee]/10 px-2 py-0.5 tracking-normal text-[#bfe9ff]">{dexLabel(dex)}</span>)}</div>
@@ -52,10 +58,11 @@ export function ExternalTokenView({ token }: { token: ExternalTokenRecord }) {
           <div className="glass-card rounded-[24px] p-5">
             <h2 className="font-display text-2xl font-bold text-white">{locale === "ru" ? "Рынок" : "Market"}</h2>
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
-              <div className="rounded-2xl border border-white/8 bg-white/5 p-4"><div className="text-xs text-[#8ba3c1]">{locale === "ru" ? "Цена" : "Price"}</div><div className="mt-1 font-semibold text-white">{token.priceGram ? `${token.priceGram.toLocaleString("en-US")} GRAM` : token.priceUsd ? `$${token.priceUsd.toLocaleString("en-US")}` : "—"}</div></div>
-              <div className="rounded-2xl border border-white/8 bg-white/5 p-4"><div className="text-xs text-[#8ba3c1]">24h</div><div className={`mt-1 font-semibold ${changeClass}`}>{change > 0 ? "+" : ""}{change.toFixed(1)}%</div></div>
-              <div className="rounded-2xl border border-white/8 bg-white/5 p-4"><div className="text-xs text-[#8ba3c1]">{locale === "ru" ? "Ликвидность" : "Liquidity"}</div><div className="mt-1 font-semibold text-white">{token.liquidityGram ? `${token.liquidityGram.toLocaleString("en-US")} GRAM` : "—"}</div></div>
-              <div className="rounded-2xl border border-white/8 bg-white/5 p-4"><div className="text-xs text-[#8ba3c1]">DEX</div><div className="mt-1 flex flex-wrap gap-1">{dexes.length ? dexes.map((dex) => <span key={dex} className="rounded-full bg-white/8 px-2 py-0.5 text-xs font-semibold text-white">{dexLabel(dex)}</span>) : <span className="font-semibold text-white">No route</span>}</div></div>
+              <div className="rounded-2xl border border-white/8 bg-white/5 p-4"><div className="text-xs text-[#8ba3c1]">{locale === "ru" ? "Цена" : "Price"}</div><div className="mt-1 font-semibold text-white">{token.priceGram ? `${token.priceGram.toLocaleString("en-US")} GRAM` : token.priceUsd ? `$${token.priceUsd.toLocaleString("en-US")}` : "N/A"}</div></div>
+              <div className="rounded-2xl border border-white/8 bg-white/5 p-4"><div className="text-xs text-[#8ba3c1]">24h</div><div className={`mt-1 font-semibold ${changeClass}`}>{change == null ? "N/A" : `${change > 0 ? "+" : ""}${change.toFixed(1)}%`}</div></div>
+              <div className="rounded-2xl border border-white/8 bg-white/5 p-4"><div className="text-xs text-[#8ba3c1]">{locale === "ru" ? "Ликвидность" : "Liquidity"}</div><div className="mt-1 font-semibold text-white">{formatGram(token.liquidityGram)}</div></div>
+              <div className="rounded-2xl border border-white/8 bg-white/5 p-4"><div className="text-xs text-[#8ba3c1]">{locale === "ru" ? "Объём 24ч" : "24h volume"}</div><div className="mt-1 font-semibold text-white">{formatGram(token.volume24hGram)}</div></div>
+              <div className="rounded-2xl border border-white/8 bg-white/5 p-4 sm:col-span-2"><div className="text-xs text-[#8ba3c1]">DEX</div><div className="mt-1 flex flex-wrap gap-1">{dexes.length ? dexes.map((dex) => <span key={dex} className="rounded-full bg-white/8 px-2 py-0.5 text-xs font-semibold text-white">{dexLabel(dex)}</span>) : <span className="font-semibold text-white">No route</span>}</div></div>
             </div>
           </div>
           <ExternalTokenWalletPanel token={token} />
