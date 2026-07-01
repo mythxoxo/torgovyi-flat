@@ -1,7 +1,7 @@
 import { Address } from "@ton/core";
 import type { ExternalTokenRecord } from "./types";
 import { listLiveDedustExternalTokens } from "./dedust-live";
-import { listExternalTokens, resolveExternalToken, searchExternalTokens, type ExternalTokenFilter } from "./search";
+import { resolveExternalToken, searchExternalTokens, type ExternalTokenFilter } from "./search";
 import { listLiveStonfiExternalTokens } from "./stonfi-live";
 
 const normalizeAddress = (value: string) => {
@@ -21,18 +21,18 @@ const bestNumber = (a?: number, b?: number) => {
 };
 
 const hasUsefulImage = (value?: string) => typeof value === "string" && /^https?:\/\//i.test(value.trim());
-const hasUsefulVolume = (value?: number) => Number.isFinite(value ?? 0) && (value ?? 0) > 0;
-const hasUsefulLiquidity = (value?: number) => Number.isFinite(value ?? 0) && (value ?? 0) > 0;
+const hasUsefulVolume = (value?: number) => Number.isFinite(value ?? 0) && (value ?? 0) >= 100;
+const hasUsefulLiquidity = (value?: number) => Number.isFinite(value ?? 0) && (value ?? 0) >= 100;
 const hasRoute = (token: ExternalTokenRecord) => Boolean(token.primaryDex || token.dexes.length > 0 || token.poolAddress);
 
-const bannedSymbols = new Set(["TON", "STON", "TSUSDE", "TSTON", "NOT"]);
-const bannedNames = ["tonstakers", "tetherusd", "wrapped ton", "staked ton"];
+const bannedSymbols = new Set(["TON", "GRAM", "STON", "USDT", "USDT₮", "TSUSDE", "TSTON", "NOT", "MAJOR"]);
+const bannedNames = ["tonstakers", "tetherusd", "wrapped ton", "staked ton", "gram", "major"];
 
 function isRelevantExternalToken(token: ExternalTokenRecord) {
   const symbol = token.symbol.trim().toUpperCase();
   const name = token.name.trim().toLowerCase();
   if (bannedSymbols.has(symbol)) return false;
-  if (bannedNames.some((bad) => name.includes(bad))) return false;
+  if (bannedNames.some((bad) => name === bad || name.includes(`${bad} `) || name.includes(` ${bad}`))) return false;
   if (!hasRoute(token)) return false;
   if (!hasUsefulLiquidity(token.liquidityGram) && !hasUsefulVolume(token.volume24hGram)) return false;
   return true;
@@ -72,22 +72,18 @@ const mergeExternalTokens = (groups: ExternalTokenRecord[][]): ExternalTokenReco
 };
 
 export async function listExternalTokensLive(filter: ExternalTokenFilter = "all"): Promise<ExternalTokenRecord[]> {
-  try {
-    const [stonfi, dedust] = await Promise.allSettled([
-      listLiveStonfiExternalTokens(160),
-      listLiveDedustExternalTokens(240)
-    ]);
-    const live = mergeExternalTokens([
-      stonfi.status === "fulfilled" ? stonfi.value : [],
-      dedust.status === "fulfilled" ? dedust.value : []
-    ]);
-    const tokens = live.length > 0 ? live : listExternalTokens(filter);
-    if (filter === "verified") return tokens.filter((token) => token.verified);
-    if (filter === "risky") return tokens.filter((token) => token.riskLevel === "HIGH");
-    return tokens;
-  } catch {
-    return listExternalTokens(filter).filter(isRelevantExternalToken);
-  }
+  const [dedust, stonfi] = await Promise.allSettled([
+    listLiveDedustExternalTokens(120),
+    listLiveStonfiExternalTokens(60)
+  ]);
+
+  const dedustTokens = dedust.status === "fulfilled" ? dedust.value : [];
+  const stonfiTokens = stonfi.status === "fulfilled" ? stonfi.value : [];
+  const live = mergeExternalTokens([dedustTokens, stonfiTokens]);
+
+  if (filter === "verified") return live.filter((token) => token.verified);
+  if (filter === "risky") return live.filter((token) => token.riskLevel === "HIGH");
+  return live;
 }
 
 export async function searchExternalTokensLive(query: string, filter: ExternalTokenFilter = "all"): Promise<ExternalTokenRecord[]> {
@@ -101,7 +97,7 @@ export async function searchExternalTokensLive(query: string, filter: ExternalTo
       return hay.includes(q);
     });
   } catch {
-    return searchExternalTokens(query, filter);
+    return searchExternalTokens(query, filter).filter(isRelevantExternalToken);
   }
 }
 
