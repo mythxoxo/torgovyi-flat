@@ -4,13 +4,16 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import type { TokenRecord } from "../lib/shared";
 import { TokenList } from "../components/token-list";
-import { getTokenList } from "../lib/api";
+import { getBlumMemepadTokens, getTokenList } from "../lib/api";
 import { useUi } from "../components/page-shell";
 
 export default function HomePage() {
   const [tokens, setTokens] = useState<TokenRecord[]>([]);
+  const [blumTokens, setBlumTokens] = useState<TokenRecord[]>([]);
   const [loading, setLoading] = useState(true);
+  const [blumLoading, setBlumLoading] = useState(true);
   const [error, setError] = useState("");
+  const [blumNotice, setBlumNotice] = useState("");
   const { t, locale } = useUi();
 
   useEffect(() => {
@@ -22,7 +25,27 @@ export default function HomePage() {
       .finally(() => setLoading(false));
   }, []);
 
+  useEffect(() => {
+    setBlumLoading(true);
+    setBlumNotice("");
+    getBlumMemepadTokens(6)
+      .then((feed) => {
+        setBlumTokens(feed.tokens);
+        if (feed.warning) setBlumNotice(feed.warning);
+        if (!feed.configured) {
+          setBlumNotice(
+            locale === "ru"
+              ? "Blum Memepad feed пока не настроен: добавь BLUM_MEMEPAD_FEED_URL или BLUM_MEMEPAD_JETTONS в env."
+              : "Blum Memepad feed is not configured yet: add BLUM_MEMEPAD_FEED_URL or BLUM_MEMEPAD_JETTONS to env."
+          );
+        }
+      })
+      .catch((err) => setBlumNotice(err instanceof Error ? err.message : "Blum feed unavailable"))
+      .finally(() => setBlumLoading(false));
+  }, [locale]);
+
   const launches = useMemo(() => tokens.slice(0, 6), [tokens]);
+  const blumLaunches = useMemo(() => blumTokens.slice(0, 6), [blumTokens]);
 
   return (
     <div className="space-y-8 pb-20">
@@ -58,6 +81,28 @@ export default function HomePage() {
         {error ? <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-[#c6e8ff]">{t.misc.noLaunches}</div> : null}
         <div className="mt-4">
           <TokenList tokens={launches} loading={loading} />
+        </div>
+      </section>
+
+      <section className="glass-card rounded-[28px] p-5">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-xs uppercase tracking-[0.2em] text-[#7dd3fc]">Blum Memepad</p>
+            <h2 className="mt-2 font-display text-2xl font-bold text-white">
+              {locale === "ru" ? "Новые монеты из Blum" : "New coins from Blum"}
+            </h2>
+          </div>
+          <a href="/api/external/blum" target="_blank" rel="noreferrer" className="text-sm font-semibold text-[#7dd3fc] hover:text-white">
+            {locale === "ru" ? "Открыть JSON" : "Open JSON"}
+          </a>
+        </div>
+        {blumNotice ? (
+          <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm leading-6 text-[#c6e8ff]">
+            {blumNotice}
+          </div>
+        ) : null}
+        <div className="mt-4">
+          <TokenList tokens={blumLaunches} loading={blumLoading} />
         </div>
       </section>
     </div>
