@@ -71,10 +71,10 @@ export async function listExternalTokensLive(filter: ExternalTokenFilter = "all"
     listLiveStonfiExternalTokens(160),
     listLiveDedustExternalTokens(240)
   ]);
-  const live = mergeExternalTokens([
-    stonfi.status === "fulfilled" ? stonfi.value : [],
-    dedust.status === "fulfilled" ? dedust.value : []
-  ]);
+  const stonfiTokens = stonfi.status === "fulfilled" ? stonfi.value : [];
+  const dedustTokens = dedust.status === "fulfilled" ? dedust.value : [];
+  const mergedLive = mergeExternalTokens([stonfiTokens, dedustTokens]);
+  const live = mergedLive.length > 0 ? mergedLive : dedustTokens.filter(isRelevantExternalToken);
   if (filter === "verified") return live.filter((token) => token.verified);
   if (filter === "risky") return live.filter((token) => token.riskLevel === "HIGH");
   return live;
