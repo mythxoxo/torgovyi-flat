@@ -16,7 +16,7 @@ type WalletSource = "tonconnect" | "none";
 const REQUIRED_CHAIN = CHAIN.MAINNET;
 const MANIFEST_URL =
   process.env.NEXT_PUBLIC_TONCONNECT_MANIFEST_URL ||
-  "https://torgovyi-flat.vercel.app/tonconnect-manifest.json?v=20260629-brand2";
+  "https://torgovyi-flat.vercel.app/tonconnect-tonk.json?v=20260701-tonk";
 
 const WalletContext = createContext<{
   wallet: string;
