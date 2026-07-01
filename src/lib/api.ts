@@ -6,6 +6,14 @@ import type {
   UserSummary
 } from "./shared";
 
+export interface ExternalTokenFeedResponse {
+  source: "configured_feed" | "address_list" | "not_configured";
+  configured: boolean;
+  scannedAt: string;
+  tokens: TokenRecord[];
+  warning?: string;
+}
+
 const resolveApiBase = (): string => {
   const configured =
     process.env.NEXT_PUBLIC_API_URL ||
@@ -36,6 +44,12 @@ export const listTokens = (filter = "trending") =>
   requestJson<TokenRecord[]>(`/api/tokens?filter=${encodeURIComponent(filter)}`);
 
 export const getTokenList = listTokens;
+
+export const getBlumMemepadTokens = (limit = 12, addresses?: string[]) => {
+  const params = new URLSearchParams({ limit: String(limit) });
+  if (addresses?.length) params.set("addresses", addresses.join(","));
+  return requestJson<ExternalTokenFeedResponse>(`/api/external/blum?${params.toString()}`);
+};
 
 export const getToken = (id: string) =>
   requestJson<{ token: TokenRecord; shareUrl: string }>(`/api/tokens/${id}`);
