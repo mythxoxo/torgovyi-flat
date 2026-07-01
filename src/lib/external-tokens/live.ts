@@ -28,42 +28,6 @@ const hasRoute = (token: ExternalTokenRecord) => Boolean(token.primaryDex || tok
 const bannedSymbols = new Set(["TON", "USDT", "USDT₮", "TSUSDE", "TSTON", "NOT", "STON", "JUSDT", "GRAM"]);
 const bannedNames = ["tonstakers", "tetherusd", "wrapped ton", "staked ton", "notcoin"];
 
-const tonapiBase = (process.env.TONAPI_ENDPOINT || "https://tonapi.io/v2").replace(/\/$/, "");
-const tonapiKey = process.env.TONAPI_API_KEY || "";
-const imageCache = new Map<string, string>();
-
-async function enrichTokenImage(token: ExternalTokenRecord): Promise<ExternalTokenRecord> {
-  if (hasUsefulImage(token.image)) return token;
-  if (!tonapiKey) return token;
-  const cacheKey = normalizeAddress(token.address);
-  const cached = imageCache.get(cacheKey);
-  if (cached) return { ...token, image: cached };
-
-  try {
-    const res = await fetch(`${tonapiBase}/jettons/${encodeURIComponent(token.address)}`, {
-      headers: { Authorization: `Bearer ${tonapiKey}` },
-      cache: "no-store"
-    });
-    if (!res.ok) return token;
-    const data = await res.json() as Record<string, unknown>;
-    const metadata = data.metadata && typeof data.metadata === "object" ? (data.metadata as Record<string, unknown>) : null;
-    const image = typeof metadata?.image === "string"
-      ? metadata.image
-      : typeof data.image === "string"
-        ? data.image
-        : typeof data.preview === "string"
-          ? data.preview
-          : "";
-    if (hasUsefulImage(image)) {
-      imageCache.set(cacheKey, image);
-      return { ...token, image };
-    }
-    return token;
-  } catch {
-    return token;
-  }
-}
-
 function isRelevantExternalToken(token: ExternalTokenRecord) {
   const symbol = token.symbol.trim().toUpperCase();
   const name = token.name.trim().toLowerCase();
@@ -116,11 +80,10 @@ export async function listExternalTokensLive(filter: ExternalTokenFilter = "all"
   const dedustTokens = dedust.status === "fulfilled" ? dedust.value : [];
   const stonfiTokens = stonfi.status === "fulfilled" ? stonfi.value : [];
   const live = mergeExternalTokens([dedustTokens, stonfiTokens]);
-  const enriched = await Promise.all(live.map(enrichTokenImage));
 
-  if (filter === "verified") return enriched.filter((token) => token.verified);
-  if (filter === "risky") return enriched.filter((token) => token.riskLevel === "HIGH");
-  return enriched;
+  if (filter === "verified") return live.filter((token) => token.verified);
+  if (filter === "risky") return live.filter((token) => token.riskLevel === "HIGH");
+  return live;
 }
 
 export async function searchExternalTokensLive(query: string, filter: ExternalTokenFilter = "all"): Promise<ExternalTokenRecord[]> {
