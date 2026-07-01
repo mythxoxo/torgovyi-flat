@@ -5,26 +5,8 @@ import { GainersPanel } from "../../components/gainers-panel";
 import { MarketTokenList } from "../../components/market-token-list";
 import { useUi } from "../../components/page-shell";
 import type { ExternalTokenRecord } from "../../lib/external-tokens/types";
-import { listExternalTokens } from "../../lib/external-tokens/search";
 import { listMarketTokens } from "../../lib/market/list-market-tokens";
 import type { MarketFilter, MarketToken } from "../../lib/market/types";
-
-const bannedSymbols = new Set(["TON", "GRAM", "STON", "USDT", "USDT₮", "TSUSDE", "TSTON", "NOT", "MAJOR"]);
-const bannedNames = ["tonstakers", "tetherusd", "wrapped ton", "staked ton"];
-
-function curatedFallbackTokens(tokens: ExternalTokenRecord[]) {
-  return tokens
-    .filter((token) => {
-      const symbol = token.symbol.trim().toUpperCase();
-      const name = token.name.trim().toLowerCase();
-      if (bannedSymbols.has(symbol)) return false;
-      if (bannedNames.some((bad) => name.includes(bad))) return false;
-      if (!token.dexes.length && !token.poolAddress) return false;
-      if (!(token.liquidityGram && token.liquidityGram > 0) && !(token.volume24hGram && token.volume24hGram > 0)) return false;
-      return true;
-    })
-    .sort((a, b) => (b.volume24hGram ?? b.liquidityGram ?? 0) - (a.volume24hGram ?? a.liquidityGram ?? 0));
-}
 
 export default function MarketsPage() {
   const { locale, theme } = useUi();
@@ -40,24 +22,14 @@ export default function MarketsPage() {
 
     const load = async () => {
       if (tab === "external") {
-        try {
-          const res = await fetch("/api/external-tokens", { cache: "no-store" });
-          const data = await res.json() as { ok: boolean; source?: "live-external" | "fallback"; tokens?: ExternalTokenRecord[] };
-          const liveTokens = data.ok && data.tokens ? data.tokens : [];
-          const finalTokens = liveTokens.length > 0 ? liveTokens : curatedFallbackTokens(listExternalTokens("all"));
-          if (!cancelled) {
-            setExternalSource(liveTokens.length > 0 ? (data.source ?? "live-external") : "fallback");
-            setTokens(finalTokens.map((token) => ({ source: "EXTERNAL", token })));
-          }
-          return;
-        } catch {
-          const fallback = curatedFallbackTokens(listExternalTokens("all"));
-          if (!cancelled) {
-            setExternalSource("fallback");
-            setTokens(fallback.map((token) => ({ source: "EXTERNAL", token })));
-          }
-          return;
+        const res = await fetch("/api/external-tokens", { cache: "no-store" });
+        const data = await res.json() as { ok: boolean; source?: "live-external" | "fallback"; tokens?: ExternalTokenRecord[] };
+        if (!data.ok || !data.tokens) throw new Error("External source failed");
+        if (!cancelled) {
+          setExternalSource(data.source ?? "fallback");
+          setTokens(data.tokens.map((token) => ({ source: "EXTERNAL", token })));
         }
+        return;
       }
 
       const marketTokens = await listMarketTokens(tab);
@@ -102,7 +74,7 @@ export default function MarketsPage() {
             <button key={item.id} type="button" onClick={() => setTab(item.id)} className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${tab === item.id ? "border-[#0088cc] bg-[#0088cc] text-white" : inactive}`}>{locale === "ru" ? item.ru : item.en}</button>
           ))}
         </div>
-        {tab === "external" && externalSource ? <p className={`mt-3 text-xs ${muted}`}>{externalSource === "live-external" ? (locale === "ru" ? "Источник: live external assets" : "Source: live external assets") : (locale === "ru" ? "Источник: curated fallback" : "Source: curated fallback")}</p> : null}
+        {tab === "external" && externalSource ? <p className={`mt-3 text-xs ${muted}`}>{externalSource === "live-external" ? (locale === "ru" ? "Источник: live external assets" : "Source: live external assets") : (locale === "ru" ? "Источник: недоступен" : "Source: unavailable")}</p> : null}
       </section>
       {tab === "gainers" ? <GainersPanel /> : <MarketTokenList tokens={tokens} loading={loading} />}
     </div>
