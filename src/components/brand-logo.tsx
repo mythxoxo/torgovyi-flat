@@ -1,43 +1,24 @@
 export function BrandLogo({ compact = false }: { subtitle?: string; compact?: boolean }) {
   return (
     <div className={compact ? "pd-brand-logo pd-brand-logo--compact" : "pd-brand-logo"}>
-      <svg className="pd-cart-logo" viewBox="0 0 88 64" fill="none" aria-hidden="true">
-        <defs>
-          <linearGradient id="cartLogoGem" x1="20" y1="9" x2="74" y2="58" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#7EE7FF" />
-            <stop offset="0.52" stopColor="#2AABEE" />
-            <stop offset="1" stopColor="#8B5CF6" />
-          </linearGradient>
-          <linearGradient id="cartLogoPink" x1="16" y1="18" x2="78" y2="54" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#FF63C3" />
-            <stop offset="1" stopColor="#8B5CF6" />
-          </linearGradient>
-          <filter id="cartLogoGlow" x="-20" y="-20" width="128" height="104" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-            <feDropShadow dx="0" dy="10" stdDeviation="10" floodColor="#FF55B8" floodOpacity="0.22" />
-            <feDropShadow dx="0" dy="6" stdDeviation="8" floodColor="#2AABEE" floodOpacity="0.16" />
-          </filter>
-        </defs>
+      <svg className="pd-cart-logo" viewBox="0 0 120 72" fill="none" aria-hidden="true">
+        <path d="M14 30H29L37 55H91L103 30H36" stroke="#FF55B8" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M36 33H99L90 53H42L36 33Z" fill="rgba(8,12,18,0.82)" stroke="rgba(255,255,255,0.18)" strokeWidth="2" />
+        <circle cx="45" cy="61" r="5" fill="#070A12" stroke="#C9F0FF" strokeWidth="3" />
+        <circle cx="84" cy="61" r="5" fill="#070A12" stroke="#C9F0FF" strokeWidth="3" />
 
-        <g filter="url(#cartLogoGlow)">
-          <path d="M15 23H25L31 47H69L76 28H27" stroke="url(#cartLogoPink)" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M32 47H70" stroke="rgba(255,255,255,0.72)" strokeWidth="2" strokeLinecap="round" />
-          <circle cx="38" cy="54" r="4" fill="#070A12" stroke="#C9F0FF" strokeWidth="2.4" />
-          <circle cx="65" cy="54" r="4" fill="#070A12" stroke="#C9F0FF" strokeWidth="2.4" />
+        <path d="M75 23L84 11L94 23L88 37H80L75 23Z" fill="#59C7FF" stroke="#E7FBFF" strokeWidth="2" strokeLinejoin="round" />
+        <path d="M88 29L96 19L105 29L100 41H93L88 29Z" fill="#8B5CF6" stroke="#E7FBFF" strokeWidth="1.8" strokeLinejoin="round" />
+        <path d="M84 11L88 23L80 37M96 19L100 29L93 41" stroke="rgba(255,255,255,0.55)" strokeWidth="1.2" strokeLinecap="round" />
 
-          <path d="M34 24L40 15L48 24L43 34H39L34 24Z" fill="url(#cartLogoGem)" stroke="#DFF8FF" strokeWidth="1.2" />
-          <path d="M56 23L62 14L70 23L65 34H60L56 23Z" fill="url(#cartLogoGem)" stroke="#DFF8FF" strokeWidth="1.2" />
-          <path d="M46 31L51 23L58 31L54 40H50L46 31Z" fill="url(#cartLogoGem)" stroke="#DFF8FF" strokeWidth="1.1" />
-          <path d="M40 15L43 24L39 34M62 14L65 23L60 34M51 23L54 31L50 40" stroke="rgba(255,255,255,0.44)" strokeWidth="0.9" />
-
-          <path d="M32 23C31 14 37 8 46 12L49 7L53 14C59 17 62 24 60 31C57 41 42 43 35 36C32 33 31 28 32 23Z" fill="#B7B0AA" stroke="#171A22" strokeWidth="2.2" />
-          <path d="M38 13L34 6L45 11" fill="#B7B0AA" stroke="#171A22" strokeWidth="2.2" strokeLinejoin="round" />
-          <path d="M53 14L60 8L59 20" fill="#B7B0AA" stroke="#171A22" strokeWidth="2.2" strokeLinejoin="round" />
-          <path d="M40 27C42 25 45 25 47 27" stroke="#171A22" strokeWidth="2" strokeLinecap="round" />
-          <path d="M51 28C53 26 55 26 57 28" stroke="#171A22" strokeWidth="2" strokeLinecap="round" />
-          <path d="M48 31L46 34L50 34L48 31Z" fill="#171A22" />
-          <path d="M43 38C46 35 51 35 54 38" stroke="#171A22" strokeWidth="2" strokeLinecap="round" />
-          <path d="M35 31L27 28M35 34L27 35M58 32L67 29M58 35L67 36" stroke="#171A22" strokeWidth="1.3" strokeLinecap="round" opacity="0.72" />
-        </g>
+        <path d="M38 22C37 8 48 2 61 8C75 2 87 9 86 24C85 43 75 54 62 54C48 54 39 43 38 22Z" fill="#C8C0B8" stroke="#111827" strokeWidth="4" strokeLinejoin="round" />
+        <path d="M45 12L38 1L56 8" fill="#C8C0B8" stroke="#111827" strokeWidth="4" strokeLinejoin="round" />
+        <path d="M76 10L90 2L86 22" fill="#C8C0B8" stroke="#111827" strokeWidth="4" strokeLinejoin="round" />
+        <path d="M50 30C53 27 57 27 60 30" stroke="#111827" strokeWidth="3.2" strokeLinecap="round" />
+        <path d="M66 30C69 27 73 27 76 30" stroke="#111827" strokeWidth="3.2" strokeLinecap="round" />
+        <path d="M63 34L59 39H67L63 34Z" fill="#111827" />
+        <path d="M55 46C60 41 68 41 73 46" stroke="#111827" strokeWidth="3.2" strokeLinecap="round" />
+        <path d="M42 36L29 32M42 42L30 44M82 36L96 32M82 42L94 44" stroke="#111827" strokeWidth="2" strokeLinecap="round" opacity="0.66" />
       </svg>
 
       <div className="pd-brand-copy">
