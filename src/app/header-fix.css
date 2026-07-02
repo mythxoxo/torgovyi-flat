@@ -2,8 +2,13 @@
 
 .pd-brand-logo {
   display: inline-flex;
+  width: 250px;
+  height: 62px;
   min-width: 0;
   align-items: center;
+  overflow: hidden;
+  border-radius: 20px;
+  background: transparent !important;
 }
 
 .pd-brand-logo::before {
@@ -15,9 +20,15 @@
   display: block;
   width: 250px;
   height: 62px;
-  object-fit: contain;
+  object-fit: cover;
+  object-position: center;
   border-radius: 20px;
-  filter: drop-shadow(0 6px 10px rgba(255,85,184,0.06)) drop-shadow(0 3px 8px rgba(89,199,255,0.05));
+  filter: none !important;
+}
+
+.pd-brand-logo--compact {
+  width: 190px;
+  height: 48px;
 }
 
 .pd-brand-logo--compact .pd-brand-img {
@@ -55,17 +66,22 @@
   }
 
   .premium-degen .pd-shell-header > .mx-auto.flex > a:first-child {
+    width: 250px !important;
     min-width: 250px !important;
+    max-width: 250px !important;
     flex: 0 0 250px !important;
-    height: 62px;
+    height: 62px !important;
     padding: 0 !important;
-    border-radius: 20px;
-    overflow: visible;
-    background: #000 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    border-radius: 20px !important;
+    overflow: hidden !important;
+    background: transparent !important;
+    box-shadow: none !important;
   }
 
   .premium-degen .pd-shell-header > .mx-auto.flex > a:first-child:hover {
-    background: #000 !important;
+    background: transparent !important;
     transform: none !important;
   }
 
@@ -125,6 +141,7 @@
 }
 
 @media (max-width: 767px) {
+  .pd-brand-logo,
   .pd-brand-img {
     width: 190px;
     height: 48px;
