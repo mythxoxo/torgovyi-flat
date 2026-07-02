@@ -1,18 +1,20 @@
 import Image from "next/image";
 
 export function BrandLogo({ subtitle, compact = false }: { subtitle?: string; compact?: boolean }) {
-  const iconSize = compact ? 32 : 36;
-  const wordClass = compact ? "text-[18px]" : "text-[23px]";
+  const iconSize = compact ? 30 : 34;
+  const wordClass = compact ? "text-[16px]" : "text-[20px]";
 
   return (
-    <div className="flex min-w-0 items-center gap-3">
-      <Image src="/brand/logo-icon.svg" alt="TONS of GRAM" width={iconSize} height={iconSize} className={compact ? "h-8 w-8 shrink-0" : "h-9 w-9 shrink-0"} />
+    <div className="pd-brand-logo flex min-w-0 items-center gap-3">
+      <div className={compact ? "pd-brand-mark h-9 w-9" : "pd-brand-mark h-10 w-10"}>
+        <Image src="/brand/logo-icon.svg" alt="TONS of GRAM" width={iconSize} height={iconSize} className={compact ? "h-[30px] w-[30px] shrink-0" : "h-[34px] w-[34px] shrink-0"} />
+      </div>
       <div className="min-w-0">
-        <div className={`whitespace-nowrap font-sans ${wordClass} font-extrabold uppercase leading-none tracking-[0.05em] text-[var(--gram-text)]`}>
-          TONS of GRAM
+        <div className={`pd-brand-word whitespace-nowrap font-sans ${wordClass} font-black uppercase leading-none tracking-[0.045em] text-white`}>
+          TONS OF GRAM
         </div>
         {subtitle ? (
-          <div className={compact ? "mt-1 text-[10px] tracking-[0.18em] text-[var(--gram-muted)]" : "mt-1.5 text-[11px] tracking-[0.2em] text-[var(--gram-muted)]"}>
+          <div className={compact ? "pd-brand-sub mt-1 text-[9px]" : "pd-brand-sub mt-1.5 text-[10px]"}>
             {subtitle}
           </div>
         ) : null}
