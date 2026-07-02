@@ -11,13 +11,14 @@ export function ReferralPanel({ referralCode, shareUrl, earnedTon, volumeTon, pe
   const refUrl = hasReferral ? `https://t.me/Myclawxyz_bot?ref=${user?.id ?? referralCode}` : "Connect wallet to generate your referral link.";
   const copy = async () => hasReferral ? navigator.clipboard.writeText(refUrl) : undefined;
   const shareRef = () => hasReferral ? app?.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(refUrl)}&text=${encodeURIComponent("TONS of GRAM referral access")}`) : undefined;
+  const statusCopy = hasReferral ? (pendingTon > 0 ? "Attribution visible / payout pending" : earnedTon > 0 ? "Attribution visible / payout verified" : "Attribution visible / claim state not live yet") : "Wallet required";
 
   return (
     <div className="space-y-5">
       <section className="glass-card rounded-[28px] p-6">
         <p className="text-xs uppercase tracking-[0.2em] text-[#7dd3fc]">Referrals</p>
-        <h1 className="mt-2 font-display text-3xl font-bold text-white">Referral links are live. Rewards depend on indexed eligible buys.</h1>
-        <p className="mt-3 max-w-2xl text-sm leading-7 text-[#c6d4ea]">Link generation and sharing work. Reward and claim values reflect stored backend accounting and remain zero until eligible indexed buys exist.</p>
+        <h1 className="mt-2 font-display text-3xl font-bold text-white">Share launches. Track attribution.</h1>
+        <p className="mt-3 max-w-2xl text-sm leading-7 text-[#c6d4ea]">Your referral link becomes active when your wallet is connected. Attribution can be visible before payout state is fully verified.</p>
       </section>
 
       <section className="glass-card rounded-[28px] p-5">
@@ -28,7 +29,7 @@ export function ReferralPanel({ referralCode, shareUrl, earnedTon, volumeTon, pe
 
       <section className="grid gap-3 sm:grid-cols-3">
         {[
-          { label: 'Status', value: hasReferral ? 'Share-ready / tracked by backend state' : 'Wallet required' },
+          { label: 'Status', value: statusCopy },
           { label: 'Earned', value: `💎 ${earnedTon.toFixed(2)}` },
           { label: 'Pending', value: `💎 ${pendingTon.toFixed(2)}` }
         ].map((stat) => (
@@ -36,7 +37,7 @@ export function ReferralPanel({ referralCode, shareUrl, earnedTon, volumeTon, pe
         ))}
       </section>
 
-      <section className="glass-card rounded-[28px] p-5 text-sm text-[#c6d4ea]">{hasReferral ? `Current visible metrics: volume ${volumeTon.toFixed(2)} TON, code ${referralCode || user?.id || ''}. Claim/earn totals update from persisted backend accounting.` : "Connect wallet to generate your referral link."}</section>
+      <section className="glass-card rounded-[28px] p-5 text-sm text-[#c6d4ea]">{hasReferral ? `Track referral volume, attribution state, and payout status in one place. Current visible volume: ${volumeTon.toFixed(2)} TON. Referral code: ${referralCode || user?.id || ''}.` : "Connect wallet to generate your referral link."}</section>
     </div>
   );
 }

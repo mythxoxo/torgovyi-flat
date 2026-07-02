@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, BarChart3, Rocket, ShieldCheck, Sparkles, TrendingUp, Wallet } from "lucide-react";
+import { BarChart3, Rocket, ShieldCheck, Sparkles, TrendingUp, Wallet } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import type { TokenRecord } from "../lib/shared";
 import { TokenList } from "../components/token-list";
@@ -36,20 +36,19 @@ export default function HomePage() {
             <div className="absolute bottom-[-140px] right-[-100px] h-96 w-96 rounded-full bg-[#2aabee]/16 blur-3xl" />
             <div className="relative z-10 max-w-4xl">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="pd-chip pd-chip-hot"><Sparkles className="h-3.5 w-3.5" /> TON launchpad</span>
-                <span className="pd-chip pd-chip-blue">Live markets</span>
+                <span className="pd-chip pd-chip-hot"><Sparkles className="h-3.5 w-3.5" /> GRAM launchpad</span>
+                <span className="pd-chip pd-chip-blue">Market status</span>
                 <span className="pd-chip pd-chip-live">No custody</span>
               </div>
 
               <h1 className="mt-7 max-w-4xl font-display text-[3rem] font-black leading-[0.92] tracking-[-0.065em] text-white sm:text-[4.9rem]">
-                {locale === "ru" ? <>Мемы на TON.<br /><span className="bg-gradient-to-r from-[#ff7fc3] via-white to-[#9cff2e] bg-clip-text text-transparent">Без лишнего шума.</span></> : <>Memes on TON.<br /><span className="bg-gradient-to-r from-[#ff7fc3] via-white to-[#9cff2e] bg-clip-text text-transparent">Without the noise.</span></>}
+                {t.home.title}
               </h1>
-              <p className="mt-5 max-w-2xl text-lg leading-8 text-[#cbd5e1]">{locale === "ru" ? "Launchpad для быстрых запусков, живых рынков и DEX-токенов. Реальные метрики, ручная подпись в кошельке, без custody." : "A launchpad for fast launches, live markets, and DEX tokens. Real metrics, manual wallet signing, no custody."}</p>
+              <p className="mt-5 max-w-2xl text-lg leading-8 text-[#cbd5e1]">{t.home.subtitle}</p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <Link href="/create?target=8888" className="pd-btn-primary"><Rocket className="h-4 w-4" /> {t.home.launchMain}</Link>
                 <Link href="/markets" className="pd-btn-secondary"><BarChart3 className="h-4 w-4" /> {t.home.ctaTokens}</Link>
-                <Link href="/markets?tab=external" className="pd-btn-secondary">External <ArrowRight className="h-4 w-4" /></Link>
               </div>
 
               <div className="mt-9 grid gap-3 md:grid-cols-3">
@@ -84,9 +83,9 @@ export default function HomePage() {
           <div>
             <p className="pd-kicker">Launchpad feed</p>
             <h2 className="mt-2 font-display text-3xl font-black tracking-[-0.05em] text-white">{t.home.launchesTitle}</h2>
-            <p className="mt-2 text-sm text-[#90a3b8]">{locale === "ru" ? "Если запусков пока нет, витрина остаётся аккуратной, а не пустой заглушкой." : "If there are no launches yet, the feed stays polished."}</p>
+            <p className="mt-2 text-sm text-[#90a3b8]">{locale === "ru" ? "Следи за тем, что уже запущено, что движется и что ещё ждёт proof." : "Track what launched, what is moving, and what still needs proof."}</p>
           </div>
-          <Link href="/markets" className="pd-btn-secondary w-auto">{locale === "ru" ? "Все рынки" : "All markets"} <ArrowRight className="h-4 w-4" /></Link>
+          <Link href="/markets" className="pd-btn-secondary w-auto">{locale === "ru" ? "Все рынки" : "All markets"}</Link>
         </div>
         {error ? <div className="pd-empty mt-4 rounded-2xl px-4 py-3 text-sm text-[#ffb3d1]">{t.misc.noLaunches}</div> : null}
         <div className="mt-5"><TokenList tokens={launches} loading={loading} /></div>

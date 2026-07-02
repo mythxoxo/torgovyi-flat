@@ -26,22 +26,22 @@ const brandIcon = "/brand/tons-of-gram-tonconnect.svg";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://torgovyi-flat.vercel.app"),
-  title: "TONS of GRAM Launchpad",
-  description: "Wallet-first TON launchpad for bonding token launches.",
+  title: "TONS of GRAM — Launch GRAM tokens on The Open Network",
+  description: "Create, share, and track GRAM-based launches on TON Blockchain with wallet-signed steps and transparent market status.",
   icons: {
     icon: brandIcon,
     shortcut: brandIcon,
     apple: brandIcon
   },
   openGraph: {
-    title: "TONS of GRAM Launchpad",
-    description: "Wallet-first TON launchpad for bonding token launches.",
+    title: "TONS of GRAM — Launch GRAM tokens on The Open Network",
+    description: "Create, share, and track GRAM-based launches on TON Blockchain with wallet-signed steps and transparent market status.",
     images: [brandIcon]
   },
   twitter: {
     card: "summary_large_image",
-    title: "TONS of GRAM Launchpad",
-    description: "Wallet-first TON launchpad for bonding token launches.",
+    title: "TONS of GRAM — Launch GRAM tokens on The Open Network",
+    description: "Create, share, and track GRAM-based launches on TON Blockchain with wallet-signed steps and transparent market status.",
     images: [brandIcon]
   }
 };

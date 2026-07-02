@@ -6,24 +6,24 @@ export const messages = {
   ru: {
     nav: { home: "Главная", search: "Поиск", markets: "Рынки", profile: "Профиль" },
     home: {
-      title: "Запусти токен. Пусть рынок решит.",
+      title: "Запускай идеи GRAM на TON.",
       subtitle:
-        "Создай запуск, подпиши транзакции кошельком и следи за прогрессом в ленте. Публичный старт — 8888 GRAM.",
-      ctaTokens: "Смотреть токены",
+        "Создавай, делись и отслеживай GRAM-based запуски с подписью в кошельке и прозрачным market status.",
+      ctaTokens: "Смотреть рынки",
       launchTest: "Внутренний тест",
-      launchMain: "Запуск 8888 GRAM",
+      launchMain: "Запустить токен",
       modeTest: "5 GRAM — внутренний тест",
       modeMain: "Основной запуск — 8888 GRAM",
       note: "5 GRAM — только для внутренней проверки. Публичный запуск — 8888 GRAM.",
       launchesTitle: "Последние запуски"
     },
     create: {
-      title: "Создать токен",
-      subtitle: "Подготовь запуск и подпиши транзакции через свой кошелёк.",
+      title: "Запустить токен",
+      subtitle: "Настрой GRAM-based запуск, подпиши шаги в кошельке и двигайся по понятному launch flow в TON Blockchain.",
       modeTitle: "Режим запуска",
       modeTest: "5 GRAM — внутренний тест",
       modeMain: "8888 GRAM — публичный запуск",
-      signed: "Транзакции подписываются только через твой кошелёк."
+      signed: "Wallet-signed only. Без custody."
     },
     search: {
       title: "Поиск токенов",
@@ -31,7 +31,7 @@ export const messages = {
       empty: "Начни вводить название или тикер."
     },
     markets: {
-      title: "Рынки",
+      title: "GRAM рынки",
       trending: "В тренде",
       volume: "Топ по объёму",
       gainers: "Лидеры роста",
@@ -39,9 +39,9 @@ export const messages = {
       empty: "Рейтинги появятся после первых индексированных сделок."
     },
     profile: {
-      title: "Профиль",
-      subtitle: "Только активы подключённого кошелька.",
-      connect: "Подключите кошелёк, чтобы увидеть профиль.",
+      title: "Кошелёк",
+      subtitle: "Следи за кошельком, запусками и GRAM-активностью.",
+      connect: "Подключи кошелёк, чтобы увидеть балансы, запуски и referral state.",
       assetsFallback: "Не удалось загрузить активы кошелька. Проверь mainnet API ключи и повтори позже."
     },
     token: {
@@ -62,24 +62,24 @@ export const messages = {
   en: {
     nav: { home: "Home", search: "Search", markets: "Markets", profile: "Profile" },
     home: {
-      title: "Launch the token. Let the market decide.",
+      title: "Launch GRAM ideas on TON.",
       subtitle:
-        "Create the launch, sign with your wallet, and track progress in the live feed. Public launch starts at 8888 GRAM.",
-      ctaTokens: "Explore tokens",
+        "Create, share, and track GRAM-based launches with wallet-signed steps and transparent market status.",
+      ctaTokens: "Explore markets",
       launchTest: "Internal test",
-      launchMain: "Launch 8888 GRAM",
+      launchMain: "Launch token",
       modeTest: "5 GRAM — internal test",
       modeMain: "Main launch — 8888 GRAM",
       note: "5 GRAM is only for internal checks. Public launch starts at 8888 GRAM.",
       launchesTitle: "Latest launches"
     },
     create: {
-      title: "Create token",
-      subtitle: "Prepare the launch and sign transactions with your wallet.",
+      title: "Launch token",
+      subtitle: "Set up a GRAM-based launch, sign with your wallet, and move through a clear launch flow on TON Blockchain.",
       modeTitle: "Launch mode",
       modeTest: "5 GRAM — internal test",
       modeMain: "8888 GRAM — public launch",
-      signed: "Transactions are signed only by your wallet."
+      signed: "Wallet-signed only. No custody."
     },
     search: {
       title: "Search tokens",
@@ -87,7 +87,7 @@ export const messages = {
       empty: "Start typing a name or ticker."
     },
     markets: {
-      title: "Markets",
+      title: "GRAM markets",
       trending: "Trending",
       volume: "Top volume",
       gainers: "Gainers",
@@ -95,9 +95,9 @@ export const messages = {
       empty: "Market rankings will appear after indexed trades."
     },
     profile: {
-      title: "Profile",
-      subtitle: "Only the connected wallet assets are shown here.",
-      connect: "Connect your wallet to open the profile.",
+      title: "Wallet",
+      subtitle: "Track your wallet, launches, and GRAM activity.",
+      connect: "Connect wallet to view balances, launches, and referral state.",
       assetsFallback: "Wallet assets are not available yet. Check mainnet API keys and try again later."
     },
     token: {

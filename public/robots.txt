@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://torgovyi-flat.vercel.app/sitemap.xml

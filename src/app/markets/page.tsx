@@ -75,12 +75,12 @@ export default function MarketsPage() {
         <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <span className="pd-chip pd-chip-hot"><Flame className="h-3.5 w-3.5" /> Markets</span>
+              <span className="pd-chip pd-chip-hot"><Flame className="h-3.5 w-3.5" /> GRAM markets</span>
               <span className="pd-chip pd-chip-blue">Launchpad + DEX</span>
-              <span className="pd-chip pd-chip-live">Live metrics</span>
+              <span className="pd-chip pd-chip-live">Market status</span>
             </div>
-            <h1 className="mt-4 font-display text-5xl font-black tracking-[-0.065em] text-white sm:text-6xl">{locale === "ru" ? "Рынки TON" : "TON markets"}</h1>
-            <p className="mt-3 max-w-2xl text-sm leading-7 text-[#90a3b8]">{locale === "ru" ? "Запуски TONS of GRAM и External DEX токены в одной чистой витрине. Данные остаются из текущего pipeline." : "TONS of GRAM launches and External DEX tokens in one clean market view. Data stays on the current pipeline."}</p>
+            <h1 className="mt-4 font-display text-5xl font-black tracking-[-0.065em] text-white sm:text-6xl">{locale === "ru" ? "GRAM рынки" : "GRAM markets"}</h1>
+            <p className="mt-3 max-w-2xl text-sm leading-7 text-[#90a3b8]">{locale === "ru" ? "Исследуй GRAM-based запуски и external markets в одной чистой витрине на The Open Network." : "Explore GRAM-based launches and external markets in one clean view on The Open Network."}</p>
           </div>
           <div className="grid gap-3 sm:grid-cols-3 xl:w-[520px]">
             <div className="pd-stat"><BarChart3 className="h-4 w-4 text-[#9cff2e]" /><div className="mt-2 text-2xl font-black text-white">{tokens.length}</div><div className="text-xs text-[#90a3b8]">{locale === "ru" ? "токенов" : "tokens"}</div></div>

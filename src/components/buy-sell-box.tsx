@@ -74,7 +74,7 @@ export function BuySellBox({ token }: { token: TokenRecord }) {
     } finally { setLoading(false); }
   };
 
-  if (!wallet) return <div className="pd-panel rounded-[28px] p-6 text-center"><h3 className="font-display text-2xl font-black tracking-[-0.04em] text-white">Connect wallet to trade</h3><p className="mx-auto mt-2 max-w-xs text-sm leading-6 text-[#90a3b8]">Manual signing only. No custody, no private keys.</p><div className="mt-5 flex justify-center"><WalletConnectButton /></div></div>;
+  if (!wallet) return <div className="pd-panel rounded-[28px] p-6 text-center"><h3 className="font-display text-2xl font-black tracking-[-0.04em] text-white">Connect wallet to buy or sell</h3><p className="mx-auto mt-2 max-w-xs text-sm leading-6 text-[#90a3b8]">Transactions are signed in your wallet on TON Blockchain. No custody, no private keys.</p><div className="mt-5 flex justify-center"><WalletConnectButton /></div></div>;
 
   const activeQuote = mode === "buy" ? buyQuote : null;
 
@@ -82,7 +82,7 @@ export function BuySellBox({ token }: { token: TokenRecord }) {
     <div className="pd-panel space-y-4 rounded-[28px] p-5">
       <div>
         <div className="pd-kicker">Bonding trade</div>
-        <h3 className="mt-1 font-display text-2xl font-black tracking-[-0.045em] text-white">{mode === "buy" ? "Buy launch" : "Sell"}</h3>
+        <h3 className="mt-1 font-display text-2xl font-black tracking-[-0.045em] text-white">{mode === "buy" ? "Buy / sell" : "Sell"}</h3>
       </div>
 
       <div className="grid grid-cols-2 gap-2 rounded-2xl border border-white/10 bg-white/[0.045] p-1">
@@ -101,9 +101,10 @@ export function BuySellBox({ token }: { token: TokenRecord }) {
 
       <div className="space-y-2 rounded-[22px] border border-white/10 bg-white/[0.045] px-4 py-3 text-sm text-[#cbd5e1]">
         <div className="flex justify-between"><span>Current price</span><span className="font-mono font-bold text-white">{visibleCurrentPrice > 0 ? `${visibleCurrentPrice.toFixed(8)} GRAM` : "—"}</span></div>
-        {mode === "buy" ? <><div className="flex justify-between"><span>Estimated tokens</span><span className="font-mono font-bold text-white">{buyQuote ? buyQuote.tokenAmount.toFixed(2) : "—"}</span></div><div className="flex justify-between"><span>GRAM in USD</span><span className="font-mono font-bold text-white">{gramPrice ? `$${gramPrice.toFixed(2)}` : "—"}</span></div><div className="flex justify-between"><span>Estimated USD value</span><span className="font-mono font-bold text-white">{gramPrice && numericAmount > 0 ? formatTonUsd(numericAmount, gramPrice) : "—"}</span></div></> : <div className="rounded-2xl border border-[#ffd166]/25 bg-[#ffd166]/10 p-3 text-xs text-[#ffe1a3]">Sell is not available yet for bonding launches.</div>}
+        {mode === "buy" ? <><div className="flex justify-between"><span>Estimated tokens</span><span className="font-mono font-bold text-white">{buyQuote ? buyQuote.tokenAmount.toFixed(2) : "—"}</span></div><div className="flex justify-between"><span>GRAM in USD</span><span className="font-mono font-bold text-white">{gramPrice ? `$${gramPrice.toFixed(2)}` : "—"}</span></div><div className="flex justify-between"><span>Estimated USD value</span><span className="font-mono font-bold text-white">{gramPrice && numericAmount > 0 ? formatTonUsd(numericAmount, gramPrice) : "—"}</span></div></> : <div className="rounded-2xl border border-[#ffd166]/25 bg-[#ffd166]/10 p-3 text-xs text-[#ffe1a3]">Trading is not available for this launch state yet.</div>}
       </div>
 
+      <div className="rounded-2xl border border-white/10 bg-white/[0.045] p-3 text-xs text-[#90a3b8]">Market access does not replace proof state. Review launch and market status before trading.</div>
       {error ? <div className="rounded-2xl border border-[#ff5c7a]/30 bg-[#ff5c7a]/10 p-3 text-sm text-[#ff9db0]">{error}</div> : null}
       <button onClick={submit} disabled={loading || !activeQuote || token.status !== "BONDING" || mode !== "buy"} className="pd-btn-primary w-full disabled:cursor-not-allowed disabled:opacity-50">{loading ? "Waiting for wallet signature..." : mode === "buy" ? "Buy with wallet" : "Sell unavailable"}</button>
       <div className="text-xs text-[#90a3b8]">Status: {stage}</div>
