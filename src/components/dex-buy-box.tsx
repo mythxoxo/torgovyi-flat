@@ -63,7 +63,11 @@ export function DexBuyBox({ token }: { token: ExternalTokenRecord }) {
     setStage("quoting");
     try {
       if (!wallet) throw new Error(locale === "ru" ? "Сначала подключи кошелёк" : "Connect wallet first");
-      const res = await fetch("/api/dex/quote", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ tokenAddress: token.address, side, amount: inputUnits(), platforms: availablePlatforms, slippageBps: 300 }) });
+      const res = await fetch("/api/dex/quote", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tokenAddress: token.address, side, amount: inputUnits(), platforms: availablePlatforms, slippageBps: 300 })
+      });
       const data = (await res.json()) as { ok?: boolean; quotes?: DexQuote[]; error?: string };
       const nextQuotes = Array.isArray(data.quotes) ? data.quotes : [];
       if (!res.ok || !data.ok || nextQuotes.length === 0) throw new Error(data.error || "Quote failed");
@@ -76,7 +80,9 @@ export function DexBuyBox({ token }: { token: ExternalTokenRecord }) {
       setStage("failed");
       setError(message);
       app?.HapticFeedback?.notificationOccurred("error");
-    } finally { setLoading(false); }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const execute = async () => {
@@ -90,12 +96,14 @@ export function DexBuyBox({ token }: { token: ExternalTokenRecord }) {
       if (!isMainnet) throw new Error(locale === "ru" ? "Нужен TON mainnet" : "TON mainnet is required");
       if (!selectedDex) throw new Error(locale === "ru" ? "Выбери платформу" : "Choose platform");
       if (!selectedQuote || selectedQuote.status !== "quote_ready") throw new Error(locale === "ru" ? "Сначала получи рабочий quote" : "Fetch a working quote first");
-
-      const res = await fetch("/api/dex/swap", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ tokenAddress: token.address, side, amount: inputUnits(), platform: selectedDex, userWallet: wallet, slippageBps: 300 }) });
+      const res = await fetch("/api/dex/swap", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tokenAddress: token.address, side, amount: inputUnits(), platform: selectedDex, userWallet: wallet, slippageBps: 300 })
+      });
       const data = (await res.json()) as { ok?: boolean; result?: DexSwapPayload; error?: string };
       if (!res.ok || !data.result) throw new Error(data.error || "Swap payload failed");
       if (data.result.status !== "payload_ready") throw new Error(data.result.reason || data.result.status);
-
       setStage("signing");
       const tx = (await sendTransaction({ validUntil: data.result.validUntil, messages: data.result.messages } as TonTransactionDraft)) as { boc?: string } | unknown;
       const nextTxInfo = typeof tx === "object" && tx ? { hash: "boc" in tx && typeof tx.boc === "string" ? tx.boc : undefined } : null;
@@ -107,7 +115,9 @@ export function DexBuyBox({ token }: { token: ExternalTokenRecord }) {
       setStage("failed");
       setError(message);
       app?.HapticFeedback?.notificationOccurred("error");
-    } finally { setLoading(false); }
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!isConnected) {
@@ -130,4 +140,17 @@ export function DexBuyBox({ token }: { token: ExternalTokenRecord }) {
         <button type="button" onClick={() => setSide("buy")} className={`rounded-xl py-2.5 text-sm font-bold ${side === "buy" ? "bg-[#ff3d9a] text-white" : "text-[#90a3b8]"}`}>{locale === "ru" ? "Купить" : "Buy"}</button>
         <button type="button" onClick={() => setSide("sell")} className={`rounded-xl py-2.5 text-sm font-bold ${side === "sell" ? "bg-[#ff3d9a] text-white" : "text-[#90a3b8]"}`}>{locale === "ru" ? "Продать" : "Sell"}</button>
       </div>
-      <div className="rounded-[22px] border border-white/10 bg-white/[0.055] p-3"><label className="text-xs font-bold uppercase tracking-[0.14em] text-[#90a3b8]">{side === "buy" ? (locale === "ru" ? "Сумма в TON" : "Amount in TON") : `${locale === "ru" ? "Сумма в" : "Amount in
+      <div className="rounded-[22px] border border-white/10 bg-white/[0.055] p-3"><label className="text-xs font-bold uppercase tracking-[0.14em] text-[#90a3b8]">{side === "buy" ? (locale === "ru" ? "Сумма в TON" : "Amount in TON") : `${locale === "ru" ? "Сумма в" : "Amount in"} ${token.symbol}`}</label><input value={amount} onChange={(event) => setAmount(event.target.value)} inputMode="decimal" className="mt-2 w-full bg-transparent font-mono text-xl font-black text-white outline-none" /></div>
+      <div className="grid grid-cols-4 gap-2">{(side === "buy" ? ["0.2", "0.5", "1", "5"] : ["100", "1000", "10000", "50000"]).map((val) => <button key={val} type="button" onClick={() => setAmount(val)} className="rounded-xl border border-white/10 bg-white/[0.045] py-2 text-xs font-bold text-[#90a3b8] hover:border-[#ff3d9a]/45 hover:text-white">{val}</button>)}</div>
+      <button type="button" disabled={disabledQuote} onClick={requestQuote} className={`pd-btn-secondary w-full ${disabledQuote ? "cursor-not-allowed opacity-50" : ""}`}>{loading && stage === "quoting" ? (locale === "ru" ? "Считаю маршрут..." : "Quoting route...") : (locale === "ru" ? "Получить quote" : "Get quote")}</button>
+      <DexPlatformSelector quotes={quotes} selected={selectedDex} onSelect={setSelectedDex} />
+      {selectedQuote ? <div className="space-y-2 rounded-[22px] border border-[#9cff2e]/25 bg-[#9cff2e]/10 p-3 text-sm text-[#dfff9f]"><div className="flex justify-between"><span>{locale === "ru" ? "Ожидаемо получишь" : "Expected output"}</span><span className="font-mono font-bold text-white">{formatUnits(selectedQuote.expectedReceive, side === "buy" ? token.decimals : 9)} {side === "buy" ? token.symbol : "TON"}</span></div><div className="flex justify-between"><span>{locale === "ru" ? "Минимум" : "Minimum"}</span><span className="font-mono font-bold text-white">{formatUnits(selectedQuote.minReceive, side === "buy" ? token.decimals : 9)} {side === "buy" ? token.symbol : "TON"}</span></div></div> : null}
+      <button type="button" disabled={disabledTrade} onClick={execute} className={`pd-btn-primary w-full ${disabledTrade ? "cursor-not-allowed opacity-50" : ""}`}>{loading && stage === "building" ? (locale === "ru" ? "Собираю транзакцию..." : "Building transaction...") : loading && stage === "signing" ? (locale === "ru" ? "Подтверди в кошельке..." : "Confirm in wallet...") : stage === "submitted" ? (locale === "ru" ? "Отправлено" : "Submitted") : side === "buy" ? (locale === "ru" ? "Купить через кошелёк" : "Buy with wallet") : (locale === "ru" ? "Продать через кошелёк" : "Sell with wallet")}</button>
+      {!isMainnet ? <div className="rounded-2xl border border-[#ffd166]/30 bg-[#ffd166]/10 p-3 text-sm text-[#ffe1a3]">{locale === "ru" ? "Переключи кошелёк на TON mainnet." : "Switch your wallet to TON mainnet."}</div> : null}
+      {warning ? <div className="rounded-2xl border border-[#ffd166]/30 bg-[#ffd166]/10 p-3 text-sm text-[#ffe1a3]">{warning}</div> : null}
+      {txInfo?.hash ? <div className="space-y-2 break-all rounded-2xl border border-[#5ac8fa]/30 bg-[#5ac8fa]/10 p-3 text-xs text-[#c9f0ff]"><div>BOC: {txInfo.hash}</div>{txExplorer ? <a href={txExplorer} target="_blank" rel="noreferrer" className="inline-flex text-[#8fd6ff] underline underline-offset-2">{locale === "ru" ? "Открыть в Tonviewer" : "Open in Tonviewer"}</a> : null}</div> : null}
+      {error ? <div className="rounded-2xl border border-[#ff5c7a]/30 bg-[#ff5c7a]/10 p-3 text-sm text-[#ff9db0]">{error}</div> : null}
+      <p className="text-xs leading-5 text-[#90a3b8]">{locale === "ru" ? `Статус: ${stage}` : `Status: ${stage}`}</p>
+    </div>
+  );
+}
