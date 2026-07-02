@@ -4,31 +4,32 @@
   display: inline-flex;
   min-width: 0;
   align-items: center;
-  gap: 0;
 }
 
 .pd-brand-logo::before {
-  content: "";
-  display: block;
-  width: 330px;
-  height: 82px;
-  flex: 0 0 auto;
-  background-image: url("/brand/tons-of-gram-header-logo.webp");
-  background-repeat: no-repeat;
-  background-position: left center;
-  background-size: contain;
-  filter: drop-shadow(0 14px 28px rgba(255,85,184,0.14)) drop-shadow(0 8px 18px rgba(89,199,255,0.10));
+  content: none !important;
+  display: none !important;
 }
 
-.pd-brand-logo--compact::before {
-  width: 230px;
-  height: 58px;
+.pd-brand-img {
+  display: block;
+  width: 250px;
+  height: 62px;
+  object-fit: contain;
+  border-radius: 20px;
+  filter: drop-shadow(0 10px 18px rgba(255,85,184,0.10)) drop-shadow(0 5px 12px rgba(89,199,255,0.08));
+}
+
+.pd-brand-logo--compact .pd-brand-img {
+  width: 190px;
+  height: 48px;
 }
 
 .pd-cart-logo,
 .pd-brand-copy,
 .pd-brand-wordmark,
-.pd-brand-of {
+.pd-brand-of,
+.pd-brand-art {
   display: none !important;
 }
 
@@ -40,32 +41,42 @@
   }
 
   .premium-degen .pd-shell-header > .mx-auto.flex {
-    margin-top: 14px;
-    margin-bottom: 14px;
-    padding: 8px !important;
-    gap: 12px !important;
+    max-width: 1360px !important;
+    margin-top: 12px;
+    margin-bottom: 12px;
+    padding: 10px 14px !important;
+    gap: 18px !important;
+    align-items: center !important;
     border: 1px solid rgba(255,255,255,0.075) !important;
     border-radius: 28px !important;
-    background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.034)), rgba(6,8,15,0.82) !important;
-    box-shadow: 0 24px 80px rgba(0,0,0,0.34), inset 0 1px 0 rgba(255,255,255,0.075) !important;
+    background: linear-gradient(180deg, rgba(255,255,255,0.066), rgba(255,255,255,0.030)), rgba(6,8,15,0.84) !important;
+    box-shadow: 0 22px 70px rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.07) !important;
     backdrop-filter: blur(22px);
   }
 
   .premium-degen .pd-shell-header > .mx-auto.flex > a:first-child {
-    min-width: 350px;
-    padding: 0 10px 0 0;
-    border-radius: 22px;
+    min-width: 250px !important;
+    flex: 0 0 250px !important;
+    height: 62px;
+    padding: 0 !important;
+    border-radius: 20px;
+    overflow: visible;
+    background: transparent !important;
   }
 
   .premium-degen .pd-shell-header > .mx-auto.flex > a:first-child:hover {
-    background: rgba(255,255,255,0.045);
+    background: transparent !important;
+    transform: translateY(-1px);
   }
 
   .premium-degen .pd-shell-header nav.pd-nav {
+    flex: 1 1 auto;
+    justify-content: center;
+    min-width: 0;
     padding: 6px !important;
-    gap: 3px !important;
-    border-radius: 22px !important;
-    background: rgba(3,5,10,0.48) !important;
+    gap: 4px !important;
+    border-radius: 23px !important;
+    background: rgba(3,5,10,0.50) !important;
     border-color: rgba(255,255,255,0.07) !important;
   }
 
@@ -78,11 +89,12 @@
   }
 
   .premium-degen .pd-shell-header > .mx-auto.flex > div:last-child {
+    flex: 0 0 auto;
     min-width: 282px;
     gap: 6px !important;
     padding: 5px !important;
     border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 22px;
+    border-radius: 23px;
     background: rgba(3,5,10,0.42);
   }
 }
@@ -110,9 +122,9 @@
 }
 
 @media (max-width: 767px) {
-  .pd-brand-logo::before {
-    width: 230px;
-    height: 58px;
+  .pd-brand-img {
+    width: 190px;
+    height: 48px;
   }
 
   .premium-degen .pd-shell-header {
