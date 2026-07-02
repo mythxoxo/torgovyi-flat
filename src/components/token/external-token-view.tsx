@@ -15,47 +15,50 @@ export function ExternalTokenView({ token }: { token: ExternalTokenRecord }) {
   const { locale } = useUi();
   const copyAddress = async () => navigator.clipboard.writeText(token.address);
   const change = token.change24h ?? 0;
-  const changeClass = change >= 0 ? "text-[#86efac]" : "text-[#ff8a95]";
+  const changeClass = change >= 0 ? "text-[#9cff2e]" : "text-[#ff5c7a]";
   const dexes = token.dexes.length ? token.dexes : token.primaryDex ? [token.primaryDex] : [];
 
   return (
-    <div className="space-y-4 pb-24 pt-4">
-      <div className="space-y-4 px-4">
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex min-w-0 items-center gap-3">
-            <div className="h-14 w-14 overflow-hidden rounded-xl border border-[#1e3a5f] bg-white/5">
-              <Image src={token.image || "/brand/img_04.jpg"} alt={token.name} width={56} height={56} className="h-full w-full object-cover" />
+    <div className="space-y-5 pb-24 pt-2">
+      <section className="pd-panel overflow-hidden rounded-[34px] p-6">
+        <div className="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
+          <div className="flex min-w-0 items-start gap-4">
+            <div className="h-20 w-20 shrink-0 overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-[0_18px_60px_rgba(0,0,0,0.28)]">
+              <Image src={token.image || "/brand/img_04.jpg"} alt={token.name} width={80} height={80} className="h-full w-full object-cover" />
             </div>
             <div className="min-w-0">
-              <div className="flex flex-wrap gap-1 text-xs uppercase tracking-[0.18em] text-[#5ac8fa]"><span>External token</span>{dexes.map((dex) => <span key={dex} className="rounded-full border border-[#2aabee]/30 bg-[#2aabee]/10 px-2 py-0.5 tracking-normal text-[#bfe9ff]">{dexLabel(dex)}</span>)}</div>
-              <h1 className="truncate font-display text-xl font-bold text-white">{token.name}</h1>
-              <span className="font-mono text-sm text-[#2aabee]">{token.symbol}</span>
+              <div className="flex flex-wrap gap-2">
+                <span className="pd-chip pd-chip-hot">External token</span>
+                {dexes.map((dex) => <span key={dex} className="pd-chip pd-chip-blue">{dexLabel(dex)}</span>)}
+                <span className={change >= 0 ? "pd-chip pd-chip-live" : "pd-chip pd-chip-hot"}>{change > 0 ? "+" : ""}{change.toFixed(1)}% 24h</span>
+              </div>
+              <h1 className="mt-4 truncate font-display text-5xl font-black tracking-[-0.065em] text-white">{token.name}</h1>
+              <div className="mt-1 font-mono text-sm font-bold text-[#5ac8fa]">{token.symbol}</div>
             </div>
           </div>
           <WatchlistButton id={token.address} />
         </div>
 
-        <p className="text-sm leading-6 text-[#8ba3c1]">
-          {locale === "ru" ? "Этот токен не был запущен через TONS of GRAM. Купить или продать его можно через выбранный DEX-маршрут и подпись в кошельке." : "This token was not launched through TONS of GRAM, but you can buy or sell it through the selected DEX route and wallet signature."}
+        <p className="mt-5 max-w-3xl text-sm leading-7 text-[#90a3b8]">
+          {locale === "ru" ? "External DEX токен. Торговля идёт через выбранный DEX-маршрут и подпись в кошельке; TONS of GRAM не хранит средства." : "External DEX token. Trading goes through the selected DEX route and wallet signature; TONS of GRAM does not custody funds."}
         </p>
 
-        <div className="flex items-center gap-2 rounded-lg bg-[#1a2235] px-3 py-2">
-          <span className="flex-1 truncate font-mono text-xs text-[#8ba3c1]">{token.address.slice(0, 6)}...{token.address.slice(-4)}</span>
-          <button onClick={copyAddress}><Copy className="h-4 w-4 text-[#8ba3c1]" /></button>
+        <div className="mt-5 flex items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.045] px-3 py-2">
+          <span className="flex-1 truncate font-mono text-xs text-[#90a3b8]">{token.address.slice(0, 6)}...{token.address.slice(-4)}</span>
+          <button onClick={copyAddress}><Copy className="h-4 w-4 text-[#90a3b8]" /></button>
         </div>
+        <div className="mt-4"><RiskBadges token={token} /></div>
+      </section>
 
-        <RiskBadges token={token} />
-      </div>
-
-      <div className="grid gap-4 px-4 xl:grid-cols-[1.2fr_0.8fr]">
-        <div className="space-y-4">
-          <div className="glass-card rounded-[24px] p-5">
-            <h2 className="font-display text-2xl font-bold text-white">{locale === "ru" ? "Рынок" : "Market"}</h2>
+      <div className="grid gap-5 xl:grid-cols-[1.2fr_0.8fr]">
+        <div className="space-y-5">
+          <div className="pd-panel rounded-[28px] p-5">
+            <h2 className="font-display text-2xl font-black text-white">{locale === "ru" ? "Рынок" : "Market"}</h2>
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
-              <div className="rounded-2xl border border-white/8 bg-white/5 p-4"><div className="text-xs text-[#8ba3c1]">{locale === "ru" ? "Цена" : "Price"}</div><div className="mt-1 font-semibold text-white">{token.priceGram ? `${token.priceGram.toLocaleString("en-US")} GRAM` : "N/A"}</div></div>
-              <div className="rounded-2xl border border-white/8 bg-white/5 p-4"><div className="text-xs text-[#8ba3c1]">24h</div><div className={`mt-1 font-semibold ${changeClass}`}>{change > 0 ? "+" : ""}{change.toFixed(1)}%</div></div>
-              <div className="rounded-2xl border border-white/8 bg-white/5 p-4"><div className="text-xs text-[#8ba3c1]">{locale === "ru" ? "Ликвидность" : "Liquidity"}</div><div className="mt-1 font-semibold text-white">{token.liquidityGram ? `${token.liquidityGram.toLocaleString("en-US")} GRAM` : "N/A"}</div></div>
-              <div className="rounded-2xl border border-white/8 bg-white/5 p-4"><div className="text-xs text-[#8ba3c1]">DEX</div><div className="mt-1 flex flex-wrap gap-1">{dexes.length ? dexes.map((dex) => <span key={dex} className="rounded-full bg-white/8 px-2 py-0.5 text-xs font-semibold text-white">{dexLabel(dex)}</span>) : <span className="font-semibold text-white">No route</span>}</div></div>
+              <div className="pd-stat"><div className="text-xs text-[#90a3b8]">{locale === "ru" ? "Цена" : "Price"}</div><div className="mt-1 font-black text-white">{token.priceGram ? `${token.priceGram.toLocaleString("en-US")} GRAM` : token.priceUsd ? `$${token.priceUsd.toLocaleString("en-US")}` : "N/A"}</div></div>
+              <div className="pd-stat"><div className="text-xs text-[#90a3b8]">24h</div><div className={`mt-1 font-black ${changeClass}`}>{change > 0 ? "+" : ""}{change.toFixed(1)}%</div></div>
+              <div className="pd-stat"><div className="text-xs text-[#90a3b8]">{locale === "ru" ? "Ликвидность" : "Liquidity"}</div><div className="mt-1 font-black text-white">{token.liquidityGram ? `${token.liquidityGram.toLocaleString("en-US")} GRAM` : token.liquidityUsd ? `$${token.liquidityUsd.toLocaleString("en-US")}` : "N/A"}</div></div>
+              <div className="pd-stat"><div className="text-xs text-[#90a3b8]">DEX</div><div className="mt-1 flex flex-wrap gap-1">{dexes.length ? dexes.map((dex) => <span key={dex} className="pd-chip pd-chip-blue">{dexLabel(dex)}</span>) : <span className="font-semibold text-white">No route</span>}</div></div>
             </div>
           </div>
           <ExternalTokenWalletPanel token={token} />
