@@ -20,11 +20,32 @@ function readAddress(...names: string[]): string | undefined {
 
 export function getProjectWallets(): ProjectWalletConfig {
   return {
-    treasury: readAddress("TONS_OF_GRAM_TREASURY_ADDRESS", "TONK_TREASURY_ADDRESS"),
-    owner: readAddress("TONS_OF_GRAM_OWNER_ADDRESS", "TONK_OWNER_ADDRESS", "FACTORY_OWNER_ADDRESS"),
-    deployer: readAddress("TONS_OF_GRAM_DEPLOYER_ADDRESS", "TONK_DEPLOYER_ADDRESS"),
-    operator: readAddress("TONS_OF_GRAM_OPERATOR_ADDRESS", "TONK_OPERATOR_ADDRESS"),
-    liquidity: readAddress("TONS_OF_GRAM_LIQUIDITY_ADDRESS", "TONK_LIQUIDITY_ADDRESS")
+    treasury: readAddress(
+      "TONSOFGRAM_TREASURY_ADDRESS",
+      "TONS_OF_GRAM_TREASURY_ADDRESS",
+      "TONK_TREASURY_ADDRESS"
+    ),
+    owner: readAddress(
+      "TONSOFGRAM_OWNER_ADDRESS",
+      "TONS_OF_GRAM_OWNER_ADDRESS",
+      "TONK_OWNER_ADDRESS",
+      "FACTORY_OWNER_ADDRESS"
+    ),
+    deployer: readAddress(
+      "TONSOFGRAM_DEPLOYER_ADDRESS",
+      "TONS_OF_GRAM_DEPLOYER_ADDRESS",
+      "TONK_DEPLOYER_ADDRESS"
+    ),
+    operator: readAddress(
+      "TONSOFGRAM_OPERATOR_ADDRESS",
+      "TONS_OF_GRAM_OPERATOR_ADDRESS",
+      "TONK_OPERATOR_ADDRESS"
+    ),
+    liquidity: readAddress(
+      "TONSOFGRAM_LIQUIDITY_ADDRESS",
+      "TONS_OF_GRAM_LIQUIDITY_ADDRESS",
+      "TONK_LIQUIDITY_ADDRESS"
+    )
   };
 }
 
