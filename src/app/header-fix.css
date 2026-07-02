@@ -4,63 +4,32 @@
   display: inline-flex;
   min-width: 0;
   align-items: center;
-  gap: 12px;
+  gap: 0;
 }
 
-.pd-brand-logo--compact {
-  gap: 8px;
-}
-
-.pd-cart-logo {
-  width: 82px;
-  height: 50px;
-  flex: 0 0 auto;
+.pd-brand-logo::before {
+  content: "";
   display: block;
-  filter: drop-shadow(0 14px 26px rgba(255,85,184,0.16)) drop-shadow(0 8px 18px rgba(89,199,255,0.10));
+  width: 330px;
+  height: 82px;
+  flex: 0 0 auto;
+  background-image: url("/brand/tons-of-gram-header-logo.webp");
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: contain;
+  filter: drop-shadow(0 14px 28px rgba(255,85,184,0.14)) drop-shadow(0 8px 18px rgba(89,199,255,0.10));
 }
 
-.pd-brand-logo--compact .pd-cart-logo {
-  width: 62px;
-  height: 38px;
+.pd-brand-logo--compact::before {
+  width: 230px;
+  height: 58px;
 }
 
-.pd-brand-copy {
-  min-width: 0;
-  display: flex;
-  align-items: center;
-}
-
-.pd-brand-wordmark {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 5px;
-  white-space: nowrap;
-  font-family: var(--font-sora), var(--font-geist), system-ui, sans-serif;
-  font-size: 19px;
-  line-height: 1;
-  font-weight: 900;
-  letter-spacing: 0.005em;
-  color: #ffffff;
-  text-transform: none;
-  text-shadow: 0 10px 30px rgba(255,255,255,0.08);
-}
-
-.pd-brand-logo--compact .pd-brand-wordmark {
-  font-size: 15px;
-  gap: 4px;
-}
-
+.pd-cart-logo,
+.pd-brand-copy,
+.pd-brand-wordmark,
 .pd-brand-of {
-  position: relative;
-  top: -0.42em;
-  margin-left: -2px;
-  margin-right: -2px;
-  font-size: 0.28em;
-  line-height: 1;
-  font-weight: 900;
-  letter-spacing: -0.05em;
-  color: #ff55b8;
-  opacity: 0.98;
+  display: none !important;
 }
 
 @media (min-width: 768px) {
@@ -83,8 +52,8 @@
   }
 
   .premium-degen .pd-shell-header > .mx-auto.flex > a:first-child {
-    min-width: 310px;
-    padding: 2px 14px 2px 4px;
+    min-width: 350px;
+    padding: 0 10px 0 0;
     border-radius: 22px;
   }
 
@@ -141,7 +110,13 @@
 }
 
 @media (max-width: 767px) {
-  .pd-cart-logo { width: 62px; height: 38px; }
-  .pd-brand-wordmark { font-size: 15px; gap: 4px; }
-  .premium-degen .pd-shell-header { padding: 11px 14px !important; background: rgba(3,5,10,0.88) !important; }
+  .pd-brand-logo::before {
+    width: 230px;
+    height: 58px;
+  }
+
+  .premium-degen .pd-shell-header {
+    padding: 11px 14px !important;
+    background: rgba(3,5,10,0.88) !important;
+  }
 }
