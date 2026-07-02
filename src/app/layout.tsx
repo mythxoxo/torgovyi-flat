@@ -4,6 +4,7 @@ import { Sora } from "next/font/google";
 import "./globals.css";
 import "./premium-degen.css";
 import "./header-fix.css";
+import "./brand-art-fix.css";
 import { PageShell } from "../components/page-shell";
 import { TelegramBoot } from "../components/telegram-boot";
 import { Providers } from "../components/wallet-context";
