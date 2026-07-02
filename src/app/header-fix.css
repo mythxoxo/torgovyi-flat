@@ -1,64 +1,65 @@
 /* Focused header/logo fix. Visual only. */
 
-.pd-gem-mark {
-  position: relative;
+.pd-brand-logo {
   display: inline-flex;
-  height: 46px;
-  width: 46px;
-  flex-shrink: 0;
+  min-width: 0;
   align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  border-radius: 18px;
-  border: 1px solid rgba(255,255,255,0.14);
-  background: linear-gradient(135deg, rgba(255,85,184,0.34), rgba(139,92,246,0.22) 48%, rgba(89,199,255,0.30)), rgba(255,255,255,0.06);
-  box-shadow: 0 16px 42px rgba(255,85,184,0.16), inset 0 1px 0 rgba(255,255,255,0.20);
+  gap: 10px;
 }
 
-.pd-gem-mark--compact {
-  height: 40px;
-  width: 40px;
-  border-radius: 15px;
+.pd-brand-logo--compact {
+  gap: 8px;
 }
 
-.pd-gem-core {
-  position: relative;
-  height: 22px;
-  width: 22px;
-  transform: rotate(45deg);
-  border: 1px solid rgba(255,255,255,0.62);
-  background: linear-gradient(135deg, #ff55b8, #8b5cf6 52%, #59c7ff);
-  box-shadow: 0 0 24px rgba(255,85,184,0.42), inset 0 0 14px rgba(255,255,255,0.22);
-}
-
-.pd-gem-mark--compact .pd-gem-core {
-  height: 18px;
-  width: 18px;
-}
-
-.pd-gem-facet {
-  position: absolute;
+.pd-cart-logo {
+  width: 58px;
+  height: 42px;
+  flex: 0 0 auto;
   display: block;
-  background: rgba(255,255,255,0.48);
 }
 
-.pd-gem-facet-a { left: 50%; top: 0; width: 1px; height: 100%; }
-.pd-gem-facet-b { left: 0; top: 50%; width: 100%; height: 1px; }
-.pd-gem-facet-c { left: 50%; top: -12%; width: 1px; height: 124%; transform: rotate(90deg); opacity: 0.34; }
-
-.pd-brand-word {
-  font-family: var(--font-sora), var(--font-geist), system-ui, sans-serif !important;
-  font-weight: 900 !important;
-  letter-spacing: 0.012em !important;
-  line-height: 0.95 !important;
-  color: #ffffff !important;
-  text-shadow: 0 10px 30px rgba(255,255,255,0.08) !important;
+.pd-brand-logo--compact .pd-cart-logo {
+  width: 48px;
+  height: 35px;
 }
 
-.pd-brand-sub {
-  color: #ff55b8 !important;
-  letter-spacing: 0.24em !important;
-  font-weight: 900 !important;
+.pd-brand-copy {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+.pd-brand-wordmark {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  white-space: nowrap;
+  font-family: var(--font-sora), var(--font-geist), system-ui, sans-serif;
+  font-size: 19px;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: 0.005em;
+  color: #ffffff;
+  text-transform: none;
+  text-shadow: 0 10px 30px rgba(255,255,255,0.08);
+}
+
+.pd-brand-logo--compact .pd-brand-wordmark {
+  font-size: 15px;
+  gap: 4px;
+}
+
+.pd-brand-of {
+  position: relative;
+  top: -0.34em;
+  margin-left: -1px;
+  margin-right: -1px;
+  font-size: 0.34em;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  color: #ff55b8;
+  opacity: 0.95;
 }
 
 @media (min-width: 768px) {
@@ -81,9 +82,13 @@
   }
 
   .premium-degen .pd-shell-header > .mx-auto.flex > a:first-child {
-    min-width: 235px;
-    padding: 4px 10px 4px 4px;
+    min-width: 260px;
+    padding: 4px 12px 4px 6px;
     border-radius: 22px;
+  }
+
+  .premium-degen .pd-shell-header > .mx-auto.flex > a:first-child:hover {
+    background: rgba(255,255,255,0.045);
   }
 
   .premium-degen .pd-shell-header nav.pd-nav {
@@ -135,7 +140,7 @@
 }
 
 @media (max-width: 767px) {
-  .pd-gem-mark { height: 40px; width: 40px; border-radius: 15px; }
-  .pd-gem-core { height: 18px; width: 18px; }
+  .pd-cart-logo { width: 48px; height: 35px; }
+  .pd-brand-wordmark { font-size: 15px; gap: 4px; }
   .premium-degen .pd-shell-header { padding: 11px 14px !important; background: rgba(3,5,10,0.88) !important; }
 }
