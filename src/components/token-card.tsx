@@ -5,12 +5,12 @@ import { ProgressBar } from "./progress-bar";
 import { useUi } from "./page-shell";
 
 function statusMeta(token: TokenRecord, locale: "ru" | "en") {
-  if (token.status === "LISTED") return { label: locale === "ru" ? "На рынке" : "Listed", className: "bg-white/10 text-white" };
-  if (token.status === "GRADUATED_READY") return { label: locale === "ru" ? "Готов к ликвидности" : "Ready for liquidity", className: "bg-[#2aabee]/15 text-[#5ac8fa]" };
+  if (token.status === "LISTED") return { label: locale === "ru" ? "На рынке" : "Listed", className: "pd-chip pd-chip-live" };
+  if (token.status === "GRADUATED_READY") return { label: locale === "ru" ? "К листингу" : "Ready", className: "pd-chip pd-chip-blue" };
   const pct = token.state.progress * 100;
-  if (pct >= 75) return { label: locale === "ru" ? "Почти готов" : "Almost ready", className: "bg-[#2aabee]/15 text-[#5ac8fa]" };
-  if (pct >= 40) return { label: locale === "ru" ? "Запуск идёт" : "Launching", className: "bg-[#2aabee]/15 text-[#5ac8fa]" };
-  return { label: locale === "ru" ? "Новый" : "New", className: "bg-white/10 text-white" };
+  if (pct >= 75) return { label: locale === "ru" ? "Горячий" : "Hot", className: "pd-chip pd-chip-hot" };
+  if (pct >= 40) return { label: locale === "ru" ? "Live" : "Live", className: "pd-chip pd-chip-live" };
+  return { label: locale === "ru" ? "Новый" : "New", className: "pd-chip pd-chip-blue" };
 }
 
 function timeAgo(value: string, locale: "ru" | "en") {
@@ -45,33 +45,35 @@ export function TokenCard({ token }: { token: TokenRecord }) {
   const trusted = isOnChainReady(token);
 
   return (
-    <Link href={`/token/${encodeURIComponent(token.id)}`} className="glass-card group block overflow-hidden rounded-[24px] border border-white/10 bg-[linear-gradient(180deg,rgba(15,24,39,0.9),rgba(9,15,26,0.98))] transition hover:border-[#2aabee]/30 hover:bg-[linear-gradient(180deg,rgba(18,28,45,0.96),rgba(10,16,28,0.98))]">
-      <div className="relative aspect-[1.55] overflow-hidden bg-[#07111f]">
-        <img src={token.image || "/brand/tons-of-gram-tonconnect.svg"} alt="" className="h-full w-full object-cover opacity-90 transition duration-300 group-hover:scale-[1.03]" loading="lazy" />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,7,18,0.05),rgba(3,7,18,0.76))]" />
-        <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between gap-3">
-          <div>
-            <div className="text-xs uppercase tracking-[0.16em] text-[#b6dfff]">{timeAgo(token.createdAt, locale)}</div>
-            <h3 className="mt-1 line-clamp-1 font-display text-2xl font-black tracking-[-0.04em] text-white">{token.name}</h3>
-            <div className="mt-1 font-mono text-sm font-semibold text-[#5ac8fa]">{token.ticker}</div>
+    <Link href={`/token/${encodeURIComponent(token.id)}`} className="group block overflow-hidden rounded-[30px] border border-white/10 bg-[linear-gradient(180deg,rgba(17,23,34,0.88),rgba(8,12,18,0.96))] shadow-[0_22px_80px_rgba(0,0,0,0.28)] transition duration-200 hover:-translate-y-0.5 hover:border-[#ff3d9a]/35 hover:shadow-[0_28px_95px_rgba(255,61,154,0.12)]">
+      <div className="relative aspect-[1.34] overflow-hidden bg-[#070b12]">
+        <img src={token.image || "/brand/tons-of-gram-tonconnect.svg"} alt="" className="h-full w-full object-cover opacity-95 transition duration-500 group-hover:scale-[1.045]" loading="lazy" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,7,11,0.04),rgba(5,7,11,0.88))]" />
+        <div className="absolute left-4 top-4 flex flex-wrap gap-2">
+          <span className={status.className}>{status.label}</span>
+          <span className={trusted ? "pd-chip pd-chip-live" : "pd-chip"}>{trusted ? "On-chain" : "Indexing"}</span>
+        </div>
+        <div className="absolute bottom-4 left-4 right-4">
+          <div className="text-xs font-black uppercase tracking-[0.16em] text-[#9cff2e]">{timeAgo(token.createdAt, locale)}</div>
+          <div className="mt-2 flex items-end justify-between gap-4">
+            <div className="min-w-0">
+              <h3 className="line-clamp-1 font-display text-2xl font-black tracking-[-0.045em] text-white">{token.name}</h3>
+              <div className="mt-1 font-mono text-sm font-bold text-[#5ac8fa]">{token.ticker}</div>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-black/30 px-3 py-2 text-right backdrop-blur-md"><div className="text-[10px] uppercase text-[#90a3b8]">Progress</div><div className="font-black text-[#9cff2e]">{progress}%</div></div>
           </div>
-          <span className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold ${status.className}`}>{status.label}</span>
         </div>
       </div>
 
-      <div className="p-5">
-        <div className="flex flex-wrap gap-2">
-          <span className={trusted ? "rounded-full bg-[#2aabee]/15 px-3 py-1 text-xs font-bold text-[#5ac8fa]" : "rounded-full bg-white/10 px-3 py-1 text-xs font-bold text-white/70"}>{trusted ? (locale === "ru" ? "On-chain" : "On-chain") : (locale === "ru" ? "Ожидает сеть" : "Pending chain")}</span>
-          <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-bold text-white/70">No custody</span>
-        </div>
-
-        {token.description ? <p className="mt-4 line-clamp-2 text-sm leading-6 text-[#c6d4ea]">{token.description}</p> : null}
-
-        <div className="mt-5 rounded-2xl border border-white/8 bg-white/5 p-4">
-          <div className="flex items-center justify-between text-xs text-[#8ba3c1]"><span>{locale === "ru" ? "Прогресс" : "Progress"}</span><span>{progress}%</span></div>
+      <div className="space-y-4 p-5">
+        {token.description ? <p className="line-clamp-2 text-sm leading-6 text-[#cbd5e1]">{token.description}</p> : null}
+        <div className="rounded-[24px] border border-white/10 bg-white/[0.045] p-4">
+          <div className="flex items-center justify-between text-xs text-[#90a3b8]"><span>{locale === "ru" ? "До листинга" : "To graduation"}</span><span className="font-black text-[#9cff2e]">{progress}%</span></div>
           <ProgressBar progress={progress} className="mt-2" />
-          <div className="mt-3 flex items-center justify-between text-sm"><span className="text-[#8ba3c1]">{locale === "ru" ? "Цена" : "Price"}</span><span className="font-semibold text-white">{price > 0 ? `${price.toFixed(8)} GRAM` : "—"}</span></div>
-          <div className="mt-2 flex items-center justify-between text-sm"><span className="text-[#8ba3c1]">{locale === "ru" ? "Собрано" : "Collected"}</span><span className="font-semibold text-white">💎 {collected.toFixed(2)} GRAM</span></div>
+          <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
+            <div className="min-w-0"><span className="block text-xs text-[#90a3b8]">{locale === "ru" ? "Цена" : "Price"}</span><span className="mt-1 block truncate font-black text-white">{price > 0 ? `${price.toFixed(8)} GRAM` : "—"}</span></div>
+            <div className="min-w-0"><span className="block text-xs text-[#90a3b8]">{locale === "ru" ? "Собрано" : "Collected"}</span><span className="mt-1 block truncate font-black text-white">{collected.toFixed(2)} GRAM</span></div>
+          </div>
         </div>
       </div>
     </Link>
