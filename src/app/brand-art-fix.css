@@ -1,0 +1,28 @@
+.pd-brand-logo::before {
+  content: none !important;
+  display: none !important;
+}
+
+.pd-brand-art {
+  display: block;
+  width: 330px;
+  height: 82px;
+  flex: 0 0 auto;
+  background-image: url("/brand/tons-of-gram-header-logo.webp");
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: contain;
+  filter: drop-shadow(0 14px 28px rgba(255,85,184,0.14)) drop-shadow(0 8px 18px rgba(89,199,255,0.10));
+}
+
+.pd-brand-logo--compact .pd-brand-art {
+  width: 230px;
+  height: 58px;
+}
+
+@media (max-width: 767px) {
+  .pd-brand-art {
+    width: 230px;
+    height: 58px;
+  }
+}
