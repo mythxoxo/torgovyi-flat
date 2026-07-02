@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, ShieldCheck, TrendingUp, Wallet } from "lucide-react";
+import { ArrowRight, BarChart3, Rocket, ShieldCheck, Sparkles, TrendingUp, Wallet } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import type { TokenRecord } from "../lib/shared";
 import { TokenList } from "../components/token-list";
@@ -12,7 +12,7 @@ export default function HomePage() {
   const [tokens, setTokens] = useState<TokenRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const { t, locale, theme } = useUi();
+  const { t, locale } = useUi();
 
   useEffect(() => {
     setLoading(true);
@@ -24,80 +24,72 @@ export default function HomePage() {
   }, []);
 
   const launches = useMemo(() => tokens.slice(0, 6), [tokens]);
-  const panel = theme === "light" ? "border-[#dbe8f4] bg-white text-[#111827] shadow-[0_24px_70px_rgba(15,23,42,0.08)]" : "border-white/10 bg-[#0f1724] text-white shadow-[0_24px_70px_rgba(0,0,0,0.26)]";
-  const muted = theme === "light" ? "text-[#64748b]" : "text-[#8ba3c1]";
-  const soft = theme === "light" ? "border-[#dbe8f4] bg-[#f8fbff]" : "border-white/10 bg-white/5";
+  const totalCollected = launches.reduce((sum, token) => sum + (token.state.collectedTon ?? token.state.reserveTon ?? 0), 0);
+  const liveCount = launches.length;
 
   return (
-    <div className="space-y-8 pb-20">
-      <section className="grid gap-5 xl:grid-cols-[1fr_360px]">
-        <div className={`rounded-[36px] border p-7 sm:p-9 ${panel}`}>
-          <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#0088cc]">TONS OF GRAM</p>
-          <h1 className="mt-5 max-w-4xl font-display text-[3.2rem] font-black leading-[0.92] tracking-[-0.055em] sm:text-[4.6rem]">
-            {t.home.title}
-          </h1>
-          <p className={`mt-5 max-w-2xl text-lg leading-8 ${muted}`}>{t.home.subtitle}</p>
+    <div className="space-y-7 pb-20">
+      <section className="pd-panel overflow-hidden rounded-[36px]">
+        <div className="grid gap-0 xl:grid-cols-[1fr_390px]">
+          <div className="relative overflow-hidden p-7 sm:p-10">
+            <div className="absolute left-[-110px] top-[-140px] h-80 w-80 rounded-full bg-[#ff3d9a]/16 blur-3xl" />
+            <div className="absolute bottom-[-140px] right-[-100px] h-96 w-96 rounded-full bg-[#2aabee]/16 blur-3xl" />
+            <div className="relative z-10 max-w-4xl">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="pd-chip pd-chip-hot"><Sparkles className="h-3.5 w-3.5" /> TON launchpad</span>
+                <span className="pd-chip pd-chip-blue">Live markets</span>
+                <span className="pd-chip pd-chip-live">No custody</span>
+              </div>
 
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Link href="/create?target=8888" className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#0088cc] px-6 py-3.5 text-[15px] font-semibold tracking-[-0.01em] text-white shadow-[0_16px_36px_rgba(0,136,204,0.22)]">
-              {t.home.launchMain}
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-            <Link href="/markets" className={`inline-flex items-center justify-center rounded-2xl border px-6 py-3.5 text-[15px] font-semibold tracking-[-0.01em] ${theme === "light" ? "border-[#dbe8f4] bg-white text-[#111827]" : "border-white/10 bg-white/5 text-white"}`}>
-              {t.home.ctaTokens}
-            </Link>
+              <h1 className="mt-7 max-w-4xl font-display text-[3rem] font-black leading-[0.92] tracking-[-0.065em] text-white sm:text-[4.9rem]">
+                {locale === "ru" ? <>Мемы на TON.<br /><span className="bg-gradient-to-r from-[#ff7fc3] via-white to-[#9cff2e] bg-clip-text text-transparent">Без лишнего шума.</span></> : <>Memes on TON.<br /><span className="bg-gradient-to-r from-[#ff7fc3] via-white to-[#9cff2e] bg-clip-text text-transparent">Without the noise.</span></>}
+              </h1>
+              <p className="mt-5 max-w-2xl text-lg leading-8 text-[#cbd5e1]">{locale === "ru" ? "Launchpad для быстрых запусков, живых рынков и DEX-токенов. Реальные метрики, ручная подпись в кошельке, без custody." : "A launchpad for fast launches, live markets, and DEX tokens. Real metrics, manual wallet signing, no custody."}</p>
+
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <Link href="/create?target=8888" className="pd-btn-primary"><Rocket className="h-4 w-4" /> {t.home.launchMain}</Link>
+                <Link href="/markets" className="pd-btn-secondary"><BarChart3 className="h-4 w-4" /> {t.home.ctaTokens}</Link>
+                <Link href="/markets?tab=external" className="pd-btn-secondary">External <ArrowRight className="h-4 w-4" /></Link>
+              </div>
+
+              <div className="mt-9 grid gap-3 md:grid-cols-3">
+                <div className="pd-stat"><ShieldCheck className="h-5 w-5 text-[#9cff2e]" /><div className="mt-3 text-sm font-black text-white">No custody</div><div className="mt-1 text-sm leading-5 text-[#90a3b8]">{locale === "ru" ? "Подпись только в кошельке." : "Wallet-only signing."}</div></div>
+                <div className="pd-stat"><TrendingUp className="h-5 w-5 text-[#ff7fc3]" /><div className="mt-3 text-sm font-black text-white">Market layer</div><div className="mt-1 text-sm leading-5 text-[#90a3b8]">{locale === "ru" ? "Метрики из live pipeline." : "Metrics from live pipeline."}</div></div>
+                <div className="pd-stat"><Wallet className="h-5 w-5 text-[#5ac8fa]" /><div className="mt-3 text-sm font-black text-white">8888 GRAM</div><div className="mt-1 text-sm leading-5 text-[#90a3b8]">{locale === "ru" ? "Публичный target." : "Public target."}</div></div>
+              </div>
+            </div>
           </div>
 
-          <div className="mt-8 grid gap-3 md:grid-cols-3">
-            <div className={`rounded-3xl border p-4 ${soft}`}>
-              <ShieldCheck className="h-5 w-5 text-[#0088cc]" />
-              <div className="mt-3 text-sm font-semibold">No custody</div>
-              <div className={`mt-1 text-sm leading-5 ${muted}`}>{locale === "ru" ? "Кошелёк подписывает всё вручную." : "Wallet signs every action."}</div>
+          <aside className="border-t border-white/10 bg-black/24 p-6 xl:border-l xl:border-t-0">
+            <p className="pd-kicker">Launch control</p>
+            <div className="mt-5 rounded-[28px] border border-white/10 bg-white/[0.045] p-5">
+              <div className="flex items-center justify-between gap-3"><span className="text-sm font-black text-white">{t.home.modeMain}</span><span className="pd-chip pd-chip-live">Open</span></div>
+              <div className="mt-4 text-5xl font-black tracking-[-0.06em] text-white">8888</div>
+              <div className="mt-1 text-sm text-[#90a3b8]">GRAM target</div>
             </div>
-            <div className={`rounded-3xl border p-4 ${soft}`}>
-              <TrendingUp className="h-5 w-5 text-[#0088cc]" />
-              <div className="mt-3 text-sm font-semibold">Market first</div>
-              <div className={`mt-1 text-sm leading-5 ${muted}`}>{locale === "ru" ? "Рынок решает, что живёт." : "The market decides what lives."}</div>
+            <div className="mt-3 grid grid-cols-2 gap-3">
+              <div className="pd-stat"><div className="text-xs text-[#90a3b8]">{locale === "ru" ? "В фиде" : "In feed"}</div><div className="mt-2 text-3xl font-black text-white">{liveCount}</div></div>
+              <div className="pd-stat"><div className="text-xs text-[#90a3b8]">{locale === "ru" ? "Собрано" : "Raised"}</div><div className="mt-2 text-3xl font-black text-[#9cff2e]">{totalCollected.toFixed(0)}</div></div>
             </div>
-            <div className={`rounded-3xl border p-4 ${soft}`}>
-              <Wallet className="h-5 w-5 text-[#0088cc]" />
-              <div className="mt-3 text-sm font-semibold">8888 GRAM</div>
-              <div className={`mt-1 text-sm leading-5 ${muted}`}>{locale === "ru" ? "Публичный запуск." : "Public launch."}</div>
+            <div className="mt-3 rounded-[28px] border border-[#ff3d9a]/20 bg-[#ff3d9a]/8 p-5">
+              <div className="text-sm font-black text-white">{locale === "ru" ? "Premium degen" : "Premium degen"}</div>
+              <p className="mt-2 text-sm leading-6 text-[#cbd5e1]">{locale === "ru" ? "Degen-энергия без дешёвого казино-визуала: чистая сетка, мягкий glow, понятные действия." : "Degen energy without casino visuals: clean grid, soft glow, clear actions."}</p>
             </div>
-          </div>
+          </aside>
         </div>
-
-        <aside className={`rounded-[32px] border p-6 ${panel}`}>
-          <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#0088cc]">Launch control</p>
-          <div className="mt-5 rounded-3xl border border-[var(--gram-border)] bg-[var(--gram-soft)] p-5">
-            <div className="text-sm font-semibold">{t.home.modeMain}</div>
-            <div className="mt-2 text-4xl font-black tracking-[-0.04em]">8888</div>
-            <div className={`mt-1 text-sm ${muted}`}>GRAM</div>
-          </div>
-          <div className="mt-3 rounded-3xl border border-[var(--gram-border)] bg-[var(--gram-soft)] p-5">
-            <div className="text-sm font-semibold">{t.home.modeTest}</div>
-            <div className={`mt-2 text-sm leading-6 ${muted}`}>{locale === "ru" ? "5 GRAM скрыт как внутренний тест, не как публичный CTA." : "5 GRAM stays hidden as internal test, not public CTA."}</div>
-          </div>
-          <Link href="/create?target=8888" className="mt-5 inline-flex w-full items-center justify-center rounded-2xl bg-[#0088cc] px-5 py-3 text-sm font-semibold text-white">
-            {locale === "ru" ? "Подготовить запуск" : "Prepare launch"}
-          </Link>
-        </aside>
       </section>
 
-      <section className={`rounded-[32px] border p-6 ${panel}`}>
+      <section className="pd-panel rounded-[32px] p-6">
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#0088cc]">Launchpad feed</p>
-            <h2 className="mt-2 font-display text-3xl font-bold tracking-[-0.04em]">{t.home.launchesTitle}</h2>
+            <p className="pd-kicker">Launchpad feed</p>
+            <h2 className="mt-2 font-display text-3xl font-black tracking-[-0.05em] text-white">{t.home.launchesTitle}</h2>
+            <p className="mt-2 text-sm text-[#90a3b8]">{locale === "ru" ? "Если запусков пока нет, витрина остаётся аккуратной, а не пустой заглушкой." : "If there are no launches yet, the feed stays polished."}</p>
           </div>
-          <Link href="/markets" className={`rounded-2xl border px-4 py-2 text-sm font-semibold ${theme === "light" ? "border-[#dbe8f4] bg-white text-[#111827]" : "border-white/10 bg-white/5 text-white"}`}>
-            {locale === "ru" ? "Все рынки" : "All markets"}
-          </Link>
+          <Link href="/markets" className="pd-btn-secondary w-auto">{locale === "ru" ? "Все рынки" : "All markets"} <ArrowRight className="h-4 w-4" /></Link>
         </div>
-        {error ? <div className="mt-4 rounded-2xl border border-[var(--gram-border)] bg-[var(--gram-soft)] px-4 py-3 text-sm text-[var(--gram-muted)]">{t.misc.noLaunches}</div> : null}
-        <div className="mt-5">
-          <TokenList tokens={launches} loading={loading} />
-        </div>
+        {error ? <div className="pd-empty mt-4 rounded-2xl px-4 py-3 text-sm text-[#ffb3d1]">{t.misc.noLaunches}</div> : null}
+        <div className="mt-5"><TokenList tokens={launches} loading={loading} /></div>
       </section>
     </div>
   );
