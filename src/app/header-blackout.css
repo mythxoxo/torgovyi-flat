@@ -1,0 +1,25 @@
+.premium-degen .pd-shell-header,
+.premium-degen .pd-shell-header > .mx-auto,
+.premium-degen .pd-shell-header > .mx-auto.flex,
+.premium-degen .pd-shell-header nav.pd-nav,
+.premium-degen .pd-shell-header > .mx-auto.flex > a:first-child,
+.premium-degen .pd-shell-header > .mx-auto.flex > div:last-child {
+  background: #000 !important;
+  background-color: #000 !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+.premium-degen .pd-shell-header nav.pd-nav,
+.premium-degen .pd-shell-header > .mx-auto.flex > div:last-child {
+  border-color: rgba(255, 255, 255, 0.065) !important;
+}
+
+.premium-degen .pd-nav-idle {
+  background: transparent !important;
+}
+
+.premium-degen .pd-nav-idle:hover {
+  background: rgba(255,255,255,0.035) !important;
+}
