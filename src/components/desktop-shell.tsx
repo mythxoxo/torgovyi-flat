@@ -8,8 +8,6 @@ import { useEffect, useState } from "react";
 import { WalletConnectButton } from "./wallet-connect-button";
 import { useUi } from "./page-shell";
 import { getTonPrice } from "../lib/market/ton-price";
-import { LanguageSwitcher } from "./language-switcher";
-import { ThemeSwitcher } from "./theme-switcher";
 import { BrandLogo } from "./brand-logo";
 
 export function DesktopShell({ children }: { children: ReactNode }) {
@@ -40,8 +38,6 @@ export function DesktopShell({ children }: { children: ReactNode }) {
           </nav>
           <div className="flex items-center gap-3">
             <div className="pd-chip pd-chip-live">{gramPrice ? `GRAM $${gramPrice.toFixed(2)}` : t.misc.mainnet}</div>
-            <ThemeSwitcher />
-            <LanguageSwitcher />
             <WalletConnectButton />
           </div>
         </div>
