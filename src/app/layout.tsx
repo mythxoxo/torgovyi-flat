@@ -48,7 +48,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="ru" className={`${geist.variable} ${sora.variable}`}>
+    <html lang="en" className={`${geist.variable} ${sora.variable}`}>
       <body>
         <Providers>
           <TelegramBoot />
