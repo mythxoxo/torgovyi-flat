@@ -107,8 +107,8 @@
 
   .premium-degen .pd-shell-header > .mx-auto.flex > div:last-child {
     flex: 0 0 auto;
-    min-width: 282px;
-    gap: 6px !important;
+    min-width: 214px;
+    gap: 8px !important;
     padding: 5px !important;
     border: 1px solid rgba(255,255,255,0.065);
     border-radius: 23px;
@@ -140,19 +140,61 @@
   border-color: rgba(255,255,255,0.14) !important;
 }
 
-@media (max-width: 767px) {
-  .pd-brand-logo,
-  .pd-brand-img {
-    width: 190px;
-    height: 48px;
-  }
+.premium-degen .wallet-cta__fallback-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
-  .premium-degen .pd-shell-header,
-  .premium-degen .pd-shell-header nav.pd-nav,
-  .premium-degen .pd-shell-header > div,
-  .premium-degen .pd-shell-header > div > div {
-    padding: 11px 14px !important;
+@media (max-width: 767px) {
+  .premium-degen .pd-shell-header {
+    padding: 12px 14px !important;
     background: #000 !important;
     box-shadow: none !important;
+  }
+
+  .pd-mobile-header__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 28px;
+    background: #000;
+    overflow: hidden;
+  }
+
+  .pd-mobile-header__logo {
+    display: inline-flex;
+    flex: 0 0 168px;
+    width: 168px;
+    min-width: 168px;
+    max-width: 168px;
+    overflow: hidden;
+  }
+
+  .pd-brand-logo--compact,
+  .pd-brand-logo--compact .pd-brand-img {
+    width: 168px !important;
+    height: 42px !important;
+    border-radius: 17px;
+  }
+
+  .pd-mobile-header__top .wallet-cta {
+    flex: 0 1 154px;
+    max-width: 154px;
+    min-width: 0;
+    height: 42px;
+    padding: 0 12px !important;
+    justify-content: center;
+  }
+
+  .pd-mobile-header__meta {
+    display: flex;
+    margin-top: 10px;
+    padding: 0 2px;
   }
 }
