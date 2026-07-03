@@ -8,8 +8,6 @@ import { Activity, Compass, Home, Search, User } from "lucide-react";
 import { WalletConnectButton } from "./wallet-connect-button";
 import { getTonPrice } from "../lib/market/ton-price";
 import { useUi } from "./page-shell";
-import { LanguageSwitcher } from "./language-switcher";
-import { ThemeSwitcher } from "./theme-switcher";
 import { BrandLogo } from "./brand-logo";
 
 export function MobileShell({ children }: { children: ReactNode }) {
@@ -29,9 +27,9 @@ export function MobileShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="premium-degen min-h-screen pb-[calc(84px+env(safe-area-inset-bottom))]">
-      <header className="pd-shell-header sticky top-0 z-40 px-4 py-3">
-        <div className="flex items-center justify-between gap-3"><Link href="/" className="min-w-0"><BrandLogo subtitle={t.misc.mainnet} compact /></Link><WalletConnectButton compact /></div>
-        <div className="mt-3 flex flex-wrap gap-2">{gramPrice ? <div className="pd-chip pd-chip-live">GRAM ${gramPrice.toFixed(2)}</div> : null}<ThemeSwitcher /><LanguageSwitcher /></div>
+      <header className="pd-shell-header pd-mobile-header sticky top-0 z-40 px-4 py-3">
+        <div className="pd-mobile-header__top"><Link href="/" className="pd-mobile-header__logo"><BrandLogo subtitle={t.misc.mainnet} compact /></Link><WalletConnectButton compact /></div>
+        {gramPrice ? <div className="pd-mobile-header__meta"><div className="pd-chip pd-chip-live">GRAM ${gramPrice.toFixed(2)}</div></div> : null}
       </header>
       <main className="pd-page px-4 py-5">{children}</main>
       <nav className="pd-nav fixed bottom-0 left-0 right-0 z-50 mx-auto flex max-w-md items-center justify-around backdrop-blur-xl" style={{ height: "calc(72px + env(safe-area-inset-bottom))", paddingBottom: "env(safe-area-inset-bottom)" }}>
